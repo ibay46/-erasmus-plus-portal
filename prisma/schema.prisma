@@ -119,7 +119,7 @@ model ProjectResult {
   title       String
   year        Int
   projectType String
-  country     String?
+  country     String
   summary     String
   body        String
   coverImage  String?

@@ -10,7 +10,7 @@ import { slugify } from "@/lib/slug";
 const projectResultSchema = z.object({
   title: z.string().min(3),
   year: z.coerce.number().int().min(2007).max(2100),
-  country: z.string().optional(),
+  country: z.string().min(2),
   summary: z.string().min(10),
   body: z.string().min(10),
   published: z.boolean(),
@@ -20,7 +20,7 @@ function parseProjectResultForm(formData: FormData) {
   return projectResultSchema.parse({
     title: formData.get("title"),
     year: formData.get("year"),
-    country: formData.get("country") || undefined,
+    country: formData.get("country"),
     summary: formData.get("summary"),
     body: formData.get("body"),
     published: formData.get("published") === "on",
@@ -35,7 +35,7 @@ export async function createProjectResult(formData: FormData) {
   } catch {
     redirect(
       "/admin/proje-sonuclari/yeni?hata=" +
-        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, özet ve içerik en az 10 karakter olmalı).")
+        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2, özet ve içerik en az 10 karakter olmalı).")
     );
   }
 
@@ -62,7 +62,7 @@ export async function updateProjectResult(formData: FormData) {
   } catch {
     redirect(
       `/admin/proje-sonuclari/${id}/duzenle?hata=` +
-        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, özet ve içerik en az 10 karakter olmalı).")
+        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2, özet ve içerik en az 10 karakter olmalı).")
     );
   }
 

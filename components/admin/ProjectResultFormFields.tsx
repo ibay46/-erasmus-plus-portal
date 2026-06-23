@@ -9,7 +9,7 @@ export function ProjectResultFormFields({
   defaultValues?: {
     title: string;
     year: number;
-    country: string | null;
+    country: string;
     summary: string;
     body: string;
     published: boolean;
@@ -47,11 +47,13 @@ export function ProjectResultFormFields({
       </div>
       <div>
         <label htmlFor="country" className="block text-sm font-medium mb-1 text-foreground">
-          Ülke (opsiyonel)
+          Ülke
         </label>
         <input
           id="country"
           name="country"
+          required
+          minLength={2}
           defaultValue={defaultValues?.country ?? ""}
           className={inputClass}
         />

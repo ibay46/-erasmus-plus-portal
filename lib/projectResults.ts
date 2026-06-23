@@ -4,7 +4,7 @@ import type { ProjectResult } from "@/app/generated/prisma/client";
 export function getPublishedProjectResults() {
   return prisma.projectResult.findMany({
     where: { published: true },
-    orderBy: [{ year: "desc" }, { createdAt: "desc" }],
+    orderBy: [{ year: "desc" }, { country: "asc" }],
   });
 }
 
