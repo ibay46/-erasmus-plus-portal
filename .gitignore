@@ -52,3 +52,5 @@ next-env.d.ts
 /.claude/
 /.hallmark/
 /hallmark-demos/
+
+.vercel
