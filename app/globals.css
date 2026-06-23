@@ -109,11 +109,18 @@ body {
   text-decoration: underline;
 }
 
+.prose-erasmus .table-scroll-wrapper {
+  margin: 0.75rem 0;
+  -webkit-overflow-scrolling: touch;
+}
+
 .prose-erasmus table {
   width: 100%;
+  min-width: 420px;
   border-collapse: collapse;
-  margin: 0.75rem 0;
+  margin: 0;
   font-size: 0.9375rem;
+  table-layout: fixed;
 }
 
 .prose-erasmus th,
@@ -122,6 +129,7 @@ body {
   padding: 0.5rem 0.75rem;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: break-word;
 }
 
 .prose-erasmus th {

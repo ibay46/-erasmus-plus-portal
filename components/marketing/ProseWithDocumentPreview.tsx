@@ -99,6 +99,15 @@ export function ProseWithDocumentPreview({ html, className }: { html: string; cl
     const container = containerRef.current;
     if (!container) return;
 
+    const tables = Array.from(container.querySelectorAll("table"));
+    for (const table of tables) {
+      if (table.parentElement?.classList.contains("table-scroll-wrapper")) continue;
+      const wrapper = document.createElement("div");
+      wrapper.className = "table-scroll-wrapper overflow-x-auto";
+      table.parentNode?.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
+
     const links = Array.from(container.querySelectorAll("a"));
     const inserted: HTMLDivElement[] = [];
 
