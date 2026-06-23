@@ -1,0 +1,212 @@
+// Erasmus+ Dijital Platformu - Prisma şeması (Faz 0/1/2 modelleri)
+// learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MembershipTier {
+  FREE
+  STANDARD
+  PREMIUM
+  ADMIN
+}
+
+model User {
+  id             String         @id @default(cuid())
+  email          String         @unique
+  passwordHash   String?
+  name           String?
+  membershipTier MembershipTier @default(FREE)
+  membershipExpiresAt DateTime?
+  emailVerified  DateTime?
+  image          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  posts           Post[]
+  ilanlar         Ilan[]
+  leads           ConsultingLead[]
+  toolSubmissions ToolSubmission[]
+}
+
+// NextAuth (Auth.js) Prisma adapter şeması
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum PostCategory {
+  YENI_CAGRI
+  ULUSAL_AJANS
+  AVRUPA_KOMISYONU
+  SALTO_YOUTH
+  SALTO_EDUCATION_TRAINING
+  GENEL
+}
+
+model Post {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  excerpt     String?
+  body        String
+  category    PostCategory
+  tags        String       @default("")
+  coverImage  String?
+  published   Boolean      @default(false)
+  publishedAt DateTime?
+  authorId    String?
+  author      User?        @relation(fields: [authorId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model GrantProject {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String?
+  body        String
+  coverImage  String?
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model ProjectResult {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  year        Int
+  projectType String
+  country     String?
+  summary     String
+  body        String
+  coverImage  String?
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProjectLibraryEntry {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  projectType   String
+  themes        String   @default("")
+  summary       String
+  objectives    String
+  workPackages  String
+  dissemination String
+  budgetLogic   String
+  isPremiumOnly Boolean  @default(false)
+  coverImage    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ToolSubmission {
+  id        String   @id @default(cuid())
+  toolKey   String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  input     String
+  output    String
+  createdAt DateTime @default(now())
+}
+
+enum IlanType {
+  PARTNER_ARIYORUM
+  PROJE_FIKRIM_VAR
+  KONSORSIYUM_KURUYORUM
+}
+
+enum OrgType {
+  OKUL
+  BELEDIYE
+  STK
+  UNIVERSITE
+  DIGER
+}
+
+enum IlanStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Ilan {
+  id           String     @id @default(cuid())
+  type         IlanType
+  title        String
+  body         String
+  country      String?
+  organization String?
+  orgType      OrgType?
+  contactEmail String
+  userId       String?
+  user         User?      @relation(fields: [userId], references: [id])
+  status       IlanStatus @default(PENDING)
+  createdAt    DateTime   @default(now())
+  expiresAt    DateTime?
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+model ConsultingLead {
+  id          String     @id @default(cuid())
+  service     String
+  name        String
+  email       String
+  phone       String?
+  message     String
+  budgetRange String?
+  userId      String?
+  user        User?      @relation(fields: [userId], references: [id])
+  status      LeadStatus @default(NEW)
+  createdAt   DateTime   @default(now())
+}

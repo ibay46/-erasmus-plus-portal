@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320">
+  <defs>
+    <linearGradient id="g8" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="oklch(23% 0.05 255)" />
+      <stop offset="100%" stop-color="oklch(11% 0.02 255)" />
+    </linearGradient>
+  </defs>
+  <rect width="480" height="320" fill="url(#g8)" />
+  <circle cx="240" cy="60" r="100" fill="oklch(60% 0.2 258)" opacity="0.32" />
+  <circle cx="100" cy="260" r="120" fill="oklch(72% 0.15 55)" opacity="0.26" />
+  <rect x="320" y="200" width="90" height="70" rx="18" fill="white" opacity="0.06" />
+</svg>
