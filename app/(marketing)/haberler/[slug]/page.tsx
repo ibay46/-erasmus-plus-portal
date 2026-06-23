@@ -31,31 +31,28 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
         Haberlere Dön
       </Link>
       <div className="overflow-hidden rounded-xl border border-border">
-        <div className="relative">
-          {post.coverImage ? (
+        {post.coverImage && (
+          <div className="relative h-56 md:h-72">
             <img src={post.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          ) : (
-            <div className="absolute inset-0 bg-[oklch(15%_0.025_258)]">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-accent/30 blur-[100px]"
-              />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute right-0 bottom-0 h-64 w-64 rounded-full bg-accent-warm/25 blur-[100px]"
-              />
-            </div>
-          )}
-          <div className="absolute inset-0 bg-black/35" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/10" />
-          <div className="relative z-10 flex min-h-[18rem] flex-col justify-end gap-2 p-6 md:p-8">
-            <span className="inline-flex w-fit items-center rounded-full bg-accent px-3 py-1 text-xs font-semibold text-white">
+          </div>
+        )}
+        <div className="relative overflow-hidden border-b border-border bg-background p-6 md:p-8">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-accent/20 blur-[100px]"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 bottom-0 h-64 w-64 rounded-full bg-accent-warm/15 blur-[100px]"
+          />
+          <div className="relative z-10 flex flex-col gap-2">
+            <span className="inline-flex w-fit items-center rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
               {POST_CATEGORY_LABELS[post.category] ?? post.category}
             </span>
-            <h1 className="text-3xl font-semibold text-white md:text-4xl">{post.title}</h1>
-            {post.excerpt && <p className="max-w-2xl text-white/80">{post.excerpt}</p>}
+            <h1 className="text-3xl font-semibold text-foreground md:text-4xl">{post.title}</h1>
+            {post.excerpt && <p className="max-w-2xl text-muted-foreground">{post.excerpt}</p>}
             {post.publishedAt && (
-              <p className="text-sm text-white/60">{new Date(post.publishedAt).toLocaleDateString("tr-TR")}</p>
+              <p className="text-sm text-muted-foreground">{new Date(post.publishedAt).toLocaleDateString("tr-TR")}</p>
             )}
           </div>
         </div>
