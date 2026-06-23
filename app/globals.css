@@ -109,6 +109,26 @@ body {
   text-decoration: underline;
 }
 
+.prose-erasmus table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.9375rem;
+}
+
+.prose-erasmus th,
+.prose-erasmus td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose-erasmus th {
+  background: var(--muted);
+  font-weight: 600;
+}
+
 .prose-erasmus img {
   max-width: 100%;
   border-radius: 0.5rem;

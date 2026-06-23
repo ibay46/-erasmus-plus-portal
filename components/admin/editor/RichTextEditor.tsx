@@ -5,6 +5,10 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
+import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableHeader } from "@tiptap/extension-table-header";
+import { TableCell } from "@tiptap/extension-table-cell";
 import { useRef, useState } from "react";
 import { VideoExtension } from "@/components/admin/editor/VideoExtension";
 
@@ -114,6 +118,10 @@ function Toolbar({ editor }: { editor: Editor }) {
     }
   }
 
+  function addTable() {
+    editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  }
+
   return (
     <div className="border-b border-border">
       <div className="flex flex-wrap items-center gap-1 p-2">
@@ -144,6 +152,28 @@ function Toolbar({ editor }: { editor: Editor }) {
         <ToolbarButton title="YouTube Video Ekle" onClick={addYoutube}>
           YouTube
         </ToolbarButton>
+        <ToolbarButton title="Tablo Ekle (Excel'den kopyala-yapıştır da yapabilirsiniz)" active={editor.isActive("table")} onClick={addTable}>
+          Tablo
+        </ToolbarButton>
+        {editor.isActive("table") && (
+          <>
+            <ToolbarButton title="Satır Ekle" onClick={() => editor.chain().focus().addRowAfter().run()}>
+              +Satır
+            </ToolbarButton>
+            <ToolbarButton title="Sütun Ekle" onClick={() => editor.chain().focus().addColumnAfter().run()}>
+              +Sütun
+            </ToolbarButton>
+            <ToolbarButton title="Satır Sil" onClick={() => editor.chain().focus().deleteRow().run()}>
+              -Satır
+            </ToolbarButton>
+            <ToolbarButton title="Sütun Sil" onClick={() => editor.chain().focus().deleteColumn().run()}>
+              -Sütun
+            </ToolbarButton>
+            <ToolbarButton title="Tabloyu Sil" onClick={() => editor.chain().focus().deleteTable().run()}>
+              Tabloyu Sil
+            </ToolbarButton>
+          </>
+        )}
         <ToolbarButton title="PDF, Word, Excel, Video veya Görsel Yükle" onClick={() => fileInputRef.current?.click()}>
           {uploading ? "Yükleniyor..." : "Dosya Ekle"}
         </ToolbarButton>
@@ -183,6 +213,10 @@ export function RichTextEditor({
       Image,
       Youtube.configure({ width: 640, height: 360 }),
       VideoExtension,
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: defaultValue ?? "",
     editorProps: {

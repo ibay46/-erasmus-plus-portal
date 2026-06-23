@@ -9,6 +9,8 @@ export function sanitizeHtml(html: string): string {
       img: ["src", "alt", "width", "height"],
       iframe: ["src", "allow", "allowfullscreen", "frameborder", "width", "height"],
       video: ["src", "controls", "width", "height"],
+      td: ["colspan", "rowspan"],
+      th: ["colspan", "rowspan"],
     },
     allowedIframeHostnames: ["www.youtube.com", "youtube.com", "player.vimeo.com"],
   });
