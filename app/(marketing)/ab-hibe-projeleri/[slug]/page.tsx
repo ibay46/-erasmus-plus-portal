@@ -19,7 +19,7 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
 
   return (
     <div className="max-w-5xl grid gap-8 lg:grid-cols-[1fr_18rem]">
-      <div>
+      <div className="min-w-0">
         <Link
           href="/ab-hibe-projeleri"
           className="cursor-pointer mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
