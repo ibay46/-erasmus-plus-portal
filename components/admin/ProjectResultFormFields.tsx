@@ -1,4 +1,5 @@
 ﻿import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
+import { ERASMUS_COUNTRIES } from "@/lib/content/countries";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -49,14 +50,22 @@ export function ProjectResultFormFields({
         <label htmlFor="country" className="block text-sm font-medium mb-1 text-foreground">
           Ülke
         </label>
-        <input
+        <select
           id="country"
           name="country"
           required
-          minLength={2}
           defaultValue={defaultValues?.country ?? ""}
           className={inputClass}
-        />
+        >
+          <option value="" disabled>
+            Ülke seçin
+          </option>
+          {ERASMUS_COUNTRIES.map((country) => (
+            <option key={country} value={country}>
+              {country}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label htmlFor="summary" className="block text-sm font-medium mb-1 text-foreground">

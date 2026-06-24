@@ -20,20 +20,26 @@ export default async function ProjeSonuclariPage() {
         <p className="text-muted-foreground">Henüz yayınlanmış bir proje sonucu yok.</p>
       ) : (
         <div className="space-y-12">
-          {yearGroups.map(({ year, items }) => (
+          {yearGroups.map(({ year, countries }) => (
             <section key={year}>
-              <h2 className="text-2xl font-semibold mb-5 text-foreground">{year}</h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {items.map((item) => (
-                  <Link key={item.slug} href={`/proje-sonuclari/${item.slug}`} className="cursor-pointer">
-                    <Card className="h-full hover:border-accent/50">
-                      <p className="font-medium text-foreground mb-1">{item.title}</p>
-                      {item.country && (
-                        <p className="text-xs font-medium text-accent mb-2">{item.country}</p>
-                      )}
-                      <p className="text-sm text-muted-foreground line-clamp-3">{item.summary}</p>
-                    </Card>
-                  </Link>
+              <h2 className="text-2xl font-semibold mb-6 text-foreground">{year}</h2>
+              <div className="space-y-8">
+                {countries.map(({ country, items }) => (
+                  <div key={country}>
+                    <h3 className="text-sm font-mono font-semibold uppercase tracking-widest text-accent-warm mb-3">
+                      {country}
+                    </h3>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {items.map((item) => (
+                        <Link key={item.slug} href={`/proje-sonuclari/${item.slug}`} className="cursor-pointer">
+                          <Card className="h-full hover:border-accent/50">
+                            <p className="font-medium text-foreground mb-1">{item.title}</p>
+                            <p className="text-sm text-muted-foreground line-clamp-3">{item.summary}</p>
+                          </Card>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             </section>
