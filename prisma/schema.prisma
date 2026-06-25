@@ -213,6 +213,16 @@ enum LeadStatus {
   CLOSED
 }
 
+model PageView {
+  id          String   @id @default(cuid())
+  path        String
+  visitorHash String
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
+}
+
 model ConsultingLead {
   id          String     @id @default(cuid())
   service     String

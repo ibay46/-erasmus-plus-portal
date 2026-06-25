@@ -11,6 +11,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <Link href="/admin" className="cursor-pointer hover:text-accent">
           Panel
         </Link>
+        <Link href="/admin/istatistikler" className="cursor-pointer hover:text-accent">
+          İstatistikler
+        </Link>
         <Link href="/admin/haberler" className="cursor-pointer hover:text-accent">
           Haberler
         </Link>
