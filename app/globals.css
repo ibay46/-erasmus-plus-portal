@@ -126,7 +126,7 @@ body {
 .prose-erasmus td {
   min-width: 110px;
   border: 1px solid var(--border);
-  padding: 0.5rem 0.75rem;
+  padding: 0.3rem 0.75rem;
   text-align: left;
   vertical-align: top;
   overflow-wrap: break-word;
