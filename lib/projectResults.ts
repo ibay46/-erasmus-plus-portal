@@ -4,6 +4,8 @@ import type { ProjectResult, KaAction, EducationSector } from "@/app/generated/p
 export interface ProjectResultFilters {
   kaAction?: KaAction;
   sector?: EducationSector;
+  year?: number;
+  country?: string;
 }
 
 export function getPublishedProjectResults(filters: ProjectResultFilters = {}) {
@@ -12,9 +14,21 @@ export function getPublishedProjectResults(filters: ProjectResultFilters = {}) {
       published: true,
       ...(filters.kaAction ? { kaAction: filters.kaAction } : {}),
       ...(filters.sector ? { sector: filters.sector } : {}),
+      ...(filters.year ? { year: filters.year } : {}),
+      ...(filters.country ? { country: filters.country } : {}),
     },
     orderBy: [{ year: "desc" }, { country: "asc" }],
   });
+}
+
+export async function getAvailableProjectResultFilterValues() {
+  const results = await prisma.projectResult.findMany({
+    where: { published: true },
+    select: { year: true, country: true },
+  });
+  const years = Array.from(new Set(results.map((r) => r.year))).sort((a, b) => b - a);
+  const countries = Array.from(new Set(results.map((r) => r.country))).sort((a, b) => a.localeCompare(b, "tr"));
+  return { years, countries };
 }
 
 export function getProjectResultBySlug(slug: string) {

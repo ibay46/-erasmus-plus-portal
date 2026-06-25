@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getProjectResultsGroupedByYear } from "@/lib/projectResults";
+import { getProjectResultsGroupedByYear, getAvailableProjectResultFilterValues } from "@/lib/projectResults";
 import { Card } from "@/components/ui/Card";
 import { KA_ACTIONS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 import type { KaAction, EducationSector } from "@/app/generated/prisma/client";
@@ -31,23 +31,37 @@ function FilterPill({
   );
 }
 
+interface QueryState {
+  ka?: string;
+  sektor?: string;
+  yil?: string;
+  ulke?: string;
+}
+
 export default async function ProjeSonuclariPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ka?: string; sektor?: string }>;
+  searchParams: Promise<QueryState>;
 }) {
-  const { ka, sektor } = await searchParams;
+  const { ka, sektor, yil, ulke } = await searchParams;
+  const { years, countries: availableCountries } = await getAvailableProjectResultFilterValues();
+
   const kaAction = KA_ACTIONS.includes(ka ?? "") ? (ka as KaAction) : undefined;
   const sector = EDUCATION_SECTORS.includes(sektor ?? "") ? (sektor as EducationSector) : undefined;
+  const year = yil && years.includes(Number(yil)) ? Number(yil) : undefined;
+  const country = ulke && availableCountries.includes(ulke) ? ulke : undefined;
 
-  const yearGroups = await getProjectResultsGroupedByYear({ kaAction, sector });
+  const yearGroups = await getProjectResultsGroupedByYear({ kaAction, sector, year, country });
 
-  function buildHref(next: { ka?: string; sektor?: string }) {
+  const current: QueryState = { ka, sektor, yil, ulke };
+
+  function buildHref(next: Partial<QueryState>) {
+    const merged = { ...current, ...next };
     const params = new URLSearchParams();
-    const nextKa = next.ka !== undefined ? next.ka : ka;
-    const nextSektor = next.sektor !== undefined ? next.sektor : sektor;
-    if (nextKa) params.set("ka", nextKa);
-    if (nextSektor) params.set("sektor", nextSektor);
+    if (merged.ka) params.set("ka", merged.ka);
+    if (merged.sektor) params.set("sektor", merged.sektor);
+    if (merged.yil) params.set("yil", merged.yil);
+    if (merged.ulke) params.set("ulke", merged.ulke);
     const qs = params.toString();
     return qs ? `/proje-sonuclari?${qs}` : "/proje-sonuclari";
   }
@@ -60,6 +74,28 @@ export default async function ProjeSonuclariPage({
       </p>
 
       <div className="mb-10 space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground mr-1">Yıl:</span>
+          <FilterPill href={buildHref({ yil: undefined })} active={!year}>
+            Tümü
+          </FilterPill>
+          {years.map((y) => (
+            <FilterPill key={y} href={buildHref({ yil: String(y) })} active={year === y}>
+              {y}
+            </FilterPill>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground mr-1">Ülke:</span>
+          <FilterPill href={buildHref({ ulke: undefined })} active={!country}>
+            Tümü
+          </FilterPill>
+          {availableCountries.map((c) => (
+            <FilterPill key={c} href={buildHref({ ulke: c })} active={country === c}>
+              {c}
+            </FilterPill>
+          ))}
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground mr-1">KA Eylemi:</span>
           <FilterPill href={buildHref({ ka: undefined })} active={!kaAction}>
