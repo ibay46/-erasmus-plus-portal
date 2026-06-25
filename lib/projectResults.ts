@@ -1,9 +1,18 @@
 import { prisma } from "@/lib/prisma";
-import type { ProjectResult } from "@/app/generated/prisma/client";
+import type { ProjectResult, KaAction, EducationSector } from "@/app/generated/prisma/client";
 
-export function getPublishedProjectResults() {
+export interface ProjectResultFilters {
+  kaAction?: KaAction;
+  sector?: EducationSector;
+}
+
+export function getPublishedProjectResults(filters: ProjectResultFilters = {}) {
   return prisma.projectResult.findMany({
-    where: { published: true },
+    where: {
+      published: true,
+      ...(filters.kaAction ? { kaAction: filters.kaAction } : {}),
+      ...(filters.sector ? { sector: filters.sector } : {}),
+    },
     orderBy: [{ year: "desc" }, { country: "asc" }],
   });
 }
@@ -20,8 +29,8 @@ export function getRecentProjectResults(take = 3) {
   });
 }
 
-export async function getProjectResultsGroupedByYear() {
-  const results: ProjectResult[] = await getPublishedProjectResults();
+export async function getProjectResultsGroupedByYear(filters: ProjectResultFilters = {}) {
+  const results: ProjectResult[] = await getPublishedProjectResults(filters);
 
   const byYear = new Map<number, Map<string, ProjectResult[]>>();
   for (const result of results) {

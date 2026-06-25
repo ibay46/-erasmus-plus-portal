@@ -11,6 +11,8 @@ const projectResultSchema = z.object({
   title: z.string().min(3),
   year: z.coerce.number().int().min(2007).max(2100),
   country: z.string().min(2),
+  kaAction: z.enum(["KA210", "KA220", "KA240"]),
+  sector: z.enum(["SCH", "VET", "ADU", "YOU", "HED"]),
   summary: z.string().min(10),
   body: z.string().min(10),
   published: z.boolean(),
@@ -21,6 +23,8 @@ function parseProjectResultForm(formData: FormData) {
     title: formData.get("title"),
     year: formData.get("year"),
     country: formData.get("country"),
+    kaAction: formData.get("kaAction"),
+    sector: formData.get("sector"),
     summary: formData.get("summary"),
     body: formData.get("body"),
     published: formData.get("published") === "on",
@@ -35,7 +39,7 @@ export async function createProjectResult(formData: FormData) {
   } catch {
     redirect(
       "/admin/proje-sonuclari/yeni?hata=" +
-        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2, özet ve içerik en az 10 karakter olmalı).")
+        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2 karakter, KA Eylemi ve Sektör seçilmeli, özet ve içerik en az 10 karakter olmalı).")
     );
   }
 
@@ -62,7 +66,7 @@ export async function updateProjectResult(formData: FormData) {
   } catch {
     redirect(
       `/admin/proje-sonuclari/${id}/duzenle?hata=` +
-        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2, özet ve içerik en az 10 karakter olmalı).")
+        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2 karakter, KA Eylemi ve Sektör seçilmeli, özet ve içerik en az 10 karakter olmalı).")
     );
   }
 

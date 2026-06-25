@@ -1,5 +1,6 @@
 ﻿import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
 import { ERASMUS_COUNTRIES } from "@/lib/content/countries";
+import { KA_ACTION_LABELS, KA_ACTIONS, EDUCATION_SECTOR_LABELS, EDUCATION_SECTORS } from "@/lib/content/kaActions";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -11,6 +12,8 @@ export function ProjectResultFormFields({
     title: string;
     year: number;
     country: string;
+    kaAction: string | null;
+    sector: string | null;
     summary: string;
     body: string;
     published: boolean;
@@ -66,6 +69,50 @@ export function ProjectResultFormFields({
             </option>
           ))}
         </select>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="kaAction" className="block text-sm font-medium mb-1 text-foreground">
+            KA Eylemi
+          </label>
+          <select
+            id="kaAction"
+            name="kaAction"
+            required
+            defaultValue={defaultValues?.kaAction ?? ""}
+            className={inputClass}
+          >
+            <option value="" disabled>
+              Seçin
+            </option>
+            {KA_ACTIONS.map((action) => (
+              <option key={action} value={action}>
+                {KA_ACTION_LABELS[action]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="sector" className="block text-sm font-medium mb-1 text-foreground">
+            Sektör
+          </label>
+          <select
+            id="sector"
+            name="sector"
+            required
+            defaultValue={defaultValues?.sector ?? ""}
+            className={inputClass}
+          >
+            <option value="" disabled>
+              Seçin
+            </option>
+            {EDUCATION_SECTORS.map((sector) => (
+              <option key={sector} value={sector}>
+                {sector} — {EDUCATION_SECTOR_LABELS[sector]}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       <div>
         <label htmlFor="summary" className="block text-sm font-medium mb-1 text-foreground">
