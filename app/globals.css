@@ -116,7 +116,6 @@ body {
 
 .prose-erasmus table {
   width: 100%;
-  min-width: 420px;
   border-collapse: collapse;
   margin: 0;
   font-size: 0.9375rem;
@@ -125,6 +124,7 @@ body {
 
 .prose-erasmus th,
 .prose-erasmus td {
+  min-width: 110px;
   border: 1px solid var(--border);
   padding: 0.5rem 0.75rem;
   text-align: left;
