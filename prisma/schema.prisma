@@ -134,8 +134,8 @@ model ProjectResult {
   year        Int
   projectType String
   country     String
-  kaAction    KaAction?
-  sector      EducationSector?
+  kaAction    KaAction
+  sector      EducationSector
   summary     String
   body        String
   coverImage  String?
