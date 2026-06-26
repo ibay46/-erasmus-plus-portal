@@ -26,6 +26,7 @@ function formatEuro(value: number) {
 interface MobilityState {
   id: string;
   hostCountry: string;
+  hostCity: string;
   activityDays: number;
   travelDays: number;
   isGreenTravel: boolean;
@@ -44,6 +45,7 @@ function createMobility(id: string): MobilityState {
   return {
     id,
     hostCountry,
+    hostCity: "",
     activityDays: 5,
     travelDays: 2,
     isGreenTravel: false,
@@ -116,6 +118,7 @@ function MobilitySection({
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-foreground">
           <span className="text-sm font-normal text-muted-foreground mr-2">Hareketlilik {index + 1}:</span>
+          {mobility.hostCity ? `${mobility.hostCity}, ` : ""}
           {mobility.hostCountry}
         </h2>
         {canRemove && (
@@ -131,7 +134,7 @@ function MobilitySection({
 
       <Card>
         <h3 className="font-medium mb-4 text-foreground">Hareketlilik Bilgileri</h3>
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1 text-foreground">Ev Sahibi Ülke</label>
             <select
@@ -145,6 +148,16 @@ function MobilitySection({
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1 text-foreground">Ev Sahibi Şehir</label>
+            <input
+              type="text"
+              value={mobility.hostCity}
+              onChange={(e) => onChange({ ...mobility, hostCity: e.target.value })}
+              placeholder="Örn. Budapeşte"
+              className={inputClass}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1 text-foreground">Faaliyet Günü</label>
@@ -360,7 +373,10 @@ function MobilitySection({
       </Card>
 
       <Card className="border-accent/40">
-        <h3 className="font-medium mb-4 text-foreground">{mobility.hostCountry} Toplamı</h3>
+        <h3 className="font-medium mb-4 text-foreground">
+          {mobility.hostCity ? `${mobility.hostCity}, ` : ""}
+          {mobility.hostCountry} Toplamı
+        </h3>
         <dl className="grid sm:grid-cols-4 gap-4 text-sm">
           <div>
             <dt className="text-muted-foreground">Seyahat</dt>
