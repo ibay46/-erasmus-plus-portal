@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getPublishedPosts } from "@/lib/posts";
 import { PostFilters } from "@/components/news/PostFilters";
 import { Badge } from "@/components/ui/Badge";
-import { POST_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
+import { HABERLER_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
 
 export const metadata = {
   title: "Haberler | Erasmus+ Portal",
@@ -72,7 +72,7 @@ export default async function HaberlerPage() {
               Kategoriler
             </p>
             <nav className="flex flex-col gap-2">
-              {POST_CATEGORIES.map((category) => (
+              {HABERLER_CATEGORIES.map((category) => (
                 <Link
                   key={category}
                   href={`/haberler/kategori/${category}`}

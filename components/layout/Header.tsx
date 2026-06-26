@@ -10,6 +10,8 @@ const NAV_GROUPS = [
     label: "İçerikler",
     items: [
       { href: "/haberler", label: "Haberler", desc: "Yeni çağrılar ve duyurular" },
+      { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
+      { href: "/salto-egitim", label: "SALTO Education & Training", desc: "Okul, mesleki ve yetişkin eğitimi duyuruları" },
       { href: "/ab-hibe-projeleri", label: "AB Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
       { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
       { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },

@@ -147,13 +147,16 @@ function PlannerIllustration() {
 }
 
 export default async function Home() {
-  const [postCount, libraryCount, recentPosts, recentResults, recentGrantProjects] = await Promise.all([
-    prisma.post.count(),
-    prisma.projectLibraryEntry.count(),
-    getPublishedPosts().then((posts) => posts.slice(0, 4)),
-    getRecentProjectResults(4),
-    getPublishedGrantProjects().then((items) => items.slice(0, 4)),
-  ]);
+  const [postCount, libraryCount, recentPosts, recentResults, recentGrantProjects, recentSaltoYouth, recentSaltoEgitim] =
+    await Promise.all([
+      prisma.post.count(),
+      prisma.projectLibraryEntry.count(),
+      getPublishedPosts().then((posts) => posts.slice(0, 4)),
+      getRecentProjectResults(4),
+      getPublishedGrantProjects().then((items) => items.slice(0, 4)),
+      getPublishedPosts("SALTO_YOUTH").then((posts) => posts.slice(0, 4)),
+      getPublishedPosts("SALTO_EDUCATION_TRAINING").then((posts) => posts.slice(0, 4)),
+    ]);
 
   const stats = [
     { value: `${PROJECT_TYPES.length}`, label: "Eylem Türü Rehberi" },
@@ -234,6 +237,50 @@ export default async function Home() {
             seeAllHref="/haberler"
             seeAllLabel="Tüm Haberler"
             items={recentPosts.map((post) => ({
+              href: `/haberler/${post.slug}`,
+              title: post.title,
+              date: post.publishedAt,
+              badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
+              coverImage: post.coverImage,
+            }))}
+          />
+        </div>
+      </section>
+
+      <section className="bg-muted py-16">
+        <div className="mx-auto max-w-6xl px-6">
+          <RecentCardRow
+            eyebrow="SALTO Youth"
+            title={
+              <>
+                Son <span className="text-accent">SALTO Youth</span> Haberleri
+              </>
+            }
+            seeAllHref="/salto-youth"
+            seeAllLabel="Tüm SALTO Youth Haberleri"
+            items={recentSaltoYouth.map((post) => ({
+              href: `/haberler/${post.slug}`,
+              title: post.title,
+              date: post.publishedAt,
+              badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
+              coverImage: post.coverImage,
+            }))}
+          />
+        </div>
+      </section>
+
+      <section className="bg-background py-16">
+        <div className="mx-auto max-w-6xl px-6">
+          <RecentCardRow
+            eyebrow="SALTO Education & Training"
+            title={
+              <>
+                Son <span className="text-accent-warm">SALTO Education &amp; Training</span> Haberleri
+              </>
+            }
+            seeAllHref="/salto-egitim"
+            seeAllLabel="Tüm SALTO Education & Training Haberleri"
+            items={recentSaltoEgitim.map((post) => ({
               href: `/haberler/${post.slug}`,
               title: post.title,
               date: post.publishedAt,

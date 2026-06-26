@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { POST_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
+import { HABERLER_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
 
 export function PostFilters({ activeCategory }: { activeCategory?: string }) {
   return (
@@ -14,7 +14,7 @@ export function PostFilters({ activeCategory }: { activeCategory?: string }) {
       >
         Tümü
       </Link>
-      {POST_CATEGORIES.map((category) => (
+      {HABERLER_CATEGORIES.map((category) => (
         <Link
           key={category}
           href={`/haberler/kategori/${category}`}
