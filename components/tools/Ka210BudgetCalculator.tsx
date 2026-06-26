@@ -18,6 +18,8 @@ const inputClass =
 const MOBILITY_FRAME_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#a855f7", "#ec4899", "#06b6d4"];
 const PARTNER_FRAME_COLORS = ["#f97316", "#22c55e", "#6366f1", "#ef4444", "#0ea5e9", "#d946ef"];
 
+const PRINT_BOX_COLORS = { travel: "#4FC1DE", support: "#F2911E", total: "#FFC72C" };
+
 function rangeMidpoint(min: number, max: number) {
   return Math.round((min + max) / 2);
 }
@@ -356,7 +358,7 @@ function MobilitySection({
                 const calc = result.partners.find((p) => p.id === partner.id);
                 if (!calc) return null;
                 return (
-                  <div className="mt-3 text-sm text-muted-foreground space-y-1">
+                  <div className="mt-3 text-sm text-muted-foreground space-y-1 print:hidden">
                     <p className="text-foreground font-medium">
                       {calc.city ? `${calc.city}, ` : ""}
                       {calc.countryLabel}
@@ -383,6 +385,60 @@ function MobilitySection({
           ))}
         </div>
       </Card>
+
+      <div className="hidden print:block space-y-4">
+        <div
+          className="print-color-exact rounded-md p-4 text-sm space-y-3"
+          style={{ backgroundColor: PRINT_BOX_COLORS.travel, color: "#0f172a" }}
+        >
+          <p className="font-semibold">Seyahat Maliyetleri</p>
+          {result.partners.map((calc) => (
+            <p key={calc.id}>
+              {calc.countryLabel} ({calc.city || "-"}) - {mobility.hostCountry} ({mobility.hostCity || "-"}) arası
+              seyahat mesafesi {calc.distanceKm} KM ve {mobility.isGreenTravel ? "yeşil" : "normal"} seyahat ücreti{" "}
+              {formatEuro(calc.travelFeePerPerson)}&apos;dur. {calc.countryLabel} ({calc.city || "-"})&apos;dan gelen
+              öğretmen sayısı {calc.teacherCount} ve gelen öğrenci sayısı {calc.studentCount} kişidir. Toplam{" "}
+              {formatEuro(calc.travelFeePerPerson)} × {calc.teacherCount + calc.studentCount} ={" "}
+              {formatEuro(calc.travelTotal)}.
+            </p>
+          ))}
+          <p className="pt-2 border-t border-black/25 font-semibold">
+            Toplam seyahat maliyeti {formatEuro(result.totalTravel)}.
+          </p>
+        </div>
+
+        <div
+          className="print-color-exact rounded-md p-4 text-sm space-y-3"
+          style={{ backgroundColor: PRINT_BOX_COLORS.support, color: "#0f172a" }}
+        >
+          <p className="font-semibold">Bireysel Destek Harcamaları</p>
+          {result.partners.map((calc) => (
+            <p key={calc.id}>
+              {calc.countryLabel} ({calc.city || "-"})&apos;dan katılan öğretmen sayısı {calc.teacherCount} kişi ×{" "}
+              {calc.supportDays} gün × {formatEuro(mobility.teacherDailyRate)} = {formatEuro(calc.teacherSupportTotal)}.
+              Katılan öğrenci sayısı {calc.studentCount} kişi × {calc.supportDays} gün ×{" "}
+              {formatEuro(mobility.studentDailyRate)} = {formatEuro(calc.studentSupportTotal)}. Toplam ={" "}
+              {formatEuro(calc.teacherSupportTotal + calc.studentSupportTotal)}.
+            </p>
+          ))}
+          <p className="pt-2 border-t border-black/25 font-semibold">
+            Toplam bireysel destek harcamaları {formatEuro(result.totalTeacherSupport + result.totalStudentSupport)}.
+          </p>
+        </div>
+
+        <div
+          className="print-color-exact rounded-md p-4 text-sm space-y-3"
+          style={{ backgroundColor: PRINT_BOX_COLORS.total, color: "#0f172a" }}
+        >
+          <p className="font-semibold">Toplam Harcamalar</p>
+          {result.partners.map((calc) => (
+            <p key={calc.id}>
+              {calc.countryLabel} ({calc.city || "-"}) için toplam hareketlilik bütçesi {formatEuro(calc.travelTotal)} +{" "}
+              {formatEuro(calc.teacherSupportTotal + calc.studentSupportTotal)} = {formatEuro(calc.partnerTotal)}.
+            </p>
+          ))}
+        </div>
+      </div>
 
       <Card className={`border-accent/40 ${index % 2 === 0 ? "!bg-background" : "!bg-muted"}`}>
         <h3 className="font-medium mb-4 text-foreground">

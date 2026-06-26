@@ -196,4 +196,9 @@ body {
     background: #ffffff;
     color: #000000;
   }
+
+  .print-color-exact {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
