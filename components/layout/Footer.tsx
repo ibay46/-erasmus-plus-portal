@@ -38,7 +38,7 @@ export function Footer() {
               aria-label="Instagram'da takip edin: @erasmusportal"
               className="cursor-pointer inline-flex items-center gap-1.5 text-sm font-medium"
             >
-              <svg viewBox="0 0 24 24" className="h-4 w-4">
+              <svg viewBox="0 0 24 24" className="h-5 w-5">
                 <defs>
                   <linearGradient id="ig-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#FFDC80" />
