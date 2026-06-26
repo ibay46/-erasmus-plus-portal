@@ -15,6 +15,7 @@ const NAV_GROUPS = [
       { href: "/ab-hibe-projeleri", label: "AB Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
       { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
       { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },
+      { href: "/terimler-sozlugu", label: "Terimler Sözlüğü", desc: "KA120, TCA, hareketlilik gibi terimlerin açıklamaları" },
       { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
       { href: "/mevzuat", label: "Mevzuat", desc: "AB hibelerinin harcanmasına ilişkin resmî düzenlemeler" },
       { href: "/yararli-linkler", label: "Yararlı Linkler", desc: "Resmi kaynaklar ve faydalı araçlara hızlı erişim" },

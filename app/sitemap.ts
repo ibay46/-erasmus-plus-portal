@@ -29,6 +29,7 @@ const STATIC_PATHS = [
   "/mevzuat/ka210-islem-adimlari",
   "/yararli-linkler",
   "/sss",
+  "/terimler-sozlugu",
   "/giris",
   "/kayit",
 ];
