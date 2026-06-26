@@ -384,7 +384,7 @@ function MobilitySection({
         </div>
       </Card>
 
-      <Card className="border-accent/40 !bg-background">
+      <Card className={`border-accent/40 ${index % 2 === 0 ? "!bg-background" : "!bg-muted"}`}>
         <h3 className="font-medium mb-4 text-foreground">
           {mobility.hostCity ? `${mobility.hostCity}, ` : ""}
           {mobility.hostCountry} Toplamı
