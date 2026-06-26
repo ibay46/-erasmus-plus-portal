@@ -18,6 +18,7 @@ const NAV_GROUPS = [
       { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
       { href: "/mevzuat", label: "Mevzuat", desc: "AB hibelerinin harcanmasına ilişkin resmî düzenlemeler" },
       { href: "/yararli-linkler", label: "Yararlı Linkler", desc: "Resmi kaynaklar ve faydalı araçlara hızlı erişim" },
+      { href: "/sss", label: "Sıkça Sorulan Sorular", desc: "Başvuru, bütçe ve ortak bulma hakkında sık sorulan sorular" },
     ],
   },
   {

@@ -28,6 +28,7 @@ const STATIC_PATHS = [
   "/mevzuat/ab-hibeleri-yonetmeligi",
   "/mevzuat/ka210-islem-adimlari",
   "/yararli-linkler",
+  "/sss",
   "/giris",
   "/kayit",
 ];
