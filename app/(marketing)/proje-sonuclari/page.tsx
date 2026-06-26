@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getProjectResultsGroupedByYear, getAvailableProjectResultFilterValues } from "@/lib/projectResults";
-import { Card } from "@/components/ui/Card";
 import { KA_ACTIONS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 import type { KaAction, EducationSector } from "@/app/generated/prisma/client";
 
@@ -137,10 +136,21 @@ export default async function ProjeSonuclariPage({
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {items.map((item) => (
                         <Link key={item.slug} href={`/proje-sonuclari/${item.slug}`} className="cursor-pointer">
-                          <Card className="h-full border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
-                            <p className="font-medium text-foreground mb-1">{item.title}</p>
-                            <p className="text-sm text-muted-foreground line-clamp-3">{item.summary}</p>
-                          </Card>
+                          <div className="h-full overflow-hidden rounded-lg border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
+                            {item.coverImage && (
+                              <div className="relative h-32">
+                                <img
+                                  src={item.coverImage}
+                                  alt=""
+                                  className="absolute inset-0 h-full w-full object-cover"
+                                />
+                              </div>
+                            )}
+                            <div className="bg-card p-5">
+                              <p className="font-medium text-foreground mb-1">{item.title}</p>
+                              <p className="text-sm text-muted-foreground line-clamp-3">{item.summary}</p>
+                            </div>
+                          </div>
                         </Link>
                       ))}
                     </div>

@@ -57,6 +57,11 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
         </svg>
         Proje Sonuçlarına Dön
       </Link>
+      {result.coverImage && (
+        <div className="relative mb-8 h-56 overflow-hidden rounded-xl md:h-72">
+          <img src={result.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        </div>
+      )}
       <div className="grid gap-10 lg:grid-cols-[10rem_1fr]">
         <aside className="hidden lg:block">
           <div className="sticky top-24 space-y-4 text-sm text-muted-foreground">

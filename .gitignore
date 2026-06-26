@@ -54,3 +54,10 @@ next-env.d.ts
 /hallmark-demos/
 
 .vercel
+.env*
+
+# generated Instagram post images (not app source)
+/instagram-output/
+/banner-output/
+
+.env*
