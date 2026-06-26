@@ -140,8 +140,17 @@ export const GLOSSARY_GROUPS: GlossaryGroup[] = [
       },
       {
         term: "SALTO",
-        definition: "Avrupa Komisyonu'nun belirli alanlarda (gençlik, eğitim) kaynak, eğitim ve destek sağlayan kaynak merkezleri ağı.",
+        definition: "Avrupa Komisyonu'nun belirli alanlarda (gençlik, eğitim) kaynak, eğitim ve destek sağlayan kaynak merkezleri ağının genel adı (Support, Advanced Learning and Training Opportunities).",
+      },
+      {
+        term: "SALTO Youth",
+        definition: "SALTO ağının gençlik alanına yönelik kaynak merkezi; gençlik çalışanları ve kuruluşları için eğitim, ortak bulma ve kaynak desteği sağlar.",
         href: "/salto-youth",
+      },
+      {
+        term: "SALTO Education & Training",
+        definition: "SALTO ağının okul, mesleki ve yetişkin eğitimi alanına yönelik kaynak merkezi; bu sektörlerdeki kurumlara duyuru, eğitim ve kaynak desteği sunar.",
+        href: "/salto-egitim",
       },
       {
         term: "eTwinning",
