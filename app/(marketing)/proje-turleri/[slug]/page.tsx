@@ -53,7 +53,7 @@ export default async function ProjeTuruDetayPage({ params }: { params: Promise<{
             </div>
           </div>
         </aside>
-        <div className="max-w-3xl">
+        <div className="min-w-0">
           <Badge className="lg:hidden">{type.code}</Badge>
           <h1 className="text-3xl font-semibold mt-3 mb-2 text-foreground lg:mt-0">{type.title}</h1>
           <p className="text-muted-foreground mb-8">{type.shortDescription}</p>

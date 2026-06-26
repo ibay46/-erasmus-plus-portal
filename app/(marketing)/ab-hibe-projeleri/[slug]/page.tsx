@@ -28,7 +28,7 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
   const relatedItems = await getRecentGrantProjects(item.id);
 
   return (
-    <div className="max-w-5xl grid gap-8 lg:grid-cols-[1fr_18rem]">
+    <div className="grid gap-8 lg:grid-cols-[1fr_18rem]">
       <div className="min-w-0">
         <Link
           href="/ab-hibe-projeleri"

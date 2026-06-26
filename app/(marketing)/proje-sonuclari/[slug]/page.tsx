@@ -77,7 +77,7 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
             )}
           </div>
         </aside>
-        <article className="max-w-2xl min-w-0">
+        <article className="min-w-0">
           <div className="flex items-center gap-2 mb-3 lg:hidden">
             <Badge>{result.year}</Badge>
           </div>

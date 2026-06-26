@@ -48,7 +48,7 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
   };
 
   return (
-    <div className="max-w-5xl grid gap-8 lg:grid-cols-[1fr_18rem]">
+    <div className="grid gap-8 lg:grid-cols-[1fr_18rem]">
     <JsonLd data={articleJsonLd} />
     <div className="min-w-0">
       <Link
