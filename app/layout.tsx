@@ -33,6 +33,9 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: ["/logowithname.png"],
   },
+  verification: {
+    google: "oRGdlsgqPLjcmMawl7u0hYdGPiT56kKqWW4vlxbpr-A",
+  },
 };
 
 export default function RootLayout({
