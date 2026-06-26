@@ -36,14 +36,25 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Instagram'da takip edin: @erasmusportal"
-              className="cursor-pointer inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+              className="cursor-pointer inline-flex items-center gap-1.5 text-sm font-medium"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4">
-                <rect x="3" y="3" width="18" height="18" rx="5" />
-                <circle cx="12" cy="12" r="4" />
-                <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
+              <svg viewBox="0 0 24 24" className="h-4 w-4">
+                <defs>
+                  <linearGradient id="ig-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#FFDC80" />
+                    <stop offset="25%" stopColor="#FCAF45" />
+                    <stop offset="50%" stopColor="#E1306C" />
+                    <stop offset="75%" stopColor="#C13584" />
+                    <stop offset="100%" stopColor="#5851DB" />
+                  </linearGradient>
+                </defs>
+                <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="url(#ig-gradient)" />
+                <circle cx="12" cy="12" r="4.4" fill="none" stroke="white" strokeWidth="1.6" />
+                <circle cx="17.2" cy="6.8" r="0.9" fill="white" />
               </svg>
-              @erasmusportal
+              <span className="bg-gradient-to-r from-[#FCAF45] via-[#E1306C] to-[#5851DB] bg-clip-text text-transparent">
+                @erasmusportal
+              </span>
             </a>
           </div>
         </div>
