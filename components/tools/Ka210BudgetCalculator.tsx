@@ -384,7 +384,7 @@ function MobilitySection({
         </div>
       </Card>
 
-      <Card className="border-accent/40">
+      <Card className="border-accent/40 !bg-background">
         <h3 className="font-medium mb-4 text-foreground">
           {mobility.hostCity ? `${mobility.hostCity}, ` : ""}
           {mobility.hostCountry} Toplamı
@@ -481,7 +481,7 @@ export function Ka210BudgetCalculator() {
       </div>
 
       {mobilities.length > 1 && (
-        <Card className="border-accent/40 mt-10">
+        <Card className="border-accent/40 mt-10 !bg-muted">
           <h2 className="text-lg font-semibold mb-4 text-foreground">Proje Genel Toplamı</h2>
           <dl className="grid sm:grid-cols-4 gap-4 text-sm">
             <div>
