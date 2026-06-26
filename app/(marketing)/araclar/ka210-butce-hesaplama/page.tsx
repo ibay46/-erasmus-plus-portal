@@ -5,8 +5,8 @@ export const metadata = { title: "KA210 Bütçe Hesaplama | Erasmus+ Portal" };
 export default function Ka210ButceHesaplamaPage() {
   return (
     <div>
-      <h1 className="text-3xl font-semibold mb-2 text-foreground">KA210 Bütçe Hesaplama</h1>
-      <p className="text-muted-foreground mb-4 max-w-2xl">
+      <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">KA210 Bütçe Hesaplama</h1>
+      <p className="text-muted-foreground mb-4 max-w-2xl print:hidden">
         KA210 Küçük Ölçekli Ortaklık hareketliliği için seyahat ve bireysel destek bütçesini
         hesaplayın. Mesafeyi (KM) resmi{" "}
         <a
@@ -19,7 +19,7 @@ export default function Ka210ButceHesaplamaPage() {
         </a>{" "}
         aracından alıp her ortak için girin.
       </p>
-      <p className="text-xs text-muted-foreground mb-8 max-w-2xl">
+      <p className="text-xs text-muted-foreground mb-8 max-w-2xl print:hidden">
         Rakamlar 2026 Erasmus+ Programme Guide&apos;a göredir ve her yıl değişebilir. Günlük bireysel
         destek tutarı, Ulusal Ajans&apos;ın yayınladığı kesin orana göre aralık içinde elle girilmelidir;
         aralığı aşarsanız sayfa sizi uyarır.

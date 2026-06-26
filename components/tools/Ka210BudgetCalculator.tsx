@@ -18,7 +18,30 @@ const inputClass =
 const MOBILITY_FRAME_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#a855f7", "#ec4899", "#06b6d4"];
 const PARTNER_FRAME_COLORS = ["#f97316", "#22c55e", "#6366f1", "#ef4444", "#0ea5e9", "#d946ef"];
 
-const PRINT_BOX_COLORS = { travel: "#4FC1DE", support: "#F2911E", total: "#FFC72C" };
+const PRINT_BOX_COLORS = { intro: "#1FAD5C", travel: "#4FC1DE", support: "#F2911E", total: "#FFC72C" };
+
+function formatCountryList(partners: { countryLabel: string; city: string }[]): string {
+  const labels = partners.map((p) => `${p.countryLabel} (${p.city || "-"})`);
+  if (labels.length === 0) return "-";
+  if (labels.length === 1) return labels[0];
+  return `${labels.slice(0, -1).join(", ")} ve ${labels[labels.length - 1]}`;
+}
+
+function describeParticipants(partners: { countryLabel: string; city: string; teacherCount: number; studentCount: number }[]): string {
+  if (partners.length === 0) return "";
+  const [first] = partners;
+  const uniform = partners.every(
+    (p) => p.teacherCount === first.teacherCount && p.studentCount === first.studentCount
+  );
+  if (uniform) {
+    return `Her ortak ${first.teacherCount} öğretmen ve ${first.studentCount} öğrenci ile katılacaktır.`;
+  }
+  return (
+    partners
+      .map((p) => `${p.countryLabel} (${p.city || "-"}) ${p.teacherCount} öğretmen ve ${p.studentCount} öğrenci`)
+      .join(", ") + " ile katılacaktır."
+  );
+}
 
 function rangeMidpoint(min: number, max: number) {
   return Math.round((min + max) / 2);
@@ -142,7 +165,7 @@ function MobilitySection({
         )}
       </div>
 
-      <Card>
+      <Card className="print:hidden">
         <h3 className="font-medium mb-4 text-foreground">Hareketlilik Bilgileri</h3>
         <div className="grid sm:grid-cols-4 gap-4">
           <div>
@@ -257,7 +280,7 @@ function MobilitySection({
         </div>
       </Card>
 
-      <Card>
+      <Card className="print:hidden">
         <div className="flex items-center justify-between mb-4 print:hidden">
           <h3 className="font-medium text-foreground">Ortak Ülkeler</h3>
           <button
@@ -388,6 +411,20 @@ function MobilitySection({
 
       <div className="hidden print:block space-y-4">
         <div
+          className="print-color-exact rounded-md p-4 text-sm space-y-2"
+          style={{ backgroundColor: PRINT_BOX_COLORS.intro, color: "#0f172a" }}
+        >
+          <p>
+            Bu hareketlilik için ayrılan toplam bütçe {formatEuro(result.grandTotal)}. {mobility.hostCountry} (
+            {mobility.hostCity || "-"}) ev sahibi ülkedir. Diğer ortak ülkeler {formatCountryList(result.partners)}.{" "}
+            {describeParticipants(result.partners)} {mobility.activityDays} gün faaliyet ve{" "}
+            {mobility.travelDays} gün seyahat olmak üzere toplam {result.supportDays} gün olarak hesaplanmıştır.
+          </p>
+          <p className="font-semibold">Seyahat Harcamaları</p>
+          <p>Şehirler arasındaki mesafeler Erasmus+ Mesafe Hesaplama sisteminden hesaplanmıştır.</p>
+        </div>
+
+        <div
           className="print-color-exact rounded-md p-4 text-sm space-y-3"
           style={{ backgroundColor: PRINT_BOX_COLORS.travel, color: "#0f172a" }}
         >
@@ -440,7 +477,7 @@ function MobilitySection({
         </div>
       </div>
 
-      <Card className={`border-accent/40 ${index % 2 === 0 ? "!bg-background" : "!bg-muted"}`}>
+      <Card className={`print:hidden border-accent/40 ${index % 2 === 0 ? "!bg-background" : "!bg-muted"}`}>
         <h3 className="font-medium mb-4 text-foreground">
           {mobility.hostCity ? `${mobility.hostCity}, ` : ""}
           {mobility.hostCountry} Toplamı
@@ -537,7 +574,7 @@ export function Ka210BudgetCalculator() {
       </div>
 
       {mobilities.length > 1 && (
-        <Card className="border-accent/40 mt-10 !bg-muted">
+        <Card className="print:hidden border-accent/40 mt-10 !bg-muted">
           <h2 className="text-lg font-semibold mb-4 text-foreground">Proje Genel Toplamı</h2>
           <dl className="grid sm:grid-cols-4 gap-4 text-sm">
             <div>
