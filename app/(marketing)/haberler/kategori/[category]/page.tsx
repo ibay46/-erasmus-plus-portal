@@ -11,7 +11,11 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
-  return { title: `${POST_CATEGORY_LABELS[category] ?? category} | Erasmus+ Haberleri` };
+  const label = POST_CATEGORY_LABELS[category] ?? category;
+  return {
+    title: `${label} | Erasmus+ Haberleri`,
+    description: `${label} kategorisindeki Erasmus+ haber ve duyuruları.`,
+  };
 }
 
 export default async function HaberKategoriPage({ params }: { params: Promise<{ category: string }> }) {

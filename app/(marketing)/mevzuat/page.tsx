@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 
-export const metadata = { title: "Mevzuat | Erasmus+ Portal" };
+export const metadata = {
+  title: "Mevzuat | Erasmus+ Portal",
+  description: "AB hibe projelerinde uygulanan resmî düzenlemeler ve adım adım süreç rehberleri.",
+};
 
 interface MevzuatEntry {
   href: string;

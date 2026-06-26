@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 
-export const metadata = { title: "AB Hibeleri Yönetmeliği | Erasmus+ Portal" };
+export const metadata = {
+  title: "AB Hibeleri Yönetmeliği | Erasmus+ Portal",
+  description:
+    "Hazine ve Maliye Bakanlığı'nın AB hibelerinin harcanması ve muhasebeleştirilmesine ilişkin genelgesinin tam metni.",
+};
 
 const MADDELER = [
   {

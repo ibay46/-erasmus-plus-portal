@@ -1,7 +1,10 @@
 import { GanttChartBuilder } from "@/components/tools/GanttChartBuilder";
 import { Card } from "@/components/ui/Card";
 
-export const metadata = { title: "Proje Zaman Çizelgesi (Gantt) | Erasmus+ Portal" };
+export const metadata = {
+  title: "Proje Zaman Çizelgesi (Gantt) | Erasmus+ Portal",
+  description: "Ortak kuruluş ve aya göre tıklayarak işaretleyebileceğiniz resmi formata uygun Erasmus+ proje zaman çizelgesi.",
+};
 
 const STEPS = [
   {

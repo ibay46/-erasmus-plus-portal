@@ -7,6 +7,7 @@ import { LIBRARY_THEMES } from "@/lib/content/libraryThemes";
 
 export const metadata = {
   title: "Proje Kütüphanesi | Erasmus+ Portal",
+  description: "Eylem türü ve temaya göre filtrelenebilir örnek Erasmus+ proje arşivi.",
 };
 
 export default async function ProjeKutuphanesiPage({

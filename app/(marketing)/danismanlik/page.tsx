@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/Card";
 
 export const metadata = {
   title: "Danışmanlık | Erasmus+ Portal",
+  description:
+    "Proje yazımından bütçe hazırlamaya, ortak bulmadan yaygınlaştırma planına kadar uçtan uca Erasmus+ danışmanlık desteği.",
 };
 
 export default function DanismanlikPage() {

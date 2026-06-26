@@ -3,6 +3,7 @@ import { getPublishedGrantProjects } from "@/lib/grantProjects";
 
 export const metadata = {
   title: "AB Hibe Projeleri | Erasmus+ Portal",
+  description: "Avrupa Birliği hibe destekli projelere ilişkin haberler ve duyurular.",
 };
 
 export default async function AbHibeProjeleriPage() {

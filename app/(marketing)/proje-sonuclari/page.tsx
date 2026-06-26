@@ -6,6 +6,7 @@ import type { KaAction, EducationSector } from "@/app/generated/prisma/client";
 
 export const metadata = {
   title: "Proje Sonuçları | Erasmus+ Portal",
+  description: "Yıl, ülke, KA eylemi ve sektöre göre filtrelenebilir desteklenmeye hak kazanan Erasmus+ proje sonuçları.",
 };
 
 function FilterPill({

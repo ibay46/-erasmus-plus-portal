@@ -7,7 +7,17 @@ import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocume
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const item = await getGrantProjectBySlug(slug);
-  return { title: item ? `${item.title} | AB Hibe Projeleri` : "AB Hibe Projesi" };
+  if (!item) return { title: "AB Hibe Projesi" };
+  return {
+    title: `${item.title} | AB Hibe Projeleri`,
+    description: item.excerpt ?? undefined,
+    openGraph: {
+      title: item.title,
+      description: item.excerpt ?? undefined,
+      images: item.coverImage ? [item.coverImage] : undefined,
+      type: "article",
+    },
+  };
 }
 
 export default async function AbHibeProjesiDetayPage({ params }: { params: Promise<{ slug: string }> }) {

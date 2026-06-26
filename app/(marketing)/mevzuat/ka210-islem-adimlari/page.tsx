@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/Card";
 
 export const metadata = {
   title: "KA210 — Türkiye Dışından Kabul Edilen Projelerde İşlem Adımları | Erasmus+ Portal",
+  description:
+    "Koordinatörlüğü yabancı bir kurum tarafından üstlenilen KA210 projelerinde Türkiye'deki ortağın sözleşme, banka hesabı, hareketlilik ve raporlama adımları.",
 };
 
 interface Step {

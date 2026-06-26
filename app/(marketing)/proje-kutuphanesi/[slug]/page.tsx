@@ -8,7 +8,17 @@ import { Badge } from "@/components/ui/Badge";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const entry = await prisma.projectLibraryEntry.findUnique({ where: { slug } });
-  return { title: entry ? `${entry.title} | Erasmus+ Portal` : "Proje Kütüphanesi" };
+  if (!entry) return { title: "Proje Kütüphanesi" };
+  return {
+    title: `${entry.title} | Erasmus+ Portal`,
+    description: entry.summary,
+    openGraph: {
+      title: entry.title,
+      description: entry.summary,
+      images: entry.coverImage ? [entry.coverImage] : undefined,
+      type: "article",
+    },
+  };
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

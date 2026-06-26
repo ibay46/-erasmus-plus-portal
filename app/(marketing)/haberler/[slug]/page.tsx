@@ -8,7 +8,17 @@ import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocume
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  return { title: post ? `${post.title} | Erasmus+ Haberleri` : "Haber" };
+  if (!post) return { title: "Haber" };
+  return {
+    title: `${post.title} | Erasmus+ Haberleri`,
+    description: post.excerpt ?? undefined,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt ?? undefined,
+      images: post.coverImage ? [post.coverImage] : undefined,
+      type: "article",
+    },
+  };
 }
 
 export default async function HaberDetayPage({ params }: { params: Promise<{ slug: string }> }) {

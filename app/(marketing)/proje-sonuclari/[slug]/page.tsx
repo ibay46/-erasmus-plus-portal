@@ -8,7 +8,17 @@ import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocume
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const result = await getProjectResultBySlug(slug);
-  return { title: result ? `${result.title} | Proje Sonuçları` : "Proje Sonucu" };
+  if (!result) return { title: "Proje Sonucu" };
+  return {
+    title: `${result.title} | Proje Sonuçları`,
+    description: result.summary,
+    openGraph: {
+      title: result.title,
+      description: result.summary,
+      images: result.coverImage ? [result.coverImage] : undefined,
+      type: "article",
+    },
+  };
 }
 
 export default async function ProjeSonucuDetayPage({ params }: { params: Promise<{ slug: string }> }) {

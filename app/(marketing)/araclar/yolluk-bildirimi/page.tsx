@@ -1,6 +1,10 @@
 import { YollukBildirimi } from "@/components/tools/YollukBildirimi";
 
-export const metadata = { title: "Geçici Görev Yolluğu Bildirimi | Erasmus+ Portal" };
+export const metadata = {
+  title: "Geçici Görev Yolluğu Bildirimi | Erasmus+ Portal",
+  description:
+    "Erasmus+ hareketliliği sonrası kurumunuza sunacağınız Yurtiçi / Yurtdışı Geçici Görev Yolluğu Bildirimi formunu doldurun; gündelik ve taşıt tutarları döviz kuruna göre otomatik hesaplanır.",
+};
 
 export default function YollukBildirimiPage() {
   return (

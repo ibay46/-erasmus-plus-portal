@@ -1,7 +1,10 @@
 import { getPublishedUsefulLinks } from "@/lib/usefulLinks";
 import { Card } from "@/components/ui/Card";
 
-export const metadata = { title: "Yararlı Linkler | Erasmus+ Portal" };
+export const metadata = {
+  title: "Yararlı Linkler | Erasmus+ Portal",
+  description: "Erasmus+ projeleriniz için resmi kaynaklar, başvuru sistemleri ve faydalı araçlara hızlı erişim.",
+};
 
 export default async function YararliLinklerPage() {
   const links = await getPublishedUsefulLinks();

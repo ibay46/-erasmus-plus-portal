@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/Badge";
 
 export const metadata = {
   title: "Proje Türleri | Erasmus+ Portal",
+  description:
+    "KA120'den Jean Monnet ve Erasmus Spor'a kadar tüm Erasmus+ eylem türleri için amaç, bütçe ve başvuru rehberleri.",
 };
 
 const GROUPS: { label: string; codes: string[] }[] = [

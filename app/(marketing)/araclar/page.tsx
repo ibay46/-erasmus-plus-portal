@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 
-export const metadata = { title: "Ücretsiz Araçlar | Erasmus+ Portal" };
+export const metadata = {
+  title: "Ücretsiz Araçlar | Erasmus+ Portal",
+  description: "Erasmus+ başvurularınızı hazırlarken kullanabileceğiniz ücretsiz hesaplama araçları.",
+};
 
 const TOOLS = [
   {

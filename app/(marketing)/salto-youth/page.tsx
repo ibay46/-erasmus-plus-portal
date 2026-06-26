@@ -1,7 +1,10 @@
 import { getPublishedPosts } from "@/lib/posts";
 import { PostCard } from "@/components/news/PostCard";
 
-export const metadata = { title: "SALTO Youth | Erasmus+ Portal" };
+export const metadata = {
+  title: "SALTO Youth | Erasmus+ Portal",
+  description: "SALTO Youth kaynak merkezinin gençlik alanına yönelik duyuruları ve haberleri.",
+};
 
 export default async function SaltoYouthPage() {
   const posts = await getPublishedPosts("SALTO_YOUTH");

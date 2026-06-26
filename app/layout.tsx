@@ -12,10 +12,27 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
+const SITE_DESCRIPTION =
+  "Türkiye'deki Erasmus+ proje yazan öğretmenler, okullar, belediyeler ve STK'lar için haberler, rehberler, araçlar ve danışmanlık.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.erasmusportal.com"),
   title: "Erasmus+ Portal",
-  description:
-    "Türkiye'deki Erasmus+ proje yazan öğretmenler, okullar, belediyeler ve STK'lar için haberler, rehberler, araçlar ve danışmanlık.",
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    locale: "tr_TR",
+    siteName: "Erasmus+ Portal",
+    title: "Erasmus+ Portal",
+    description: SITE_DESCRIPTION,
+    images: ["/logowithname.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Erasmus+ Portal",
+    description: SITE_DESCRIPTION,
+    images: ["/logowithname.png"],
+  },
 };
 
 export default function RootLayout({

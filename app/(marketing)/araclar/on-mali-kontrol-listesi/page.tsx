@@ -1,6 +1,10 @@
 import { OnMaliKontrolListesi } from "@/components/tools/OnMaliKontrolListesi";
 
-export const metadata = { title: "Ön Malî Kontrol Listesi | Erasmus+ Portal" };
+export const metadata = {
+  title: "Ön Malî Kontrol Listesi | Erasmus+ Portal",
+  description:
+    "Erasmus+ yolluk avansı kapatma sürecinde kullanılan ön malî kontrol listesini doldurun, eksik/tamam durumlarını işaretleyin ve dosyanıza ekleyin.",
+};
 
 export default function OnMaliKontrolListesiPage() {
   return (

@@ -11,7 +11,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const type = getProjectTypeBySlug(slug);
-  return { title: type ? `${type.title} | Erasmus+ Portal` : "Proje Türü" };
+  if (!type) return { title: "Proje Türü" };
+  return {
+    title: `${type.title} | Erasmus+ Portal`,
+    description: type.shortDescription,
+    openGraph: { title: type.title, description: type.shortDescription, type: "article" },
+  };
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {

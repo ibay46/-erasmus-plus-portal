@@ -1,6 +1,10 @@
 import { ProjeSozlesmesi } from "@/components/tools/ProjeSozlesmesi";
 
-export const metadata = { title: "Proje Ortaklık Sözleşmesi | Erasmus+ Portal" };
+export const metadata = {
+  title: "Proje Ortaklık Sözleşmesi | Erasmus+ Portal",
+  description:
+    "Erasmus+ KA2 Stratejik Ortaklık projeleri için Partnership Agreement şablonunu doldurun; kurum, proje ve bütçe bilgilerini girdikçe sözleşme metni otomatik güncellenir.",
+};
 
 export default function ProjeSozlesmesiPage() {
   return (

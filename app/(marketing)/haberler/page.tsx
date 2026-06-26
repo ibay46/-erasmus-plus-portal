@@ -6,6 +6,7 @@ import { HABERLER_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCat
 
 export const metadata = {
   title: "Haberler | Erasmus+ Portal",
+  description: "Yeni çağrılar, Ulusal Ajans, Avrupa Komisyonu ve SALTO duyuruları.",
 };
 
 export default async function HaberlerPage() {

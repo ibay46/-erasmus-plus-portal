@@ -1,6 +1,10 @@
 import { AvansHarcamaFormu } from "@/components/tools/AvansHarcamaFormu";
 
-export const metadata = { title: "AB Hibe Proje Avans Harcama Formu | Erasmus+ Portal" };
+export const metadata = {
+  title: "AB Hibe Proje Avans Harcama Formu | Erasmus+ Portal",
+  description:
+    "Proje kapsamında alınan avansın mahsubu için harcama belgelerini girin; toplam harcama, avans artığı ve tutarların yazıyla karşılığı otomatik hesaplanır.",
+};
 
 export default function AvansHarcamaFormuPage() {
   return (

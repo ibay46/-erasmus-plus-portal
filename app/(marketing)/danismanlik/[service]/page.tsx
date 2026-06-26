@@ -9,7 +9,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ service: string }> }) {
   const { service } = await params;
   const found = CONSULTING_SERVICES.find((s) => s.slug === service);
-  return { title: found ? `${found.title} | Danışmanlık` : "Danışmanlık" };
+  if (!found) return { title: "Danışmanlık" };
+  return {
+    title: `${found.title} | Danışmanlık`,
+    description: found.description,
+    openGraph: { title: found.title, description: found.description, type: "website" },
+  };
 }
 
 export default async function DanismanlikServisPage({
