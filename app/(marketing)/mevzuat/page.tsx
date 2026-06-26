@@ -39,7 +39,7 @@ export default function MevzuatPage() {
       <div className="space-y-3">
         {KAYNAKLAR.map((k) => (
           <Link key={k.href} href={k.href} className="cursor-pointer block">
-            <Card className="hover:border-accent/50 flex items-center justify-between gap-4">
+            <Card className="flex items-center justify-between gap-4 border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
               <div>
                 <span className="inline-block mb-1.5 rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-medium text-accent">
                   {k.etiket}

@@ -17,7 +17,7 @@ const GROUPS: { label: string; codes: string[] }[] = [
 function TypeCard({ type }: { type: ProjectTypeContent }) {
   return (
     <Link href={`/proje-turleri/${type.slug}`} className="cursor-pointer">
-      <Card className="h-full hover:border-accent/50">
+      <Card className="h-full border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
         <Badge>{type.code}</Badge>
         <h2 className="font-medium mt-3 mb-1 text-foreground">{type.title}</h2>
         <p className="text-sm text-muted-foreground">{type.shortDescription}</p>

@@ -136,7 +136,7 @@ export default async function ProjeSonuclariPage({
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {items.map((item) => (
                         <Link key={item.slug} href={`/proje-sonuclari/${item.slug}`} className="cursor-pointer">
-                          <Card className="h-full hover:border-accent/50">
+                          <Card className="h-full border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
                             <p className="font-medium text-foreground mb-1">{item.title}</p>
                             <p className="text-sm text-muted-foreground line-clamp-3">{item.summary}</p>
                           </Card>

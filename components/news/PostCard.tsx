@@ -14,7 +14,7 @@ export interface PostCardData {
 export function PostCard({ post }: { post: PostCardData }) {
   return (
     <Link href={`/haberler/${post.slug}`} className="cursor-pointer">
-      <Card className="h-full hover:border-accent/50">
+      <Card className="h-full border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
         <Badge>{POST_CATEGORY_LABELS[post.category] ?? post.category}</Badge>
         <h2 className="font-medium mt-3 mb-1 text-foreground">{post.title}</h2>
         {post.excerpt && <p className="text-sm text-muted-foreground">{post.excerpt}</p>}
