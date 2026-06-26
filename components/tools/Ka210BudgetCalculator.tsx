@@ -15,6 +15,9 @@ import { Card } from "@/components/ui/Card";
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
 
+const MOBILITY_FRAME_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#a855f7", "#ec4899", "#06b6d4"];
+const PARTNER_FRAME_COLORS = ["#f97316", "#22c55e", "#6366f1", "#ef4444", "#0ea5e9", "#d946ef"];
+
 function rangeMidpoint(min: number, max: number) {
   return Math.round((min + max) / 2);
 }
@@ -40,7 +43,7 @@ function emptyPartner(id: string): Ka210PartnerInput {
 }
 
 function createMobility(id: string): MobilityState {
-  const hostCountry = COUNTRY_NAMES.find((c) => c === "Macaristan") ?? COUNTRY_NAMES[0];
+  const hostCountry = COUNTRY_NAMES[0];
   const group = COUNTRY_GROUPS[hostCountry];
   return {
     id,
@@ -113,8 +116,13 @@ function MobilitySection({
   const teacherRateValid = isRateWithinRange(mobility.teacherDailyRate, staffRange);
   const studentRateValid = isRateWithinRange(mobility.studentDailyRate, pupilRange);
 
+  const mobilityFrameColor = MOBILITY_FRAME_COLORS[index % MOBILITY_FRAME_COLORS.length];
+
   return (
-    <div className="space-y-4 print:break-inside-avoid">
+    <div
+      className="space-y-4 rounded-xl border-2 p-4 print:break-inside-avoid"
+      style={{ borderColor: mobilityFrameColor }}
+    >
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-foreground">
           <span className="text-sm font-normal text-muted-foreground mr-2">Hareketlilik {index + 1}:</span>
@@ -261,8 +269,12 @@ function MobilitySection({
         <h3 className="font-medium mb-4 text-foreground hidden print:block">Ortak Ülkeler</h3>
 
         <div className="space-y-4">
-          {mobility.partners.map((partner) => (
-            <div key={partner.id} className="rounded-lg border border-border p-4 print:break-inside-avoid">
+          {mobility.partners.map((partner, partnerIndex) => (
+            <div
+              key={partner.id}
+              className="rounded-lg border-2 p-4 print:break-inside-avoid"
+              style={{ borderColor: PARTNER_FRAME_COLORS[partnerIndex % PARTNER_FRAME_COLORS.length] }}
+            >
               <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-3">
                 <div>
                   <label className="block text-xs font-medium mb-1 text-muted-foreground">Ülke</label>
