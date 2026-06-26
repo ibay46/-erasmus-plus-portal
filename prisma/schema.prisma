@@ -213,6 +213,17 @@ enum LeadStatus {
   CLOSED
 }
 
+model UsefulLink {
+  id          String   @id @default(cuid())
+  title       String
+  url         String
+  description String   @default("")
+  order       Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model PageView {
   id          String   @id @default(cuid())
   path        String

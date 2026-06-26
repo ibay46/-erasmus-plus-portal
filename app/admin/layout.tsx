@@ -32,6 +32,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <Link href="/admin/kullanicilar" className="cursor-pointer hover:text-accent">
           Kullanıcılar
         </Link>
+        <Link href="/admin/yararli-linkler" className="cursor-pointer hover:text-accent">
+          Yararlı Linkler
+        </Link>
       </nav>
       {children}
     </div>

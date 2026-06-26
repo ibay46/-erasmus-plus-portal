@@ -3,13 +3,14 @@ import { Card } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
 
 export default async function AdminDashboardPage() {
-  const [postCount, grantCount, libraryCount, resultCount, leadCount, userCount] = await Promise.all([
+  const [postCount, grantCount, libraryCount, resultCount, leadCount, userCount, linkCount] = await Promise.all([
     prisma.post.count(),
     prisma.grantProject.count(),
     prisma.projectLibraryEntry.count(),
     prisma.projectResult.count(),
     prisma.consultingLead.count(),
     prisma.user.count(),
+    prisma.usefulLink.count(),
   ]);
 
   const sections = [
@@ -19,6 +20,7 @@ export default async function AdminDashboardPage() {
     { href: "/admin/proje-kutuphanesi", title: "Proje Kütüphanesi", description: "Örnek projeleri ekleyin, düzenleyin, silin.", count: libraryCount },
     { href: "/admin/talepler", title: "Danışmanlık Talepleri", description: "Gelen talepleri görüntüleyin ve durumlarını güncelleyin.", count: leadCount },
     { href: "/admin/kullanicilar", title: "Kullanıcılar", description: "Üyelik seviyelerini ve son üyelik tarihlerini yönetin.", count: userCount },
+    { href: "/admin/yararli-linkler", title: "Yararlı Linkler", description: "Resmi kaynaklar ve faydalı araç linklerini ekleyin, düzenleyin, silin.", count: linkCount },
   ];
 
   return (
