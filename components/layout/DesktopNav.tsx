@@ -8,9 +8,14 @@ interface NavItem {
   desc: string;
 }
 
+interface NavSection {
+  heading?: string;
+  items: NavItem[];
+}
+
 interface NavGroup {
   label: string;
-  items: NavItem[];
+  sections: NavSection[];
 }
 
 export function DesktopNav({
@@ -41,17 +46,26 @@ export function DesktopNav({
           </button>
 
           <div
-            className="invisible absolute left-0 top-full z-10 w-72 -translate-y-1 rounded-lg border border-border bg-card p-2 opacity-0 shadow-lg transition-all duration-200 ease-out group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"
+            className="invisible absolute left-0 top-full z-10 w-80 -translate-y-1 rounded-lg border border-border bg-card p-2 opacity-0 shadow-lg transition-all duration-200 ease-out group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100"
           >
-            {group.items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="cursor-pointer block rounded-md px-3 py-2 transition-colors duration-200 hover:bg-muted"
-              >
-                <span className="block font-medium text-foreground">{item.label}</span>
-                <span className="block text-xs text-muted-foreground">{item.desc}</span>
-              </Link>
+            {group.sections.map((section, index) => (
+              <div key={section.heading ?? index} className={index > 0 ? "mt-2 border-t border-border pt-2" : ""}>
+                {section.heading && (
+                  <p className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {section.heading}
+                  </p>
+                )}
+                {section.items.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="cursor-pointer block rounded-md px-3 py-2 transition-colors duration-200 hover:bg-muted"
+                  >
+                    <span className="block font-medium text-foreground">{item.label}</span>
+                    <span className="block text-xs text-muted-foreground">{item.desc}</span>
+                  </Link>
+                ))}
+              </div>
             ))}
           </div>
         </div>

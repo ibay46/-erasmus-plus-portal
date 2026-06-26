@@ -8,25 +8,48 @@ import { DesktopNav } from "@/components/layout/DesktopNav";
 const NAV_GROUPS = [
   {
     label: "İçerikler",
-    items: [
-      { href: "/haberler", label: "Haberler", desc: "Yeni çağrılar ve duyurular" },
-      { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
-      { href: "/salto-egitim", label: "SALTO Education & Training", desc: "Okul, mesleki ve yetişkin eğitimi duyuruları" },
-      { href: "/ab-hibe-projeleri", label: "AB Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
-      { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
-      { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },
-      { href: "/terimler-sozlugu", label: "Terimler Sözlüğü", desc: "KA120, TCA, hareketlilik gibi terimlerin açıklamaları" },
-      { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
-      { href: "/mevzuat", label: "Mevzuat", desc: "AB hibelerinin harcanmasına ilişkin resmî düzenlemeler" },
-      { href: "/yararli-linkler", label: "Yararlı Linkler", desc: "Resmi kaynaklar ve faydalı araçlara hızlı erişim" },
-      { href: "/sss", label: "Sıkça Sorulan Sorular", desc: "Başvuru, bütçe ve ortak bulma hakkında sık sorulan sorular" },
+    sections: [
+      {
+        heading: "Haberler & Duyurular",
+        items: [
+          { href: "/haberler", label: "Haberler", desc: "Yeni çağrılar ve duyurular" },
+          { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
+          {
+            href: "/salto-egitim",
+            label: "SALTO Education & Training",
+            desc: "Okul, mesleki ve yetişkin eğitimi duyuruları",
+          },
+          { href: "/ab-hibe-projeleri", label: "AB Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
+        ],
+      },
+      {
+        heading: "Projeler",
+        items: [
+          { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },
+          { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
+          { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
+        ],
+      },
+      {
+        heading: "Kaynaklar",
+        items: [
+          { href: "/mevzuat", label: "Mevzuat", desc: "AB hibelerinin harcanmasına ilişkin resmî düzenlemeler" },
+          { href: "/yararli-linkler", label: "Yararlı Linkler", desc: "Resmi kaynaklar ve faydalı araçlara hızlı erişim" },
+          { href: "/sss", label: "Sıkça Sorulan Sorular", desc: "Başvuru, bütçe ve ortak bulma hakkında sık sorulan sorular" },
+          { href: "/terimler-sozlugu", label: "Terimler Sözlüğü", desc: "KA120, TCA, hareketlilik gibi terimlerin açıklamaları" },
+        ],
+      },
     ],
   },
   {
     label: "Araçlar & Akademi",
-    items: [
-      { href: "/araclar", label: "Ücretsiz Araçlar", desc: "Bütçe, takvim ve bildirim araçları" },
-      { href: "/akademi", label: "Erasmus Akademi", desc: "Üyelikle özel içerik ve eğitimler" },
+    sections: [
+      {
+        items: [
+          { href: "/araclar", label: "Ücretsiz Araçlar", desc: "Bütçe, takvim ve bildirim araçları" },
+          { href: "/akademi", label: "Erasmus Akademi", desc: "Üyelikle özel içerik ve eğitimler" },
+        ],
+      },
     ],
   },
 ];
@@ -34,7 +57,9 @@ const NAV_GROUPS = [
 const NAV_SINGLE_LINKS = [{ href: "/danismanlik", label: "Danışmanlık" }];
 
 const MOBILE_NAV_LINKS = [
-  ...NAV_GROUPS.flatMap((group) => group.items.map(({ href, label }) => ({ href, label }))),
+  ...NAV_GROUPS.flatMap((group) =>
+    group.sections.flatMap((section) => section.items.map(({ href, label }) => ({ href, label })))
+  ),
   ...NAV_SINGLE_LINKS,
 ];
 

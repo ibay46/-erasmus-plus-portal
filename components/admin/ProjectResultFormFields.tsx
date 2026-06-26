@@ -1,4 +1,5 @@
 ﻿import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
+import { CoverImageInput } from "@/components/admin/CoverImageInput";
 import { ERASMUS_COUNTRIES } from "@/lib/content/countries";
 import { KA_ACTION_LABELS, KA_ACTIONS, EDUCATION_SECTOR_LABELS, EDUCATION_SECTORS } from "@/lib/content/kaActions";
 
@@ -17,10 +18,15 @@ export function ProjectResultFormFields({
     summary: string;
     body: string;
     published: boolean;
+    coverImage?: string | null;
   };
 }) {
   return (
     <>
+      <div>
+        <label className="block text-sm font-medium mb-1 text-foreground">Kapak Görseli (opsiyonel)</label>
+        <CoverImageInput defaultValue={defaultValues?.coverImage} />
+      </div>
       <div>
         <label htmlFor="title" className="block text-sm font-medium mb-1 text-foreground">
           Proje Başlığı

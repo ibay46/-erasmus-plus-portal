@@ -16,6 +16,7 @@ const projectResultSchema = z.object({
   summary: z.string().min(10),
   body: z.string().min(10),
   published: z.boolean(),
+  coverImage: z.string().nullable(),
 });
 
 function parseProjectResultForm(formData: FormData) {
@@ -28,6 +29,7 @@ function parseProjectResultForm(formData: FormData) {
     summary: formData.get("summary"),
     body: formData.get("body"),
     published: formData.get("published") === "on",
+    coverImage: formData.get("coverImage") || null,
   });
 }
 

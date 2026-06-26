@@ -105,9 +105,24 @@ const SECTIONS = [
     description: "Tema ve eylem türüne göre filtrelenebilir örnek proje arşivi.",
   },
   {
+    href: "/proje-sonuclari",
+    title: "Proje Sonuçları",
+    description: "Yıl, ülke, KA eylemi ve sektöre göre desteklenmeye hak kazanan proje sonuçları.",
+  },
+  {
+    href: "/ab-hibe-projeleri",
+    title: "AB Hibe Projeleri",
+    description: "Avrupa Birliği hibe destekli projelere ilişkin haberler ve duyurular.",
+  },
+  {
     href: "/araclar",
     title: "Ücretsiz Araçlar",
     description: "Bütçe hesaplayıcısı, proje zaman çizelgesi ve yolluk bildirimi gibi pratik araçlar.",
+  },
+  {
+    href: "/yararli-linkler",
+    title: "Yararlı Linkler",
+    description: "Resmi kaynaklar, başvuru sistemleri ve faydalı araçlara hızlı erişim.",
   },
   {
     href: "/danismanlik",
