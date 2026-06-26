@@ -25,13 +25,11 @@ export const metadata: Metadata = {
     siteName: "Erasmus+ Portal",
     title: "Erasmus+ Portal",
     description: SITE_DESCRIPTION,
-    images: ["/logowithname.png"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Erasmus+ Portal",
     description: SITE_DESCRIPTION,
-    images: ["/logowithname.png"],
   },
   verification: {
     google: "oRGdlsgqPLjcmMawl7u0hYdGPiT56kKqWW4vlxbpr-A",
