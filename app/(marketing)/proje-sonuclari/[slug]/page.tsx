@@ -4,6 +4,7 @@ import { getProjectResultBySlug } from "@/lib/projectResults";
 import { Badge } from "@/components/ui/Badge";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocumentPreview";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -26,8 +27,27 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
   const result = await getProjectResultBySlug(slug);
   if (!result || !result.published) notFound();
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: result.title,
+    description: result.summary,
+    image: result.coverImage ? [result.coverImage] : undefined,
+    datePublished: result.createdAt.toISOString(),
+    dateModified: result.updatedAt.toISOString(),
+    inLanguage: "tr",
+    author: { "@type": "Organization", name: "Erasmus+ Portal", url: "https://www.erasmusportal.com" },
+    publisher: {
+      "@type": "Organization",
+      name: "Erasmus+ Portal",
+      logo: { "@type": "ImageObject", url: "https://www.erasmusportal.com/logo-icon.png" },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.erasmusportal.com/proje-sonuclari/${result.slug}` },
+  };
+
   return (
     <div>
+      <JsonLd data={articleJsonLd} />
       <Link
         href="/proje-sonuclari"
         className="cursor-pointer mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"

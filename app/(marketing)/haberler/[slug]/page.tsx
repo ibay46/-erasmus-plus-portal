@@ -4,6 +4,7 @@ import { getPostBySlug, getRecentPostsInCategory } from "@/lib/posts";
 import { POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocumentPreview";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -28,8 +29,27 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
 
   const relatedPosts = await getRecentPostsInCategory(post.category, post.id);
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: post.title,
+    description: post.excerpt ?? undefined,
+    image: post.coverImage ? [post.coverImage] : undefined,
+    datePublished: post.publishedAt?.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
+    inLanguage: "tr",
+    author: { "@type": "Organization", name: "Erasmus+ Portal", url: "https://www.erasmusportal.com" },
+    publisher: {
+      "@type": "Organization",
+      name: "Erasmus+ Portal",
+      logo: { "@type": "ImageObject", url: "https://www.erasmusportal.com/logo-icon.png" },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.erasmusportal.com/haberler/${post.slug}` },
+  };
+
   return (
     <div className="max-w-5xl grid gap-8 lg:grid-cols-[1fr_18rem]">
+    <JsonLd data={articleJsonLd} />
     <div className="min-w-0">
       <Link
         href="/haberler"
