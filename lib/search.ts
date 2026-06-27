@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { PROJECT_TYPES } from "@/lib/content/projectTypes";
 import { FAQ_GROUPS } from "@/lib/content/faq";
 import { GLOSSARY_GROUPS } from "@/lib/content/glossary";
+import { TOOLS } from "@/lib/content/tools";
 
 export interface SearchResult {
   type: string;
@@ -92,6 +93,13 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
   }
 
   const lowerQ = q.toLowerCase();
+
+  const matchedTools = TOOLS.filter(
+    (tool) => tool.title.toLowerCase().includes(lowerQ) || tool.description.toLowerCase().includes(lowerQ)
+  ).slice(0, MAX_PER_TYPE);
+  for (const tool of matchedTools) {
+    results.push({ type: "Ücretsiz Araç", title: tool.title, description: tool.description, href: tool.href });
+  }
 
   const matchedTypes = PROJECT_TYPES.filter(
     (t) => t.title.toLowerCase().includes(lowerQ) || t.shortDescription.toLowerCase().includes(lowerQ)
