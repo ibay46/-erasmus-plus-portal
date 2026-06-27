@@ -60,13 +60,6 @@ export function MobileNav({
             </Link>
             <ThemeToggle />
           </div>
-          <Link
-            href="/danismanlik/talep"
-            onClick={() => setOpen(false)}
-            className="cursor-pointer mt-3 inline-flex w-full items-center justify-center rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
-          >
-            Danışmanlık Al
-          </Link>
         </div>
       )}
     </div>

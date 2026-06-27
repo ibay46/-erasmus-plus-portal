@@ -87,12 +87,6 @@ export async function Header() {
           >
             {user ? "Hesabım" : "Giriş Yap"}
           </Link>
-          <Link
-            href="/danismanlik/talep"
-            className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
-          >
-            Danışmanlık Al
-          </Link>
           <ThemeToggle />
         </div>
 
