@@ -20,7 +20,7 @@ export default async function ProjeDuzenlePage({
   if (!entry) notFound();
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-2xl font-semibold mb-6 text-foreground">Projeyi Düzenle</h1>
       <ErrorBanner message={hata} />
       <Card>

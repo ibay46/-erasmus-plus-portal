@@ -12,7 +12,7 @@ export default async function YeniProjePage({
 }) {
   const { hata } = await searchParams;
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-2xl font-semibold mb-6 text-foreground">Proje Kütüphanesine Ekle</h1>
       <ErrorBanner message={hata} />
       <Card>

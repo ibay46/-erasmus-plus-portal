@@ -20,7 +20,7 @@ export default async function YararliLinkDuzenlePage({
   if (!item) notFound();
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-2xl font-semibold mb-6 text-foreground">Yararlı Linki Düzenle</h1>
       <ErrorBanner message={hata} />
       <Card>
