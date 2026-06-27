@@ -4,6 +4,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Logo } from "@/components/layout/Logo";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { DesktopNav } from "@/components/layout/DesktopNav";
+import { SiteSearch } from "@/components/layout/SiteSearch";
 
 const NAV_GROUPS = [
   {
@@ -81,6 +82,7 @@ export async function Header() {
         <DesktopNav groups={NAV_GROUPS} singleLinks={NAV_SINGLE_LINKS} />
 
         <div className="hidden lg:flex items-center gap-3">
+          <SiteSearch />
           <Link
             href={user ? "/hesap" : "/giris"}
             className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
@@ -90,7 +92,10 @@ export async function Header() {
           <ThemeToggle />
         </div>
 
-        <MobileNav navLinks={MOBILE_NAV_LINKS} isLoggedIn={Boolean(user)} />
+        <div className="flex items-center lg:hidden">
+          <SiteSearch iconOnly />
+          <MobileNav navLinks={MOBILE_NAV_LINKS} isLoggedIn={Boolean(user)} />
+        </div>
       </div>
     </header>
   );
