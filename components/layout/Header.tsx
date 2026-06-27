@@ -7,10 +7,9 @@ import { DesktopNav } from "@/components/layout/DesktopNav";
 
 const NAV_GROUPS = [
   {
-    label: "İçerikler",
+    label: "Haberler & Duyurular",
     sections: [
       {
-        heading: "Haberler & Duyurular",
         items: [
           { href: "/haberler", label: "Haberler", desc: "Yeni çağrılar ve duyurular" },
           { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
@@ -22,16 +21,24 @@ const NAV_GROUPS = [
           { href: "/ab-hibe-projeleri", label: "AB Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
         ],
       },
+    ],
+  },
+  {
+    label: "Projeler",
+    sections: [
       {
-        heading: "Projeler",
         items: [
           { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },
           { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
           { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
         ],
       },
+    ],
+  },
+  {
+    label: "Kaynaklar",
+    sections: [
       {
-        heading: "Kaynaklar",
         items: [
           { href: "/mevzuat", label: "Mevzuat", desc: "AB hibelerinin harcanmasına ilişkin resmî düzenlemeler" },
           { href: "/yararli-linkler", label: "Yararlı Linkler", desc: "Resmi kaynaklar ve faydalı araçlara hızlı erişim" },
