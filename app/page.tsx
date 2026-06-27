@@ -181,7 +181,7 @@ export default async function Home() {
 
   return (
     <div>
-      <section className="relative overflow-hidden border-b border-border bg-background">
+      <section className="relative flex min-h-[calc(100vh-4rem)] items-center overflow-hidden border-b border-border bg-background">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -left-32 -top-32 h-[30rem] w-[30rem] rounded-full bg-accent/20 blur-[120px]"
@@ -190,7 +190,7 @@ export default async function Home() {
           aria-hidden="true"
           className="pointer-events-none absolute right-0 bottom-0 h-[26rem] w-[26rem] translate-x-1/4 translate-y-1/4 rounded-full bg-accent-warm/15 blur-[120px]"
         />
-        <div className="relative mx-auto grid max-w-6xl items-start gap-10 px-6 py-12 md:grid-cols-2 md:py-16">
+        <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-6 py-12 md:grid-cols-2 md:py-16">
           <div>
             <span className="inline-flex items-center rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
               Türkiye&rsquo;nin Erasmus+ danışmanlık platformu
