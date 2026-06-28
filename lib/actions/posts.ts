@@ -28,14 +28,31 @@ function parsePostForm(formData: FormData) {
   });
 }
 
+// Haberler, SALTO Youth ve SALTO Education & Training ayrı admin bölümleri olarak
+// yönetilir ama aynı Post modelini paylaşır; bu yüzden hangi listeye dönüleceğini
+// formdaki gizli "adminBase" alanından okuruz.
+function getAdminBase(formData: FormData): string {
+  const base = formData.get("adminBase");
+  return typeof base === "string" && base ? base : "/admin/haberler";
+}
+
+function revalidateAfterPostChange(adminBase: string) {
+  revalidatePath(adminBase);
+  revalidatePath("/haberler");
+  revalidatePath("/salto-youth");
+  revalidatePath("/salto-egitim");
+  revalidatePath("/proje-sonuclari");
+}
+
 export async function createPost(formData: FormData) {
   await requireTier("ADMIN");
+  const adminBase = getAdminBase(formData);
   let data: ReturnType<typeof parsePostForm>;
   try {
     data = parsePostForm(formData);
   } catch {
     redirect(
-      "/admin/haberler/yeni?hata=" +
+      `${adminBase}/yeni?hata=` +
         encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, içerik en az 10 karakter olmalı).")
     );
   }
@@ -56,21 +73,20 @@ export async function createPost(formData: FormData) {
     },
   });
 
-  revalidatePath("/admin/haberler");
-  revalidatePath("/haberler");
-  revalidatePath("/proje-sonuclari");
-  redirect("/admin/haberler");
+  revalidateAfterPostChange(adminBase);
+  redirect(adminBase);
 }
 
 export async function updatePost(formData: FormData) {
   await requireTier("ADMIN");
+  const adminBase = getAdminBase(formData);
   const id = formData.get("id") as string;
   let data: ReturnType<typeof parsePostForm>;
   try {
     data = parsePostForm(formData);
   } catch {
     redirect(
-      `/admin/haberler/${id}/duzenle?hata=` +
+      `${adminBase}/${id}/duzenle?hata=` +
         encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, içerik en az 10 karakter olmalı).")
     );
   }
@@ -87,20 +103,17 @@ export async function updatePost(formData: FormData) {
     },
   });
 
-  revalidatePath("/admin/haberler");
-  revalidatePath("/haberler");
-  revalidatePath("/proje-sonuclari");
-  redirect("/admin/haberler");
+  revalidateAfterPostChange(adminBase);
+  redirect(adminBase);
 }
 
 export async function deletePost(formData: FormData) {
   await requireTier("ADMIN");
+  const adminBase = getAdminBase(formData);
   const id = formData.get("id") as string;
 
   await prisma.post.delete({ where: { id } });
 
-  revalidatePath("/admin/haberler");
-  revalidatePath("/haberler");
-  revalidatePath("/proje-sonuclari");
-  redirect("/admin/haberler");
+  revalidateAfterPostChange(adminBase);
+  redirect(adminBase);
 }

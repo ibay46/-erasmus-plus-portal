@@ -4,11 +4,10 @@ import { updatePost, deletePost } from "@/lib/actions/posts";
 import { Card } from "@/components/ui/Card";
 import { PostFormFields } from "@/components/admin/PostFormFields";
 import { ErrorBanner } from "@/components/admin/ErrorBanner";
-import { HABERLER_CATEGORIES } from "@/lib/content/postCategories";
 
-export const metadata = { title: "Haberi Düzenle | Yönetim Paneli" };
+export const metadata = { title: "SALTO Youth Yazısını Düzenle | Yönetim Paneli" };
 
-export default async function HaberDuzenlePage({
+export default async function SaltoYouthDuzenlePage({
   params,
   searchParams,
 }: {
@@ -22,13 +21,13 @@ export default async function HaberDuzenlePage({
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6 text-foreground">Haberi Düzenle</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-foreground">SALTO Youth Yazısını Düzenle</h1>
       <ErrorBanner message={hata} />
       <Card>
         <form action={updatePost} className="space-y-4">
           <input type="hidden" name="id" value={post.id} />
-          <input type="hidden" name="adminBase" value="/admin/haberler" />
-          <PostFormFields defaultValues={post} categoryOptions={HABERLER_CATEGORIES} />
+          <input type="hidden" name="adminBase" value="/admin/salto-youth" />
+          <PostFormFields defaultValues={post} lockedCategory="SALTO_YOUTH" />
           <div className="flex items-center gap-3">
             <button
               type="submit"
@@ -40,12 +39,12 @@ export default async function HaberDuzenlePage({
         </form>
         <form action={deletePost} className="mt-3">
           <input type="hidden" name="id" value={post.id} />
-          <input type="hidden" name="adminBase" value="/admin/haberler" />
+          <input type="hidden" name="adminBase" value="/admin/salto-youth" />
           <button
             type="submit"
             className="cursor-pointer rounded-lg border border-border px-5 py-2.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
           >
-            Bu Haberi Sil
+            Bu Yazıyı Sil
           </button>
         </form>
       </Card>

@@ -7,6 +7,8 @@ const inputClass =
 
 export function PostFormFields({
   defaultValues,
+  categoryOptions = POST_CATEGORIES,
+  lockedCategory,
 }: {
   defaultValues?: {
     title: string;
@@ -16,6 +18,8 @@ export function PostFormFields({
     published: boolean;
     coverImage?: string | null;
   };
+  categoryOptions?: string[];
+  lockedCategory?: string;
 }) {
   return (
     <>
@@ -36,24 +40,28 @@ export function PostFormFields({
           className={inputClass}
         />
       </div>
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium mb-1 text-foreground">
-          Kategori
-        </label>
-        <select
-          id="category"
-          name="category"
-          required
-          defaultValue={defaultValues?.category ?? POST_CATEGORIES[0]}
-          className={inputClass}
-        >
-          {POST_CATEGORIES.map((category) => (
-            <option key={category} value={category}>
-              {POST_CATEGORY_LABELS[category]}
-            </option>
-          ))}
-        </select>
-      </div>
+      {lockedCategory ? (
+        <input type="hidden" name="category" value={lockedCategory} />
+      ) : (
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium mb-1 text-foreground">
+            Kategori
+          </label>
+          <select
+            id="category"
+            name="category"
+            required
+            defaultValue={defaultValues?.category ?? categoryOptions[0]}
+            className={inputClass}
+          >
+            {categoryOptions.map((category) => (
+              <option key={category} value={category}>
+                {POST_CATEGORY_LABELS[category]}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <div>
         <label htmlFor="excerpt" className="block text-sm font-medium mb-1 text-foreground">
           Kısa Özet (opsiyonel)

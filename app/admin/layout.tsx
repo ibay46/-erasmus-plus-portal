@@ -17,6 +17,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <Link href="/admin/haberler" className="cursor-pointer hover:text-accent">
           Haberler
         </Link>
+        <Link href="/admin/salto-youth" className="cursor-pointer hover:text-accent">
+          SALTO Youth
+        </Link>
+        <Link href="/admin/salto-egitim" className="cursor-pointer hover:text-accent">
+          SALTO Education & Training
+        </Link>
         <Link href="/admin/ab-hibe-projeleri" className="cursor-pointer hover:text-accent">
           AB Hibe Projeleri
         </Link>
