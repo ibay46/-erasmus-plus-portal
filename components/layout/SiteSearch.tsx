@@ -54,7 +54,7 @@ export function SiteSearch({ iconOnly = false }: { iconOnly?: boolean }) {
         type="button"
         aria-label="Sitede ara"
         onClick={() => setOpen(true)}
-        className={`cursor-pointer flex items-center justify-center rounded-md text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground ${
+        className={`cursor-pointer flex items-center justify-center rounded-md text-accent transition-all duration-200 hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/40 ${
           iconOnly ? "h-11 w-11" : "h-9 w-9"
         }`}
       >
