@@ -13,7 +13,7 @@ import { useRef, useState } from "react";
 import { VideoExtension } from "@/components/admin/editor/VideoExtension";
 
 const buttonClass =
-  "cursor-pointer rounded-md px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted";
+  "cursor-pointer rounded-md px-2.5 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted";
 const activeButtonClass = "bg-muted text-accent";
 
 function ToolbarButton({

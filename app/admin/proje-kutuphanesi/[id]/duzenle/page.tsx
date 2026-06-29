@@ -29,7 +29,7 @@ export default async function ProjeDuzenlePage({
           <LibraryFormFields defaultValues={entry} />
           <button
             type="submit"
-            className="cursor-pointer rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
+            className="cursor-pointer w-full sm:w-auto rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
           >
             Kaydet
           </button>
@@ -38,7 +38,7 @@ export default async function ProjeDuzenlePage({
           <input type="hidden" name="id" value={entry.id} />
           <button
             type="submit"
-            className="cursor-pointer rounded-lg border border-border px-5 py-2.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+            className="cursor-pointer w-full sm:w-auto rounded-lg border border-border px-5 py-2.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
           >
             Bu Projeyi Sil
           </button>

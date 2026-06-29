@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { updateMembershipTier } from "@/lib/actions/admin";
-import { AdminTable } from "@/components/admin/AdminTable";
+import { AdminListTable } from "@/components/admin/AdminListTable";
 
 export const metadata = { title: "Kullanıcılar | Yönetim Paneli" };
 
@@ -26,47 +26,47 @@ export default async function AdminKullanicilarPage() {
         Standart/Premium üyeliğe son kullanma tarihi atayabilirsiniz. Tarih geçtiğinde kullanıcı
         otomatik olarak Ücretsiz üyeliğe döner.
       </p>
-      <AdminTable head={["Ad", "E-posta", "Üyelik Seviyesi", "Son Üyelik Tarihi", ""]}>
-        {users.map((user) => (
-          <tr key={user.id} className="transition-colors duration-200 hover:bg-muted/50">
-            <td className="px-4 py-3 text-foreground">{user.name ?? "—"}</td>
-            <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
-            <td className="px-4 py-3" colSpan={3}>
-                  <form
-                    action={updateMembershipTier}
-                    className="flex flex-wrap items-center gap-2"
-                  >
-                    <input type="hidden" name="userId" value={user.id} />
-                    <select
-                      key={`tier-${user.id}-${user.membershipTier}`}
-                      name="tier"
-                      defaultValue={user.membershipTier}
-                      className="rounded-lg border border-border bg-background px-2 py-1 text-sm text-foreground"
-                    >
-                      {TIERS.map((tier) => (
-                        <option key={tier} value={tier}>
-                          {tier}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      key={`exp-${user.id}-${toDateInputValue(user.membershipExpiresAt)}`}
-                      type="date"
-                      name="membershipExpiresAt"
-                      defaultValue={toDateInputValue(user.membershipExpiresAt)}
-                      className="rounded-lg border border-border bg-background px-2 py-1 text-sm text-foreground"
-                    />
-                    <button
-                      type="submit"
-                      className="cursor-pointer rounded-lg bg-accent px-3 py-1 text-xs font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
-                    >
-                      Kaydet
-                    </button>
-                  </form>
-                </td>
-              </tr>
-        ))}
-      </AdminTable>
+      <AdminListTable
+        items={users}
+        getKey={(user) => user.id}
+        columns={[
+          {
+            header: "Ad",
+            render: (user) => <span className="font-medium text-foreground">{user.name ?? "—"}</span>,
+          },
+          { header: "E-posta", render: (user) => <span className="text-muted-foreground">{user.email}</span> },
+        ]}
+        renderActions={(user) => (
+          <form action={updateMembershipTier} className="flex flex-wrap items-center gap-2">
+            <input type="hidden" name="userId" value={user.id} />
+            <select
+              key={`tier-${user.id}-${user.membershipTier}`}
+              name="tier"
+              defaultValue={user.membershipTier}
+              className="rounded-lg border border-border bg-background px-2 py-2 text-sm text-foreground"
+            >
+              {TIERS.map((tier) => (
+                <option key={tier} value={tier}>
+                  {tier}
+                </option>
+              ))}
+            </select>
+            <input
+              key={`exp-${user.id}-${toDateInputValue(user.membershipExpiresAt)}`}
+              type="date"
+              name="membershipExpiresAt"
+              defaultValue={toDateInputValue(user.membershipExpiresAt)}
+              className="rounded-lg border border-border bg-background px-2 py-2 text-sm text-foreground"
+            />
+            <button
+              type="submit"
+              className="cursor-pointer rounded-lg bg-accent px-3 py-2 text-xs font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
+            >
+              Kaydet
+            </button>
+          </form>
+        )}
+      />
     </div>
   );
 }

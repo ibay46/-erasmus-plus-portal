@@ -8,7 +8,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <div className="flex">
       <AdminSidebar />
-      <div className="mx-auto w-full max-w-6xl px-4 py-10">{children}</div>
+      <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:py-10">{children}</div>
     </div>
   );
 }
