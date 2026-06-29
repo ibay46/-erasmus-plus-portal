@@ -16,3 +16,15 @@ export const SALTO_CATEGORIES = ["SALTO_YOUTH", "SALTO_EDUCATION_TRAINING"];
 export const STANDALONE_CATEGORIES = [...SALTO_CATEGORIES, "ESC"];
 
 export const HABERLER_CATEGORIES = POST_CATEGORIES.filter((c) => !STANDALONE_CATEGORIES.includes(c));
+
+// Bağımsız kategorilerin listeleme sayfasına dönüş linki; diğer tüm kategoriler
+// genel Haberler listesine döner. backLabel, Türkçe ek uyumu için tam metin olarak tutulur.
+export const CATEGORY_LIST_ROUTES: Record<string, { href: string; backLabel: string }> = {
+  SALTO_YOUTH: { href: "/salto-youth", backLabel: "SALTO Youth'a Dön" },
+  SALTO_EDUCATION_TRAINING: { href: "/salto-egitim", backLabel: "SALTO Education & Training'e Dön" },
+  ESC: { href: "/esc", backLabel: "ESC'ye Dön" },
+};
+
+export function getCategoryListRoute(category: string) {
+  return CATEGORY_LIST_ROUTES[category] ?? { href: "/haberler", backLabel: "Haberlere Dön" };
+}

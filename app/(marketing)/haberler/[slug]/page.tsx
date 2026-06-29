@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPostBySlug, getRecentPostsInCategory } from "@/lib/posts";
-import { POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
+import { POST_CATEGORY_LABELS, getCategoryListRoute } from "@/lib/content/postCategories";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocumentPreview";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -29,6 +29,7 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
   if (!post || !post.published) notFound();
 
   const relatedPosts = await getRecentPostsInCategory(post.category, post.id);
+  const backRoute = getCategoryListRoute(post.category);
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -53,13 +54,13 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
     <JsonLd data={articleJsonLd} />
     <div className="min-w-0">
       <Link
-        href="/haberler"
+        href={backRoute.href}
         className="cursor-pointer mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
       >
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12.5 15l-5-5 5-5" />
         </svg>
-        Haberlere Dön
+        {backRoute.backLabel}
       </Link>
       <div className="overflow-hidden rounded-xl border border-border">
         {post.coverImage && (
