@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { deletePost } from "@/lib/actions/posts";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { deletePost, togglePostPublished } from "@/lib/actions/posts";
+import { AdminTable } from "@/components/admin/AdminTable";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import { PublishToggleButton } from "@/components/admin/PublishToggleButton";
 
 export const metadata = { title: "SALTO Education & Training | Yönetim Paneli" };
 
@@ -27,35 +28,45 @@ export default async function AdminSaltoEgitimPage() {
       {posts.length === 0 ? (
         <p className="text-muted-foreground">Henüz SALTO Education & Training yazısı eklenmemiş.</p>
       ) : (
-        <div className="space-y-3">
+        <AdminTable head={["Başlık", "Durum", ""]}>
           {posts.map((post) => (
-            <Card key={post.id} className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 mb-1">{!post.published && <Badge>Taslak</Badge>}</div>
+            <tr key={post.id} className="transition-colors duration-200 hover:bg-muted/50">
+              <td className="px-4 py-3">
                 <p className="font-medium text-foreground">{post.title}</p>
                 <p className="text-xs text-muted-foreground">/{post.slug}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/admin/salto-egitim/${post.id}/duzenle`}
-                  className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
-                >
-                  Düzenle
-                </Link>
-                <form action={deletePost}>
-                  <input type="hidden" name="id" value={post.id} />
-                  <input type="hidden" name="adminBase" value="/admin/salto-egitim" />
-                  <button
-                    type="submit"
-                    className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+              </td>
+              <td className="px-4 py-3">
+                <StatusBadge published={post.published} />
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex items-center justify-end gap-2">
+                  <PublishToggleButton
+                    action={togglePostPublished}
+                    id={post.id}
+                    published={post.published}
+                    adminBase="/admin/salto-egitim"
+                  />
+                  <Link
+                    href={`/admin/salto-egitim/${post.id}/duzenle`}
+                    className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
                   >
-                    Sil
-                  </button>
-                </form>
-              </div>
-            </Card>
+                    Düzenle
+                  </Link>
+                  <form action={deletePost}>
+                    <input type="hidden" name="id" value={post.id} />
+                    <input type="hidden" name="adminBase" value="/admin/salto-egitim" />
+                    <button
+                      type="submit"
+                      className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+                    >
+                      Sil
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
           ))}
-        </div>
+        </AdminTable>
       )}
     </div>
   );

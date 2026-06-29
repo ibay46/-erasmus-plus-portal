@@ -86,6 +86,23 @@ export async function updateGrantProject(formData: FormData) {
   redirect("/admin/ab-hibe-projeleri");
 }
 
+export async function toggleGrantProjectPublished(formData: FormData) {
+  await requireTier("ADMIN");
+  const id = formData.get("id") as string;
+
+  const existing = await prisma.grantProject.findUnique({ where: { id } });
+  if (!existing) throw new Error("AB Hibe Projesi bulunamadı");
+
+  const published = !existing.published;
+  await prisma.grantProject.update({
+    where: { id },
+    data: { published, publishedAt: published ? existing.publishedAt ?? new Date() : null },
+  });
+
+  revalidatePath("/admin/ab-hibe-projeleri");
+  revalidatePath("/ab-hibe-projeleri");
+}
+
 export async function deleteGrantProject(formData: FormData) {
   await requireTier("ADMIN");
   const id = formData.get("id") as string;

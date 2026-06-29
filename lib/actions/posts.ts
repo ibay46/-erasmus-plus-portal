@@ -107,6 +107,23 @@ export async function updatePost(formData: FormData) {
   redirect(adminBase);
 }
 
+export async function togglePostPublished(formData: FormData) {
+  await requireTier("ADMIN");
+  const adminBase = getAdminBase(formData);
+  const id = formData.get("id") as string;
+
+  const existing = await prisma.post.findUnique({ where: { id } });
+  if (!existing) throw new Error("Haber bulunamadı");
+
+  const published = !existing.published;
+  await prisma.post.update({
+    where: { id },
+    data: { published, publishedAt: published ? existing.publishedAt ?? new Date() : null },
+  });
+
+  revalidateAfterPostChange(adminBase);
+}
+
 export async function deletePost(formData: FormData) {
   await requireTier("ADMIN");
   const adminBase = getAdminBase(formData);

@@ -63,6 +63,19 @@ export async function updateUsefulLink(formData: FormData) {
   redirect("/admin/yararli-linkler");
 }
 
+export async function toggleUsefulLinkPublished(formData: FormData) {
+  await requireTier("ADMIN");
+  const id = formData.get("id") as string;
+
+  const existing = await prisma.usefulLink.findUnique({ where: { id } });
+  if (!existing) throw new Error("Yararlı link bulunamadı");
+
+  await prisma.usefulLink.update({ where: { id }, data: { published: !existing.published } });
+
+  revalidatePath("/admin/yararli-linkler");
+  revalidatePath("/yararli-linkler");
+}
+
 export async function deleteUsefulLink(formData: FormData) {
   await requireTier("ADMIN");
   const id = formData.get("id") as string;

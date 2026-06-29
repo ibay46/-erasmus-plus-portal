@@ -1,7 +1,7 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deleteLibraryEntry } from "@/lib/actions/library";
-import { Card } from "@/components/ui/Card";
+import { AdminTable } from "@/components/admin/AdminTable";
 import { Badge } from "@/components/ui/Badge";
 
 export const metadata = { title: "Proje Kütüphanesi | Yönetim Paneli" };
@@ -24,37 +24,41 @@ export default async function AdminProjeKutuphanesiPage() {
       {entries.length === 0 ? (
         <p className="text-muted-foreground">Henüz örnek proje eklenmemiş.</p>
       ) : (
-        <div className="space-y-3">
+        <AdminTable head={["Başlık", "Tür", ""]}>
           {entries.map((entry) => (
-            <Card key={entry.id} className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge>{entry.projectType}</Badge>
-                  {entry.isPremiumOnly && <Badge>Premium</Badge>}
-                </div>
+            <tr key={entry.id} className="transition-colors duration-200 hover:bg-muted/50">
+              <td className="px-4 py-3">
                 <p className="font-medium text-foreground">{entry.title}</p>
                 <p className="text-xs text-muted-foreground">/{entry.slug}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/admin/proje-kutuphanesi/${entry.id}/duzenle`}
-                  className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
-                >
-                  Düzenle
-                </Link>
-                <form action={deleteLibraryEntry}>
-                  <input type="hidden" name="id" value={entry.id} />
-                  <button
-                    type="submit"
-                    className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex items-center gap-1.5">
+                  <Badge variant="info">{entry.projectType}</Badge>
+                  {entry.isPremiumOnly && <Badge variant="warning">Premium</Badge>}
+                </div>
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex items-center justify-end gap-2">
+                  <Link
+                    href={`/admin/proje-kutuphanesi/${entry.id}/duzenle`}
+                    className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
                   >
-                    Sil
-                  </button>
-                </form>
-              </div>
-            </Card>
+                    Düzenle
+                  </Link>
+                  <form action={deleteLibraryEntry}>
+                    <input type="hidden" name="id" value={entry.id} />
+                    <button
+                      type="submit"
+                      className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+                    >
+                      Sil
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
           ))}
-        </div>
+        </AdminTable>
       )}
     </div>
   );

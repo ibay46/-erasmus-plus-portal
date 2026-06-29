@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { deleteUsefulLink } from "@/lib/actions/usefulLinks";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { deleteUsefulLink, toggleUsefulLinkPublished } from "@/lib/actions/usefulLinks";
+import { AdminTable } from "@/components/admin/AdminTable";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import { PublishToggleButton } from "@/components/admin/PublishToggleButton";
 
 export const metadata = { title: "Yararlı Linkler | Yönetim Paneli" };
 
@@ -24,37 +25,40 @@ export default async function AdminYararliLinklerPage() {
       {items.length === 0 ? (
         <p className="text-muted-foreground">Henüz yararlı link eklenmemiş.</p>
       ) : (
-        <div className="space-y-3">
+        <AdminTable head={["Başlık", "Sıra", "Durum", ""]}>
           {items.map((item) => (
-            <Card key={item.id} className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  {!item.published && <Badge>Taslak</Badge>}
-                  <span className="text-xs text-muted-foreground">Sıra: {item.order}</span>
-                </div>
+            <tr key={item.id} className="transition-colors duration-200 hover:bg-muted/50">
+              <td className="px-4 py-3">
                 <p className="font-medium text-foreground">{item.title}</p>
                 <p className="text-xs text-muted-foreground break-all">{item.url}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/admin/yararli-linkler/${item.id}/duzenle`}
-                  className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
-                >
-                  Düzenle
-                </Link>
-                <form action={deleteUsefulLink}>
-                  <input type="hidden" name="id" value={item.id} />
-                  <button
-                    type="submit"
-                    className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+              </td>
+              <td className="px-4 py-3 text-muted-foreground">{item.order}</td>
+              <td className="px-4 py-3">
+                <StatusBadge published={item.published} />
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex items-center justify-end gap-2">
+                  <PublishToggleButton action={toggleUsefulLinkPublished} id={item.id} published={item.published} />
+                  <Link
+                    href={`/admin/yararli-linkler/${item.id}/duzenle`}
+                    className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
                   >
-                    Sil
-                  </button>
-                </form>
-              </div>
-            </Card>
+                    Düzenle
+                  </Link>
+                  <form action={deleteUsefulLink}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <button
+                      type="submit"
+                      className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+                    >
+                      Sil
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
           ))}
-        </div>
+        </AdminTable>
       )}
     </div>
   );

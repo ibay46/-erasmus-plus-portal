@@ -1,7 +1,9 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { deleteProjectResult } from "@/lib/actions/projectResults";
-import { Card } from "@/components/ui/Card";
+import { deleteProjectResult, toggleProjectResultPublished } from "@/lib/actions/projectResults";
+import { AdminTable } from "@/components/admin/AdminTable";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import { PublishToggleButton } from "@/components/admin/PublishToggleButton";
 import { Badge } from "@/components/ui/Badge";
 
 export const metadata = { title: "Proje Sonuçları | Yönetim Paneli" };
@@ -26,38 +28,49 @@ export default async function AdminProjeSonuclariPage() {
       {results.length === 0 ? (
         <p className="text-muted-foreground">Henüz proje sonucu eklenmemiş.</p>
       ) : (
-        <div className="space-y-3">
+        <AdminTable head={["Başlık", "Yıl / Tür", "Durum", ""]}>
           {results.map((result) => (
-            <Card key={result.id} className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge>{result.year}</Badge>
-                  <Badge>{result.projectType}</Badge>
-                  {!result.published && <Badge>Taslak</Badge>}
-                </div>
+            <tr key={result.id} className="transition-colors duration-200 hover:bg-muted/50">
+              <td className="px-4 py-3">
                 <p className="font-medium text-foreground">{result.title}</p>
                 <p className="text-xs text-muted-foreground">/{result.slug}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/admin/proje-sonuclari/${result.id}/duzenle`}
-                  className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
-                >
-                  Düzenle
-                </Link>
-                <form action={deleteProjectResult}>
-                  <input type="hidden" name="id" value={result.id} />
-                  <button
-                    type="submit"
-                    className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex items-center gap-1.5">
+                  <Badge variant="info">{result.year}</Badge>
+                  <Badge>{result.projectType}</Badge>
+                </div>
+              </td>
+              <td className="px-4 py-3">
+                <StatusBadge published={result.published} />
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex items-center justify-end gap-2">
+                  <PublishToggleButton
+                    action={toggleProjectResultPublished}
+                    id={result.id}
+                    published={result.published}
+                  />
+                  <Link
+                    href={`/admin/proje-sonuclari/${result.id}/duzenle`}
+                    className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
                   >
-                    Sil
-                  </button>
-                </form>
-              </div>
-            </Card>
+                    Düzenle
+                  </Link>
+                  <form action={deleteProjectResult}>
+                    <input type="hidden" name="id" value={result.id} />
+                    <button
+                      type="submit"
+                      className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+                    >
+                      Sil
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
           ))}
-        </div>
+        </AdminTable>
       )}
     </div>
   );

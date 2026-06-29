@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { updateMembershipTier } from "@/lib/actions/admin";
-import { Card } from "@/components/ui/Card";
+import { AdminTable } from "@/components/admin/AdminTable";
 
 export const metadata = { title: "Kullanıcılar | Yönetim Paneli" };
 
@@ -26,23 +26,12 @@ export default async function AdminKullanicilarPage() {
         Standart/Premium üyeliğe son kullanma tarihi atayabilirsiniz. Tarih geçtiğinde kullanıcı
         otomatik olarak Ücretsiz üyeliğe döner.
       </p>
-      <Card className="overflow-x-auto p-0">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-border text-sm text-muted-foreground">
-              <th className="py-3 pl-5 pr-4">Ad</th>
-              <th className="py-3 pr-4">E-posta</th>
-              <th className="py-3 pr-4">Üyelik Seviyesi</th>
-              <th className="py-3 pr-4">Son Üyelik Tarihi</th>
-              <th className="py-3 pr-5"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id} className="border-b border-border last:border-none">
-                <td className="py-3 pl-5 pr-4 text-foreground">{user.name ?? "—"}</td>
-                <td className="py-3 pr-4 text-muted-foreground">{user.email}</td>
-                <td className="py-3 pr-4" colSpan={3}>
+      <AdminTable head={["Ad", "E-posta", "Üyelik Seviyesi", "Son Üyelik Tarihi", ""]}>
+        {users.map((user) => (
+          <tr key={user.id} className="transition-colors duration-200 hover:bg-muted/50">
+            <td className="px-4 py-3 text-foreground">{user.name ?? "—"}</td>
+            <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
+            <td className="px-4 py-3" colSpan={3}>
                   <form
                     action={updateMembershipTier}
                     className="flex flex-wrap items-center gap-2"
@@ -76,10 +65,8 @@ export default async function AdminKullanicilarPage() {
                   </form>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+        ))}
+      </AdminTable>
     </div>
   );
 }

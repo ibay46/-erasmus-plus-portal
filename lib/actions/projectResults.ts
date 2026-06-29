@@ -79,6 +79,19 @@ export async function updateProjectResult(formData: FormData) {
   redirect("/admin/proje-sonuclari");
 }
 
+export async function toggleProjectResultPublished(formData: FormData) {
+  await requireTier("ADMIN");
+  const id = formData.get("id") as string;
+
+  const existing = await prisma.projectResult.findUnique({ where: { id } });
+  if (!existing) throw new Error("Proje sonucu bulunamadı");
+
+  await prisma.projectResult.update({ where: { id }, data: { published: !existing.published } });
+
+  revalidatePath("/admin/proje-sonuclari");
+  revalidatePath("/proje-sonuclari");
+}
+
 export async function deleteProjectResult(formData: FormData) {
   await requireTier("ADMIN");
   const id = formData.get("id") as string;
