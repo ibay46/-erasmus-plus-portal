@@ -11,6 +11,7 @@ const STATIC_PATHS = [
   "/haberler",
   "/salto-youth",
   "/salto-egitim",
+  "/esc",
   "/proje-turleri",
   "/proje-kutuphanesi",
   "/proje-sonuclari",

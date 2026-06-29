@@ -4,11 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { HABERLER_CATEGORIES } from "@/lib/content/postCategories";
 
 export default async function AdminDashboardPage() {
-  const [postCount, saltoYouthCount, saltoEgitimCount, grantCount, libraryCount, resultCount, leadCount, userCount, linkCount] =
+  const [postCount, saltoYouthCount, saltoEgitimCount, escCount, grantCount, libraryCount, resultCount, leadCount, userCount, linkCount] =
     await Promise.all([
       prisma.post.count({ where: { category: { in: HABERLER_CATEGORIES as never[] } } }),
       prisma.post.count({ where: { category: "SALTO_YOUTH" } }),
       prisma.post.count({ where: { category: "SALTO_EDUCATION_TRAINING" } }),
+      prisma.post.count({ where: { category: "ESC" } }),
       prisma.grantProject.count(),
       prisma.projectLibraryEntry.count(),
       prisma.projectResult.count(),
@@ -21,6 +22,7 @@ export default async function AdminDashboardPage() {
     { href: "/admin/haberler", title: "Haberler", description: "Haber ve duyuru ekleyin, düzenleyin, silin.", count: postCount },
     { href: "/admin/salto-youth", title: "SALTO Youth", description: "SALTO Youth yazılarını ekleyin, düzenleyin, silin.", count: saltoYouthCount },
     { href: "/admin/salto-egitim", title: "SALTO Education & Training", description: "SALTO Education & Training yazılarını ekleyin, düzenleyin, silin.", count: saltoEgitimCount },
+    { href: "/admin/esc", title: "ESC", description: "ESC yazılarını ekleyin, düzenleyin, silin.", count: escCount },
     { href: "/admin/ab-hibe-projeleri", title: "AB Hibe Projeleri", description: "AB hibe destekli proje haberlerini ekleyin, düzenleyin, silin.", count: grantCount },
     { href: "/admin/proje-sonuclari", title: "Proje Sonuçları", description: "Yıl bazında desteklenen proje sonuçlarını ekleyin, düzenleyin, silin.", count: resultCount },
     { href: "/admin/proje-kutuphanesi", title: "Proje Kütüphanesi", description: "Örnek projeleri ekleyin, düzenleyin, silin.", count: libraryCount },

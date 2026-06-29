@@ -41,6 +41,7 @@ function revalidateAfterPostChange(adminBase: string) {
   revalidatePath("/haberler");
   revalidatePath("/salto-youth");
   revalidatePath("/salto-egitim");
+  revalidatePath("/esc");
   revalidatePath("/proje-sonuclari");
 }
 

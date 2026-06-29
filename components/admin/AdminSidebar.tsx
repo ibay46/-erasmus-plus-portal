@@ -20,6 +20,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/haberler", label: "Haberler" },
       { href: "/admin/salto-youth", label: "SALTO Youth" },
       { href: "/admin/salto-egitim", label: "SALTO Education & Training" },
+      { href: "/admin/esc", label: "ESC" },
       { href: "/admin/ab-hibe-projeleri", label: "AB Hibe Projeleri" },
       { href: "/admin/proje-kutuphanesi", label: "Proje Kütüphanesi" },
       { href: "/admin/proje-sonuclari", label: "Proje Sonuçları" },

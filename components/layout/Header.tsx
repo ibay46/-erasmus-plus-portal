@@ -13,12 +13,6 @@ const NAV_GROUPS = [
       {
         items: [
           { href: "/haberler", label: "Haberler", desc: "Yeni çağrılar ve duyurular" },
-          { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
-          {
-            href: "/salto-egitim",
-            label: "SALTO Education & Training",
-            desc: "Okul, mesleki ve yetişkin eğitimi duyuruları",
-          },
           { href: "/ab-hibe-projeleri", label: "AB Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
         ],
       },
@@ -32,6 +26,13 @@ const NAV_GROUPS = [
           { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },
           { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
           { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
+          { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
+          {
+            href: "/salto-egitim",
+            label: "SALTO Education & Training",
+            desc: "Okul, mesleki ve yetişkin eğitimi duyuruları",
+          },
+          { href: "/esc", label: "ESC", desc: "Avrupa Dayanışma Programı gönüllülük duyuruları" },
         ],
       },
     ],
