@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { Card } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
@@ -49,7 +50,13 @@ function RecentCardRow({
             >
               <div className="relative h-40">
                 {item.coverImage ? (
-                  <img src={item.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                  <Image
+                    src={item.coverImage}
+                    alt={item.title}
+                    fill
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
                 ) : (
                   <div className="absolute inset-0 bg-muted">
                     <div

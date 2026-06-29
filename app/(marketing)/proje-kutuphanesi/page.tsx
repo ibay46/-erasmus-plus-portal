@@ -1,4 +1,5 @@
 ﻿import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -83,7 +84,15 @@ export default async function ProjeKutuphanesiPage({
           >
             <Card className="h-full overflow-hidden hover:border-accent/50 bg-muted p-0">
               {entries[0].coverImage && (
-                <img src={entries[0].coverImage} alt="" className="h-40 w-full object-cover" />
+                <div className="relative h-40 w-full">
+                  <Image
+                    src={entries[0].coverImage}
+                    alt={entries[0].title}
+                    fill
+                    sizes="(min-width: 1024px) 67vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
               )}
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3">
@@ -101,7 +110,15 @@ export default async function ProjeKutuphanesiPage({
             <Link key={entry.slug} href={`/proje-kutuphanesi/${entry.slug}`} className="cursor-pointer">
               <Card className="h-full overflow-hidden hover:border-accent/50 p-0">
                 {entry.coverImage && (
-                  <img src={entry.coverImage} alt="" className="h-28 w-full object-cover" />
+                  <div className="relative h-28 w-full">
+                    <Image
+                      src={entry.coverImage}
+                      alt={entry.title}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
                 )}
                 <div className="p-5">
                   <div className="flex items-center gap-2 mb-2">

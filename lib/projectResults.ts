@@ -43,6 +43,15 @@ export function getRecentProjectResults(take = 3) {
   });
 }
 
+export function getRelatedProjectResults(kaAction: KaAction, excludeId: string, take = 5) {
+  return prisma.projectResult.findMany({
+    where: { published: true, kaAction, id: { not: excludeId } },
+    orderBy: [{ year: "desc" }, { createdAt: "desc" }],
+    take,
+    select: { id: true, slug: true, title: true, country: true, year: true },
+  });
+}
+
 export async function getProjectResultsGroupedByYear(filters: ProjectResultFilters = {}) {
   const results: ProjectResult[] = await getPublishedProjectResults(filters);
 

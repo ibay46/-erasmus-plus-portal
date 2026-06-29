@@ -39,6 +39,13 @@ export default async function ProjeKutuphanesiDetayPage({
   const entry = await prisma.projectLibraryEntry.findUnique({ where: { slug } });
   if (!entry) notFound();
 
+  const relatedEntries = await prisma.projectLibraryEntry.findMany({
+    where: { projectType: entry.projectType, id: { not: entry.id } },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+    select: { id: true, slug: true, title: true },
+  });
+
   const user = await getCurrentUser();
   const canViewFull = !entry.isPremiumOnly || hasTier(user, "PREMIUM");
 
@@ -64,6 +71,25 @@ export default async function ProjeKutuphanesiDetayPage({
               <div>
                 <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Erişim</p>
                 <p className="mt-1 text-foreground">Premium</p>
+              </div>
+            )}
+            {relatedEntries.length > 0 && (
+              <div>
+                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                  Aynı Türden Diğer Projeler
+                </p>
+                <ul className="mt-2 space-y-2 border-l border-border pl-3">
+                  {relatedEntries.map((related) => (
+                    <li key={related.id}>
+                      <Link
+                        href={`/proje-kutuphanesi/${related.slug}`}
+                        className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
+                      >
+                        {related.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
@@ -95,6 +121,24 @@ export default async function ProjeKutuphanesiDetayPage({
               >
                 Üyelik Seviyelerini Gör
               </Link>
+            </div>
+          )}
+
+          {relatedEntries.length > 0 && (
+            <div className="mt-10 border-t border-border pt-6 lg:hidden">
+              <p className="mb-3 text-sm font-medium text-foreground">Aynı Türden Diğer Projeler</p>
+              <ul className="space-y-2">
+                {relatedEntries.map((related) => (
+                  <li key={related.id}>
+                    <Link
+                      href={`/proje-kutuphanesi/${related.slug}`}
+                      className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
+                    >
+                      {related.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>

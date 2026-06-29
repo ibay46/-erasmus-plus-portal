@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPostBySlug, getRecentPostsInCategory } from "@/lib/posts";
 import { POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
@@ -63,7 +64,14 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
       <div className="overflow-hidden rounded-xl border border-border">
         {post.coverImage && (
           <div className="relative h-56 md:h-72">
-            <img src={post.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              fill
+              sizes="(min-width: 1024px) 48rem, 100vw"
+              className="object-cover"
+              priority
+            />
           </div>
         )}
         <div className="relative overflow-hidden border-b border-border bg-background p-6 md:p-8">

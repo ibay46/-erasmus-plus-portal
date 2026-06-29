@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getProjectResultsGroupedByYear, getAvailableProjectResultFilterValues } from "@/lib/projectResults";
 import { KA_ACTIONS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 import type { KaAction, EducationSector } from "@/app/generated/prisma/client";
@@ -139,10 +140,12 @@ export default async function ProjeSonuclariPage({
                           <div className="h-full overflow-hidden rounded-lg border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
                             {item.coverImage && (
                               <div className="relative h-32">
-                                <img
+                                <Image
                                   src={item.coverImage}
-                                  alt=""
-                                  className="absolute inset-0 h-full w-full object-cover"
+                                  alt={item.title}
+                                  fill
+                                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                                  className="object-cover"
                                 />
                               </div>
                             )}

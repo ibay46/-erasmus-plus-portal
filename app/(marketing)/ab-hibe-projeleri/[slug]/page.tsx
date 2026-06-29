@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getGrantProjectBySlug, getRecentGrantProjects } from "@/lib/grantProjects";
 import { sanitizeHtml } from "@/lib/sanitize";
@@ -42,7 +43,14 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
         <div className="overflow-hidden rounded-xl border border-border">
           {item.coverImage && (
             <div className="relative h-56 md:h-72">
-              <img src={item.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <Image
+                src={item.coverImage}
+                alt={item.title}
+                fill
+                sizes="(min-width: 1024px) 48rem, 100vw"
+                className="object-cover"
+                priority
+              />
             </div>
           )}
           <div className="relative overflow-hidden border-b border-border bg-background p-6 md:p-8">

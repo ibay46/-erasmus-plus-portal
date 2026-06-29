@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProjectResultBySlug } from "@/lib/projectResults";
+import { getProjectResultBySlug, getRelatedProjectResults } from "@/lib/projectResults";
+import { KA_ACTION_LABELS } from "@/lib/content/kaActions";
 import { Badge } from "@/components/ui/Badge";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocumentPreview";
@@ -26,6 +27,8 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
   const { slug } = await params;
   const result = await getProjectResultBySlug(slug);
   if (!result || !result.published) notFound();
+
+  const relatedResults = await getRelatedProjectResults(result.kaAction, result.id);
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -70,6 +73,25 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
                 <p className="mt-1 text-foreground">{result.country}</p>
               </div>
             )}
+            {relatedResults.length > 0 && (
+              <div>
+                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                  {KA_ACTION_LABELS[result.kaAction] ?? result.kaAction} — Diğer Sonuçlar
+                </p>
+                <ul className="mt-2 space-y-2 border-l border-border pl-3">
+                  {relatedResults.map((related) => (
+                    <li key={related.id}>
+                      <Link
+                        href={`/proje-sonuclari/${related.slug}`}
+                        className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
+                      >
+                        {related.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </aside>
         <article className="min-w-0">
@@ -81,6 +103,26 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
             <p className="text-sm text-muted-foreground mb-6 lg:hidden">{result.country}</p>
           )}
           <ProseWithDocumentPreview className="prose-erasmus text-foreground" html={sanitizeHtml(result.body)} />
+
+          {relatedResults.length > 0 && (
+            <div className="mt-10 border-t border-border pt-6 lg:hidden">
+              <p className="mb-3 text-sm font-medium text-foreground">
+                {KA_ACTION_LABELS[result.kaAction] ?? result.kaAction} — Diğer Sonuçlar
+              </p>
+              <ul className="space-y-2">
+                {relatedResults.map((related) => (
+                  <li key={related.id}>
+                    <Link
+                      href={`/proje-sonuclari/${related.slug}`}
+                      className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
+                    >
+                      {related.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </article>
       </div>
     </div>
