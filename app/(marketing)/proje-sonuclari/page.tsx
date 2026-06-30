@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getProjectResultsGroupedByYear, getAvailableProjectResultFilterValues } from "@/lib/projectResults";
-import { KA_ACTIONS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
-import type { KaAction, EducationSector } from "@/app/generated/prisma/client";
+import { KA_ACTIONS, KA_ACTION_LABELS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
+import type { EducationSector } from "@/app/generated/prisma/client";
 
 export const metadata = {
   title: "Proje Sonuçları | Erasmus+ Portal",
@@ -47,7 +47,7 @@ export default async function ProjeSonuclariPage({
   const { ka, sektor, yil, ulke } = await searchParams;
   const { years, countries: availableCountries } = await getAvailableProjectResultFilterValues();
 
-  const kaAction = KA_ACTIONS.includes(ka ?? "") ? (ka as KaAction) : undefined;
+  const kaAction = KA_ACTIONS.includes(ka ?? "") ? ka : undefined;
   const sector = EDUCATION_SECTORS.includes(sektor ?? "") ? (sektor as EducationSector) : undefined;
   const year = yil && years.includes(Number(yil)) ? Number(yil) : undefined;
   const country = ulke && availableCountries.includes(ulke) ? ulke : undefined;
@@ -104,7 +104,7 @@ export default async function ProjeSonuclariPage({
           </FilterPill>
           {KA_ACTIONS.map((action) => (
             <FilterPill key={action} href={buildHref({ ka: action })} active={kaAction === action}>
-              {action}
+              {KA_ACTION_LABELS[action] ?? action}
             </FilterPill>
           ))}
         </div>

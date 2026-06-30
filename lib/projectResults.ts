@@ -1,18 +1,31 @@
 import { prisma } from "@/lib/prisma";
-import type { ProjectResult, KaAction, EducationSector } from "@/app/generated/prisma/client";
+import type { ProjectResult, EducationSector } from "@/app/generated/prisma/client";
 
 export interface ProjectResultFilters {
-  kaAction?: KaAction;
+  kaAction?: string;
   sector?: EducationSector;
   year?: number;
   country?: string;
+}
+
+// Birden fazla KA eylemi virgülle ayrılı saklandığından
+// her pozisyonda eşleşme için OR koşulu kullanılır.
+function kaActionWhere(action: string) {
+  return {
+    OR: [
+      { kaActions: action },
+      { kaActions: { startsWith: `${action},` } },
+      { kaActions: { endsWith: `,${action}` } },
+      { kaActions: { contains: `,${action},` } },
+    ],
+  };
 }
 
 export function getPublishedProjectResults(filters: ProjectResultFilters = {}) {
   return prisma.projectResult.findMany({
     where: {
       published: true,
-      ...(filters.kaAction ? { kaAction: filters.kaAction } : {}),
+      ...(filters.kaAction ? kaActionWhere(filters.kaAction) : {}),
       ...(filters.sector ? { sector: filters.sector } : {}),
       ...(filters.year ? { year: filters.year } : {}),
       ...(filters.country ? { country: filters.country } : {}),
@@ -43,9 +56,9 @@ export function getRecentProjectResults(take = 3) {
   });
 }
 
-export function getRelatedProjectResults(kaAction: KaAction, excludeId: string, take = 5) {
+export function getRelatedProjectResults(kaAction: string, excludeId: string, take = 5) {
   return prisma.projectResult.findMany({
-    where: { published: true, kaAction, id: { not: excludeId } },
+    where: { published: true, id: { not: excludeId }, ...kaActionWhere(kaAction) },
     orderBy: [{ year: "desc" }, { createdAt: "desc" }],
     take,
     select: { id: true, slug: true, title: true, country: true, year: true },

@@ -114,13 +114,6 @@ model GrantProject {
   updatedAt   DateTime  @updatedAt
 }
 
-enum KaAction {
-  KA2
-  KA210
-  KA220
-  KA240
-}
-
 enum EducationSector {
   SCH
   VET
@@ -136,7 +129,7 @@ model ProjectResult {
   year        Int
   projectType String
   country     String
-  kaAction    KaAction
+  kaActions   String           @default("")
   sector      EducationSector
   summary     String
   body        String

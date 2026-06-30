@@ -28,7 +28,10 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
   const result = await getProjectResultBySlug(slug);
   if (!result || !result.published) notFound();
 
-  const relatedResults = await getRelatedProjectResults(result.kaAction, result.id);
+  const kaActionList = result.kaActions.split(",").filter(Boolean);
+  const kaActionLabel = kaActionList.map((a) => KA_ACTION_LABELS[a] ?? a).join(" · ");
+  const firstKaAction = kaActionList[0] ?? "";
+  const relatedResults = firstKaAction ? await getRelatedProjectResults(firstKaAction, result.id) : [];
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -73,10 +76,16 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
                 <p className="mt-1 text-foreground">{result.country}</p>
               </div>
             )}
+            {kaActionList.length > 0 && (
+              <div>
+                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">KA Eylemi</p>
+                <p className="mt-1 text-foreground">{kaActionLabel}</p>
+              </div>
+            )}
             {relatedResults.length > 0 && (
               <div>
                 <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                  {KA_ACTION_LABELS[result.kaAction] ?? result.kaAction} — Diğer Sonuçlar
+                  İlgili Sonuçlar
                 </p>
                 <ul className="mt-2 space-y-2 border-l border-border pl-3">
                   {relatedResults.map((related) => (
@@ -97,6 +106,9 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
         <article className="min-w-0">
           <div className="flex items-center gap-2 mb-3 lg:hidden">
             <Badge>{result.year}</Badge>
+            {kaActionList.map((a) => (
+              <Badge key={a} variant="info">{KA_ACTION_LABELS[a] ?? a}</Badge>
+            ))}
           </div>
           <h1 className="text-3xl font-semibold mb-2 text-foreground">{result.title}</h1>
           {result.country && (
@@ -106,9 +118,7 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
 
           {relatedResults.length > 0 && (
             <div className="mt-10 border-t border-border pt-6 lg:hidden">
-              <p className="mb-3 text-sm font-medium text-foreground">
-                {KA_ACTION_LABELS[result.kaAction] ?? result.kaAction} — Diğer Sonuçlar
-              </p>
+              <p className="mb-3 text-sm font-medium text-foreground">İlgili Sonuçlar</p>
               <ul className="space-y-2">
                 {relatedResults.map((related) => (
                   <li key={related.id}>

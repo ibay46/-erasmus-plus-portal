@@ -1,4 +1,4 @@
-﻿import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
+import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
 import { CoverImageInput } from "@/components/admin/CoverImageInput";
 import { ERASMUS_COUNTRIES } from "@/lib/content/countries";
 import { KA_ACTION_LABELS, KA_ACTIONS, EDUCATION_SECTOR_LABELS, EDUCATION_SECTORS } from "@/lib/content/kaActions";
@@ -13,7 +13,7 @@ export function ProjectResultFormFields({
     title: string;
     year: number;
     country: string;
-    kaAction: string | null;
+    kaActions: string;
     sector: string | null;
     summary: string;
     body: string;
@@ -21,6 +21,8 @@ export function ProjectResultFormFields({
     coverImage?: string | null;
   };
 }) {
+  const selectedActions = defaultValues?.kaActions?.split(",").filter(Boolean) ?? [];
+
   return (
     <>
       <div>
@@ -78,25 +80,21 @@ export function ProjectResultFormFields({
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="kaAction" className="block text-sm font-medium mb-1 text-foreground">
-            KA Eylemi
-          </label>
-          <select
-            id="kaAction"
-            name="kaAction"
-            required
-            defaultValue={defaultValues?.kaAction ?? ""}
-            className={inputClass}
-          >
-            <option value="" disabled>
-              Seçin
-            </option>
+          <p className="block text-sm font-medium mb-2 text-foreground">KA Eylemi (birden fazla seçilebilir)</p>
+          <div className="space-y-2">
             {KA_ACTIONS.map((action) => (
-              <option key={action} value={action}>
-                {KA_ACTION_LABELS[action]}
-              </option>
+              <label key={action} className="flex items-center gap-2.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  name="kaActions"
+                  value={action}
+                  defaultChecked={selectedActions.includes(action)}
+                  className="h-4 w-4 rounded border-border accent-accent"
+                />
+                <span className="text-sm text-foreground">{KA_ACTION_LABELS[action]}</span>
+              </label>
             ))}
-          </select>
+          </div>
         </div>
         <div>
           <label htmlFor="sector" className="block text-sm font-medium mb-1 text-foreground">
