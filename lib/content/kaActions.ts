@@ -1,4 +1,5 @@
 export const KA_ACTION_LABELS: Record<string, string> = {
+  KA2: "KA2 — İşbirliği Alanında Ortaklıklar",
   KA210: "KA210 — Küçük Ölçekli Ortaklıklar",
   KA220: "KA220 — İş Birliği Ortaklıkları",
   KA240: "KA240 — Basitleştirilmiş Ortaklıklar",

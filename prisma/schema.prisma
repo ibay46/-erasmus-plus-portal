@@ -115,6 +115,7 @@ model GrantProject {
 }
 
 enum KaAction {
+  KA2
   KA210
   KA220
   KA240

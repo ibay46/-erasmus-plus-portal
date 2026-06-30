@@ -1,0 +1,1 @@
+ALTER TYPE "KaAction" ADD VALUE 'KA2';
