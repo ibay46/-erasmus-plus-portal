@@ -12,7 +12,7 @@ const projectResultSchema = z.object({
   year: z.coerce.number().int().min(2007).max(2100),
   country: z.string().min(2),
   kaActions: z.string().min(1),
-  sector: z.enum(["SCH", "VET", "ADU", "YOU", "HED"]),
+  sectors: z.string().min(1),
   summary: z.string().min(10),
   body: z.string().min(10),
   published: z.boolean(),
@@ -21,12 +21,13 @@ const projectResultSchema = z.object({
 
 function parseProjectResultForm(formData: FormData) {
   const kaActionsArray = (formData.getAll("kaActions") as string[]).filter(Boolean);
+  const sectorsArray = (formData.getAll("sectors") as string[]).filter(Boolean);
   return projectResultSchema.parse({
     title: formData.get("title"),
     year: formData.get("year"),
     country: formData.get("country"),
     kaActions: kaActionsArray.join(","),
-    sector: formData.get("sector"),
+    sectors: sectorsArray.join(","),
     summary: formData.get("summary"),
     body: formData.get("body"),
     published: formData.get("published") === "on",
@@ -34,16 +35,17 @@ function parseProjectResultForm(formData: FormData) {
   });
 }
 
+const ERR_MSG = encodeURIComponent(
+  "Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2 karakter, en az bir KA Eylemi ve Sektör seçilmeli, özet ve içerik en az 10 karakter olmalı)."
+);
+
 export async function createProjectResult(formData: FormData) {
   await requireTier("ADMIN");
   let data: ReturnType<typeof parseProjectResultForm>;
   try {
     data = parseProjectResultForm(formData);
   } catch {
-    redirect(
-      "/admin/proje-sonuclari/yeni?hata=" +
-        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2 karakter, en az bir KA Eylemi seçilmeli, Sektör seçilmeli, özet ve içerik en az 10 karakter olmalı).")
-    );
+    redirect(`/admin/proje-sonuclari/yeni?hata=${ERR_MSG}`);
   }
 
   const baseSlug = slugify(data.title);
@@ -67,10 +69,7 @@ export async function updateProjectResult(formData: FormData) {
   try {
     data = parseProjectResultForm(formData);
   } catch {
-    redirect(
-      `/admin/proje-sonuclari/${id}/duzenle?hata=` +
-        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, ülke en az 2 karakter, en az bir KA Eylemi seçilmeli, Sektör seçilmeli, özet ve içerik en az 10 karakter olmalı).")
-    );
+    redirect(`/admin/proje-sonuclari/${id}/duzenle?hata=${ERR_MSG}`);
   }
 
   await prisma.projectResult.update({ where: { id }, data });

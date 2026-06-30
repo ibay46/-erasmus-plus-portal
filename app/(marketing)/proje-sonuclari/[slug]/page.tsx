@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProjectResultBySlug, getRelatedProjectResults } from "@/lib/projectResults";
-import { KA_ACTION_LABELS } from "@/lib/content/kaActions";
+import { KA_ACTION_LABELS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 import { Badge } from "@/components/ui/Badge";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocumentPreview";
@@ -29,7 +29,9 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
   if (!result || !result.published) notFound();
 
   const kaActionList = result.kaActions.split(",").filter(Boolean);
+  const sectorList = result.sectors.split(",").filter(Boolean);
   const kaActionLabel = kaActionList.map((a) => KA_ACTION_LABELS[a] ?? a).join(" · ");
+  const sectorLabel = sectorList.map((s) => EDUCATION_SECTOR_LABELS[s] ?? s).join(" · ");
   const firstKaAction = kaActionList[0] ?? "";
   const relatedResults = firstKaAction ? await getRelatedProjectResults(firstKaAction, result.id) : [];
 
@@ -82,6 +84,12 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
                 <p className="mt-1 text-foreground">{kaActionLabel}</p>
               </div>
             )}
+            {sectorList.length > 0 && (
+              <div>
+                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">Sektör</p>
+                <p className="mt-1 text-foreground">{sectorLabel}</p>
+              </div>
+            )}
             {relatedResults.length > 0 && (
               <div>
                 <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
@@ -104,10 +112,13 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
           </div>
         </aside>
         <article className="min-w-0">
-          <div className="flex items-center gap-2 mb-3 lg:hidden">
+          <div className="flex flex-wrap items-center gap-2 mb-3 lg:hidden">
             <Badge>{result.year}</Badge>
             {kaActionList.map((a) => (
               <Badge key={a} variant="info">{KA_ACTION_LABELS[a] ?? a}</Badge>
+            ))}
+            {sectorList.map((s) => (
+              <Badge key={s}>{EDUCATION_SECTOR_LABELS[s] ?? s}</Badge>
             ))}
           </div>
           <h1 className="text-3xl font-semibold mb-2 text-foreground">{result.title}</h1>

@@ -114,14 +114,6 @@ model GrantProject {
   updatedAt   DateTime  @updatedAt
 }
 
-enum EducationSector {
-  SCH
-  VET
-  ADU
-  YOU
-  HED
-}
-
 model ProjectResult {
   id          String           @id @default(cuid())
   slug        String           @unique
@@ -130,7 +122,7 @@ model ProjectResult {
   projectType String
   country     String
   kaActions   String           @default("")
-  sector      EducationSector
+  sectors     String           @default("")
   summary     String
   body        String
   coverImage  String?

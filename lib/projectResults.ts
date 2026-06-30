@@ -1,22 +1,21 @@
 import { prisma } from "@/lib/prisma";
-import type { ProjectResult, EducationSector } from "@/app/generated/prisma/client";
+import type { ProjectResult } from "@/app/generated/prisma/client";
 
 export interface ProjectResultFilters {
   kaAction?: string;
-  sector?: EducationSector;
+  sector?: string;
   year?: number;
   country?: string;
 }
 
-// Birden fazla KA eylemi virgülle ayrılı saklandığından
-// her pozisyonda eşleşme için OR koşulu kullanılır.
-function kaActionWhere(action: string) {
+// Virgülle ayrılı çoklu değerler için OR filtresi (başta/ortada/sonda eşleşme)
+function multiValueWhere(field: string, value: string) {
   return {
     OR: [
-      { kaActions: action },
-      { kaActions: { startsWith: `${action},` } },
-      { kaActions: { endsWith: `,${action}` } },
-      { kaActions: { contains: `,${action},` } },
+      { [field]: value },
+      { [field]: { startsWith: `${value},` } },
+      { [field]: { endsWith: `,${value}` } },
+      { [field]: { contains: `,${value},` } },
     ],
   };
 }
@@ -25,8 +24,8 @@ export function getPublishedProjectResults(filters: ProjectResultFilters = {}) {
   return prisma.projectResult.findMany({
     where: {
       published: true,
-      ...(filters.kaAction ? kaActionWhere(filters.kaAction) : {}),
-      ...(filters.sector ? { sector: filters.sector } : {}),
+      ...(filters.kaAction ? multiValueWhere("kaActions", filters.kaAction) : {}),
+      ...(filters.sector ? multiValueWhere("sectors", filters.sector) : {}),
       ...(filters.year ? { year: filters.year } : {}),
       ...(filters.country ? { country: filters.country } : {}),
     },
@@ -58,7 +57,7 @@ export function getRecentProjectResults(take = 3) {
 
 export function getRelatedProjectResults(kaAction: string, excludeId: string, take = 5) {
   return prisma.projectResult.findMany({
-    where: { published: true, id: { not: excludeId }, ...kaActionWhere(kaAction) },
+    where: { published: true, id: { not: excludeId }, ...multiValueWhere("kaActions", kaAction) },
     orderBy: [{ year: "desc" }, { createdAt: "desc" }],
     take,
     select: { id: true, slug: true, title: true, country: true, year: true },

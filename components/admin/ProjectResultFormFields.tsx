@@ -6,6 +6,38 @@ import { KA_ACTION_LABELS, KA_ACTIONS, EDUCATION_SECTOR_LABELS, EDUCATION_SECTOR
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
 
+function CheckboxGroup({
+  label,
+  name,
+  options,
+  selected,
+}: {
+  label: string;
+  name: string;
+  options: { value: string; label: string }[];
+  selected: string[];
+}) {
+  return (
+    <div>
+      <p className="block text-sm font-medium mb-2 text-foreground">{label}</p>
+      <div className="space-y-2">
+        {options.map((opt) => (
+          <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              name={name}
+              value={opt.value}
+              defaultChecked={selected.includes(opt.value)}
+              className="h-4 w-4 rounded border-border accent-accent"
+            />
+            <span className="text-sm text-foreground">{opt.label}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function ProjectResultFormFields({
   defaultValues,
 }: {
@@ -14,7 +46,7 @@ export function ProjectResultFormFields({
     year: number;
     country: string;
     kaActions: string;
-    sector: string | null;
+    sectors: string;
     summary: string;
     body: string;
     published: boolean;
@@ -22,6 +54,7 @@ export function ProjectResultFormFields({
   };
 }) {
   const selectedActions = defaultValues?.kaActions?.split(",").filter(Boolean) ?? [];
+  const selectedSectors = defaultValues?.sectors?.split(",").filter(Boolean) ?? [];
 
   return (
     <>
@@ -79,44 +112,18 @@ export function ProjectResultFormFields({
         </select>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="block text-sm font-medium mb-2 text-foreground">KA Eylemi (birden fazla seçilebilir)</p>
-          <div className="space-y-2">
-            {KA_ACTIONS.map((action) => (
-              <label key={action} className="flex items-center gap-2.5 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  name="kaActions"
-                  value={action}
-                  defaultChecked={selectedActions.includes(action)}
-                  className="h-4 w-4 rounded border-border accent-accent"
-                />
-                <span className="text-sm text-foreground">{KA_ACTION_LABELS[action]}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-        <div>
-          <label htmlFor="sector" className="block text-sm font-medium mb-1 text-foreground">
-            Sektör
-          </label>
-          <select
-            id="sector"
-            name="sector"
-            required
-            defaultValue={defaultValues?.sector ?? ""}
-            className={inputClass}
-          >
-            <option value="" disabled>
-              Seçin
-            </option>
-            {EDUCATION_SECTORS.map((sector) => (
-              <option key={sector} value={sector}>
-                {sector} — {EDUCATION_SECTOR_LABELS[sector]}
-              </option>
-            ))}
-          </select>
-        </div>
+        <CheckboxGroup
+          label="KA Eylemi (birden fazla seçilebilir)"
+          name="kaActions"
+          options={KA_ACTIONS.map((a) => ({ value: a, label: KA_ACTION_LABELS[a] }))}
+          selected={selectedActions}
+        />
+        <CheckboxGroup
+          label="Sektör (birden fazla seçilebilir)"
+          name="sectors"
+          options={EDUCATION_SECTORS.map((s) => ({ value: s, label: `${s} — ${EDUCATION_SECTOR_LABELS[s]}` }))}
+          selected={selectedSectors}
+        />
       </div>
       <div>
         <label htmlFor="summary" className="block text-sm font-medium mb-1 text-foreground">

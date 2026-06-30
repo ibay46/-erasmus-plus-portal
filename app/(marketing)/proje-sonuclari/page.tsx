@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { getProjectResultsGroupedByYear, getAvailableProjectResultFilterValues } from "@/lib/projectResults";
 import { KA_ACTIONS, KA_ACTION_LABELS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
-import type { EducationSector } from "@/app/generated/prisma/client";
 
 export const metadata = {
   title: "Proje Sonuçları | Erasmus+ Portal",
@@ -32,6 +31,20 @@ function FilterPill({
   );
 }
 
+function TagChip({ children, variant = "default" }: { children: React.ReactNode; variant?: "ka" | "sector" | "default" }) {
+  const cls =
+    variant === "ka"
+      ? "bg-accent/15 text-accent"
+      : variant === "sector"
+      ? "bg-muted text-muted-foreground"
+      : "bg-muted text-muted-foreground";
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${cls}`}>
+      {children}
+    </span>
+  );
+}
+
 interface QueryState {
   ka?: string;
   sektor?: string;
@@ -48,7 +61,7 @@ export default async function ProjeSonuclariPage({
   const { years, countries: availableCountries } = await getAvailableProjectResultFilterValues();
 
   const kaAction = KA_ACTIONS.includes(ka ?? "") ? ka : undefined;
-  const sector = EDUCATION_SECTORS.includes(sektor ?? "") ? (sektor as EducationSector) : undefined;
+  const sector = EDUCATION_SECTORS.includes(sektor ?? "") ? sektor : undefined;
   const year = yil && years.includes(Number(yil)) ? Number(yil) : undefined;
   const country = ulke && availableCountries.includes(ulke) ? ulke : undefined;
 
@@ -77,31 +90,21 @@ export default async function ProjeSonuclariPage({
       <div className="mb-10 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground mr-1">Yıl:</span>
-          <FilterPill href={buildHref({ yil: undefined })} active={!year}>
-            Tümü
-          </FilterPill>
+          <FilterPill href={buildHref({ yil: undefined })} active={!year}>Tümü</FilterPill>
           {years.map((y) => (
-            <FilterPill key={y} href={buildHref({ yil: String(y) })} active={year === y}>
-              {y}
-            </FilterPill>
+            <FilterPill key={y} href={buildHref({ yil: String(y) })} active={year === y}>{y}</FilterPill>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground mr-1">Ülke:</span>
-          <FilterPill href={buildHref({ ulke: undefined })} active={!country}>
-            Tümü
-          </FilterPill>
+          <FilterPill href={buildHref({ ulke: undefined })} active={!country}>Tümü</FilterPill>
           {availableCountries.map((c) => (
-            <FilterPill key={c} href={buildHref({ ulke: c })} active={country === c}>
-              {c}
-            </FilterPill>
+            <FilterPill key={c} href={buildHref({ ulke: c })} active={country === c}>{c}</FilterPill>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground mr-1">KA Eylemi:</span>
-          <FilterPill href={buildHref({ ka: undefined })} active={!kaAction}>
-            Tümü
-          </FilterPill>
+          <FilterPill href={buildHref({ ka: undefined })} active={!kaAction}>Tümü</FilterPill>
           {KA_ACTIONS.map((action) => (
             <FilterPill key={action} href={buildHref({ ka: action })} active={kaAction === action}>
               {KA_ACTION_LABELS[action] ?? action}
@@ -110,9 +113,7 @@ export default async function ProjeSonuclariPage({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground mr-1">Sektör:</span>
-          <FilterPill href={buildHref({ sektor: undefined })} active={!sector}>
-            Tümü
-          </FilterPill>
+          <FilterPill href={buildHref({ sektor: undefined })} active={!sector}>Tümü</FilterPill>
           {EDUCATION_SECTORS.map((s) => (
             <FilterPill key={s} href={buildHref({ sektor: s })} active={sector === s}>
               {s} · {EDUCATION_SECTOR_LABELS[s]}
@@ -135,27 +136,41 @@ export default async function ProjeSonuclariPage({
                       {country}
                     </h3>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {items.map((item) => (
-                        <Link key={item.slug} href={`/proje-sonuclari/${item.slug}`} className="cursor-pointer">
-                          <div className="h-full overflow-hidden rounded-lg border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
-                            {item.coverImage && (
-                              <div className="relative h-32">
-                                <Image
-                                  src={item.coverImage}
-                                  alt={item.title}
-                                  fill
-                                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                                  className="object-cover"
-                                />
+                      {items.map((item) => {
+                        const kaList = item.kaActions.split(",").filter(Boolean);
+                        const sectorList = item.sectors.split(",").filter(Boolean);
+                        return (
+                          <Link key={item.slug} href={`/proje-sonuclari/${item.slug}`} className="cursor-pointer">
+                            <div className="h-full overflow-hidden rounded-lg border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
+                              {item.coverImage && (
+                                <div className="relative h-32">
+                                  <Image
+                                    src={item.coverImage}
+                                    alt={item.title}
+                                    fill
+                                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                                    className="object-cover"
+                                  />
+                                </div>
+                              )}
+                              <div className="bg-card p-5">
+                                <p className="font-medium text-foreground mb-1">{item.title}</p>
+                                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{item.summary}</p>
+                                {(kaList.length > 0 || sectorList.length > 0) && (
+                                  <div className="flex flex-wrap gap-1">
+                                    {kaList.map((a) => (
+                                      <TagChip key={a} variant="ka">{a}</TagChip>
+                                    ))}
+                                    {sectorList.map((s) => (
+                                      <TagChip key={s} variant="sector">{EDUCATION_SECTOR_LABELS[s] ?? s}</TagChip>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
-                            )}
-                            <div className="bg-card p-5">
-                              <p className="font-medium text-foreground mb-1">{item.title}</p>
-                              <p className="text-sm text-muted-foreground line-clamp-3">{item.summary}</p>
                             </div>
-                          </div>
-                        </Link>
-                      ))}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
