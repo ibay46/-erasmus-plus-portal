@@ -230,6 +230,30 @@ export default async function Home() {
               >
                 Proje Sonuçları
               </Link>
+              <Link
+                href="/salto-youth"
+                className="cursor-pointer inline-flex items-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-emerald-600/90"
+              >
+                SALTO Youth
+              </Link>
+              <Link
+                href="/salto-egitim"
+                className="cursor-pointer inline-flex items-center rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-violet-600/90"
+              >
+                SALTO Education & Training
+              </Link>
+              <Link
+                href="/esc"
+                className="cursor-pointer inline-flex items-center rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-sky-500/90"
+              >
+                ESC
+              </Link>
+              <Link
+                href="/ab-hibe-projeleri"
+                className="cursor-pointer inline-flex items-center rounded-lg bg-rose-600 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-rose-600/90"
+              >
+                AB Hibe Projeleri
+              </Link>
             </div>
           </div>
           <div className="justify-self-center md:justify-self-end">
