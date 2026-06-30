@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getProjectResultsGroupedByYear, getAvailableProjectResultFilterValues } from "@/lib/projectResults";
 import { KA_ACTIONS, KA_ACTION_LABELS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 
@@ -125,55 +124,47 @@ export default async function ProjeSonuclariPage({
       {yearGroups.length === 0 ? (
         <p className="text-muted-foreground">Bu filtrelere uygun yayınlanmış bir proje sonucu yok.</p>
       ) : (
-        <div className="space-y-12">
+        <div className="space-y-10">
           {yearGroups.map(({ year, countries }) => (
             <section key={year}>
-              <h2 className="text-2xl font-semibold mb-6 text-foreground">{year}</h2>
-              <div className="space-y-8">
-                {countries.map(({ country, items }) => (
-                  <div key={country}>
-                    <h3 className="text-sm font-mono font-semibold uppercase tracking-widest text-accent-warm mb-3">
-                      {country}
-                    </h3>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {items.map((item) => {
-                        const kaList = item.kaActions.split(",").filter(Boolean);
-                        const sectorList = item.sectors.split(",").filter(Boolean);
-                        return (
-                          <Link key={item.slug} href={`/proje-sonuclari/${item.slug}`} className="cursor-pointer">
-                            <div className="h-full overflow-hidden rounded-lg border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
-                              {item.coverImage && (
-                                <div className="relative h-32">
-                                  <Image
-                                    src={item.coverImage}
-                                    alt={item.title}
-                                    fill
-                                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                                    className="object-cover"
-                                  />
-                                </div>
-                              )}
-                              <div className="bg-card p-5">
-                                <p className="font-medium text-foreground mb-1">{item.title}</p>
-                                <p className="text-sm text-muted-foreground line-clamp-2 mb-3">{item.summary}</p>
-                                {(kaList.length > 0 || sectorList.length > 0) && (
-                                  <div className="flex flex-wrap gap-1">
-                                    {kaList.map((a) => (
-                                      <TagChip key={a} variant="ka">{a}</TagChip>
-                                    ))}
-                                    {sectorList.map((s) => (
-                                      <TagChip key={s} variant="sector">{EDUCATION_SECTOR_LABELS[s] ?? s}</TagChip>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+              <h2 className="text-lg font-semibold mb-3 text-foreground border-b border-border pb-2">{year}</h2>
+              <div className="divide-y divide-border rounded-lg border border-border overflow-hidden">
+                {countries.flatMap(({ country, items }) =>
+                  items.map((item) => {
+                    const kaList = item.kaActions.split(",").filter(Boolean);
+                    const sectorList = item.sectors.split(",").filter(Boolean);
+                    return (
+                      <Link
+                        key={item.slug}
+                        href={`/proje-sonuclari/${item.slug}`}
+                        className="group flex items-center gap-3 px-4 py-3 bg-card hover:bg-accent/5 transition-colors duration-200 cursor-pointer"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-foreground group-hover:text-accent transition-colors duration-200 truncate">
+                            {item.title}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-1 sm:hidden">
+                            <span className="text-xs text-muted-foreground">{country}</span>
+                            {kaList.map((a) => <TagChip key={a} variant="ka">{a}</TagChip>)}
+                            {sectorList.map((s) => <TagChip key={s} variant="sector">{EDUCATION_SECTOR_LABELS[s] ?? s}</TagChip>)}
+                          </div>
+                          <p className="hidden sm:block text-sm text-muted-foreground truncate mt-0.5">{item.summary}</p>
+                        </div>
+                        <span className="hidden sm:block text-xs text-muted-foreground shrink-0 w-24 text-right font-mono">
+                          {country}
+                        </span>
+                        <div className="hidden sm:flex flex-wrap justify-end gap-1 shrink-0 max-w-[180px]">
+                          {kaList.map((a) => <TagChip key={a} variant="ka">{a}</TagChip>)}
+                          {sectorList.map((s) => <TagChip key={s} variant="sector">{EDUCATION_SECTOR_LABELS[s] ?? s}</TagChip>)}
+                        </div>
+                        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2"
+                          className="h-4 w-4 text-muted-foreground shrink-0">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5l5 5-5 5" />
+                        </svg>
+                      </Link>
+                    );
+                  })
+                )}
               </div>
             </section>
           ))}
