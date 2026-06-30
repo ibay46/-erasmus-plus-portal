@@ -224,6 +224,12 @@ export default async function Home() {
               >
                 Danışmanlık Hizmetleri
               </Link>
+              <Link
+                href="/proje-sonuclari"
+                className="cursor-pointer inline-flex items-center rounded-lg bg-accent-warm px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent-warm/90"
+              >
+                Proje Sonuçları
+              </Link>
             </div>
           </div>
           <div className="justify-self-center md:justify-self-end">
