@@ -12,12 +12,12 @@
   --background: oklch(98.5% 0.004 250);
   --foreground: oklch(22% 0.01 260);
   --muted: oklch(96% 0.006 250);
-  --muted-foreground: oklch(50% 0.012 260);
+  --muted-foreground: oklch(44% 0.012 260);
   --card: oklch(98.5% 0.004 250);
   --border: oklch(90% 0.006 250);
   --accent: oklch(60% 0.20 258);
   --accent-foreground: oklch(99% 0 0);
-  --accent-warm: oklch(72% 0.15 55);
+  --accent-warm: oklch(64% 0.15 55);
 }
 
 .dark {

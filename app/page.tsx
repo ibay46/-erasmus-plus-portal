@@ -30,7 +30,7 @@ function RecentCardRow({
           <p className="mb-1 text-xs font-mono font-semibold uppercase tracking-widest text-accent-warm">
             {eyebrow}
           </p>
-          <h3 className="text-2xl font-semibold text-foreground">{title}</h3>
+          <h2 className="text-2xl font-semibold text-foreground">{title}</h2>
         </div>
         <Link
           href={seeAllHref}
