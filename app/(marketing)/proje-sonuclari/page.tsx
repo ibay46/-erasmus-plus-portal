@@ -1,10 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getProjectResultsGroupedByYear, getAvailableProjectResultFilterValues } from "@/lib/projectResults";
 import { KA_ACTIONS, KA_ACTION_LABELS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Proje Sonuçları | Erasmus+ Portal",
   description: "Yıl, ülke, KA eylemi ve sektöre göre filtrelenebilir desteklenmeye hak kazanan Erasmus+ proje sonuçları.",
+  alternates: {
+    canonical: "https://www.erasmusportal.com/proje-sonuclari",
+  },
 };
 
 function FilterPill({

@@ -8,6 +8,7 @@ import { getPublishedPosts } from "@/lib/posts";
 import { POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
 import { getRecentProjectResults } from "@/lib/projectResults";
 import { getPublishedGrantProjects } from "@/lib/grantProjects";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 function RecentCardRow({
   eyebrow,
@@ -186,8 +187,25 @@ export default async function Home() {
     { value: `${postCount}+`, label: "Haber & Duyuru" },
   ];
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Erasmus+ Portal",
+    url: "https://www.erasmusportal.com",
+    description:
+      "Türkiye'deki Erasmus+ proje yazan öğretmenler, okullar, belediyeler ve STK'lar için haberler, rehberler, araçlar ve danışmanlık.",
+    inLanguage: "tr",
+    publisher: {
+      "@type": "Organization",
+      name: "Erasmus+ Portal",
+      url: "https://www.erasmusportal.com",
+      logo: { "@type": "ImageObject", url: "https://www.erasmusportal.com/logo-icon.png" },
+    },
+  };
+
   return (
     <div>
+      <JsonLd data={websiteJsonLd} />
       <section className="relative flex min-h-[calc(100vh-4rem)] items-center overflow-hidden border-b border-border bg-background">
         <div
           aria-hidden="true"

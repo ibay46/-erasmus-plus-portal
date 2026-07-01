@@ -14,6 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${result.title} | Proje Sonuçları`,
     description: result.summary,
+    alternates: { canonical: `https://www.erasmusportal.com/proje-sonuclari/${result.slug}` },
     openGraph: {
       title: result.title,
       description: result.summary,
@@ -53,9 +54,20 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
     mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.erasmusportal.com/proje-sonuclari/${result.slug}` },
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Anasayfa", item: "https://www.erasmusportal.com" },
+      { "@type": "ListItem", position: 2, name: "Proje Sonuçları", item: "https://www.erasmusportal.com/proje-sonuclari" },
+      { "@type": "ListItem", position: 3, name: result.title, item: `https://www.erasmusportal.com/proje-sonuclari/${result.slug}` },
+    ],
+  };
+
   return (
     <div>
       <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <Link
         href="/proje-sonuclari"
         className="cursor-pointer mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"

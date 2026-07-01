@@ -14,6 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} | Erasmus+ Haberleri`,
     description: post.excerpt ?? undefined,
+    alternates: { canonical: `https://www.erasmusportal.com/haberler/${post.slug}` },
     openGraph: {
       title: post.title,
       description: post.excerpt ?? undefined,
@@ -49,9 +50,20 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
     mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.erasmusportal.com/haberler/${post.slug}` },
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Anasayfa", item: "https://www.erasmusportal.com" },
+      { "@type": "ListItem", position: 2, name: "Haberler", item: "https://www.erasmusportal.com/haberler" },
+      { "@type": "ListItem", position: 3, name: post.title, item: `https://www.erasmusportal.com/haberler/${post.slug}` },
+    ],
+  };
+
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_18rem]">
     <JsonLd data={articleJsonLd} />
+    <JsonLd data={breadcrumbJsonLd} />
     <div className="min-w-0">
       <Link
         href={backRoute.href}
