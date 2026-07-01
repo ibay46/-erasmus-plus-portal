@@ -3,7 +3,6 @@
 import { useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { tlToWordsTr, euroToWordsTr } from "@/lib/numberToWordsTr";
-import { generateAvansFormuPdf } from "@/lib/pdf/generateAvansFormuPdf";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -59,7 +58,8 @@ export function AvansHarcamaFormu() {
 
   const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString("tr-TR") : "…. / …. / 20..");
 
-  function handleDownloadPdf() {
+  async function handleDownloadPdf() {
+    const { generateAvansFormuPdf } = await import("@/lib/pdf/generateAvansFormuPdf");
     generateAvansFormuPdf({
       projeKodu,
       alinanAvansLabel: alinanAvans ? formatTl(alinanAvans) : "",

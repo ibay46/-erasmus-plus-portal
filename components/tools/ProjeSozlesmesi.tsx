@@ -2,7 +2,6 @@
 
 import { useEffect, useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
-import { generateContractPdf } from "@/lib/pdf/generateContractPdf";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -149,7 +148,8 @@ export function ProjeSozlesmesi() {
 
   const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString("tr-TR") : "….");
 
-  function handleDownloadPdf() {
+  async function handleDownloadPdf() {
+    const { generateContractPdf } = await import("@/lib/pdf/generateContractPdf");
     generateContractPdf({
       protNo,
       protDateLabel: fmtDate(protDate),
