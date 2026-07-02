@@ -232,7 +232,7 @@ export default async function Home() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/araclar"
-                className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
+                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent transition-colors duration-200 hover:bg-muted"
               >
                 Ücretsiz Araçları Keşfet
               </Link>
@@ -244,31 +244,31 @@ export default async function Home() {
               </Link>
               <Link
                 href="/proje-sonuclari"
-                className="cursor-pointer inline-flex items-center rounded-lg bg-accent-warm px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-accent-warm/90"
+                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent-warm transition-colors duration-200 hover:bg-muted"
               >
                 Proje Sonuçları
               </Link>
               <Link
                 href="/salto-youth"
-                className="cursor-pointer inline-flex items-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-emerald-600/90"
+                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent transition-colors duration-200 hover:bg-muted"
               >
                 SALTO Youth
               </Link>
               <Link
                 href="/salto-egitim"
-                className="cursor-pointer inline-flex items-center rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-violet-600/90"
+                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent-warm transition-colors duration-200 hover:bg-muted"
               >
                 SALTO Education & Training
               </Link>
               <Link
                 href="/esc"
-                className="cursor-pointer inline-flex items-center rounded-lg bg-sky-500 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-sky-500/90"
+                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
               >
                 ESC
               </Link>
               <Link
                 href="/ab-hibe-projeleri"
-                className="cursor-pointer inline-flex items-center rounded-lg bg-rose-600 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-rose-600/90"
+                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent transition-colors duration-200 hover:bg-muted"
               >
                 AB Hibe Projeleri
               </Link>
