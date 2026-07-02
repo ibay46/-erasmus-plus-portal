@@ -3,7 +3,7 @@ import KaScoreSimulator from "@/components/tools/KaScoreSimulator";
 export const metadata = {
   title: "KA210 Kalite Puanı Simülatörü | Erasmus+ Portal",
   description:
-    "KA210 başvurunuzu göndermeden önce öz değerlendirin: Uygunluk, Tasarım, Ortaklık ve Etki kriterlerine göre tahmini puanınızı hesaplayın, eşik koşullarını kontrol edin.",
+    "Başvurunuzu göndermeden önce bağımsız bir Erasmus+ uzmanı gibi değerlendirin. Yapay zeka, 2026 Değerlendirme Kılavuzu'na göre Uygunluk, Tasarım, Ortaklık ve Etki kriterlerini puanlar; güçlü ve zayıf yönleri listeler.",
 };
 
 export default function KalitePuaniPage() {
@@ -13,13 +13,13 @@ export default function KalitePuaniPage() {
         KA210 Kalite Puanı Simülatörü
       </h1>
       <p className="text-muted-foreground mb-2 max-w-2xl print:hidden">
-        Başvurunuzu göndermeden önce 4 resmi kriter üzerinden öz değerlendirme yapın. Her alt
-        kıstas için puan seçin; toplam puan ve bölüm eşikleri anlık güncellenir.
+        Başvuru metninizi 4 kriter bölümüne göre yapıştırın; yapay zeka bağımsız bir değerlendirici gibi
+        puan atar, güçlü ve zayıf yönleri listeler, somut iyileştirme önerileri sunar.
       </p>
       <p className="text-xs text-muted-foreground mb-8 max-w-2xl print:hidden">
         Geçme koşulları: <strong>toplam ≥ 60/100</strong> VE{" "}
-        <strong>her bölümde ≥ %50 (eşik)</strong>. Opsiyonel: başvuru taslağınızı yapıştırın,
-        yapay zeka bölüm bazında puan önersin ve geri bildirim versin.
+        <strong>her bölümde ≥ eşik puanı</strong>. Değerlendirme sonrası{" "}
+        <em>senaryo modu</em>yla "bu bölümü güçlendirsem puan ne olur?" diye keşfedebilirsiniz.
       </p>
       <KaScoreSimulator />
     </div>
