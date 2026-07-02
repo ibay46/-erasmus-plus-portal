@@ -6,6 +6,12 @@ export interface ToolContent {
 
 export const TOOLS: ToolContent[] = [
   {
+    href: "/araclar/kalite-puani",
+    title: "KA210 Kalite Puanı Simülatörü",
+    description:
+      "Başvurunuzu göndermeden önce Uygunluk, Tasarım, Ortaklık ve Etki kriterlerine göre öz değerlendirin; eşik puanlarını geçip geçmediğinizi görün.",
+  },
+  {
     href: "/araclar/oncelik-eslestirici",
     title: "Öncelik–Proje Fikri Eşleştirici",
     description:
