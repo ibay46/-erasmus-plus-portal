@@ -12,6 +12,12 @@ export const TOOLS: ToolContent[] = [
       "Proje temanızı seçin, 2026 Erasmus+ yatay ve sektörel öncelikleriyle uyumunu görün ve başvuru formunda kullanabileceğiniz gerekçe taslağını alın.",
   },
   {
+    href: "/araclar/ka121-butce-hesaplama",
+    title: "KA121/KA122 Bütçe Hesaplama",
+    description:
+      "Personel hareketliliği için seyahat bandı, bireysel destek, kurs ücreti ve hazırlık ziyaretini birlikte hesaplayın.",
+  },
+  {
     href: "/araclar/ka210-butce-hesaplama",
     title: "KA210 Bütçe Hesaplama",
     description: "Seyahat mesafe bandı ve bireysel destek oranlarına göre KA210 hareketlilik bütçenizi hesaplayın.",
