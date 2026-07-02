@@ -297,6 +297,30 @@ export default async function Home() {
 
       <section className="bg-background py-16">
         <div className="mx-auto max-w-6xl px-6">
+          <h2 className="text-2xl font-semibold text-foreground mb-6">
+            Platformda <span className="text-accent">Neler</span> <span className="text-accent-warm">Var?</span>
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {SECTIONS.map((section) => (
+              <Link key={section.href} href={section.href} className="cursor-pointer group">
+                <Card
+                  className={`relative h-full overflow-hidden hover:border-accent/50 ${section.tinted ? "bg-background" : ""}`}
+                >
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -inset-10 rounded-full bg-accent/20 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
+                  />
+                  <h3 className="relative font-medium mb-1 text-foreground">{section.title}</h3>
+                  <p className="relative text-sm text-muted-foreground">{section.description}</p>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-muted py-16">
+        <div className="mx-auto max-w-6xl px-6">
           <RecentCardRow
             eyebrow="Haberler"
             title={
@@ -317,7 +341,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-muted py-16">
+      <section className="bg-background py-16">
         <div className="mx-auto max-w-6xl px-6">
           <RecentCardRow
             eyebrow="SALTO Youth"
@@ -339,7 +363,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-background py-16">
+      <section className="bg-muted py-16">
         <div className="mx-auto max-w-6xl px-6">
           <RecentCardRow
             eyebrow="SALTO Education & Training"
@@ -361,7 +385,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-muted py-16">
+      <section className="bg-background py-16">
         <div className="mx-auto max-w-6xl px-6">
           <RecentCardRow
             eyebrow="Sonuçlar"
@@ -383,7 +407,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-background py-16">
+      <section className="bg-muted py-16">
         <div className="mx-auto max-w-6xl px-6">
           <RecentCardRow
             eyebrow="AB Hibe Projeleri"
@@ -402,30 +426,6 @@ export default async function Home() {
               coverImage: item.coverImage,
             }))}
           />
-        </div>
-      </section>
-
-      <section className="bg-muted py-16">
-        <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-2xl font-semibold text-foreground mb-6">
-            Platformda <span className="text-accent">Neler</span> <span className="text-accent-warm">Var?</span>
-          </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {SECTIONS.map((section) => (
-              <Link key={section.href} href={section.href} className="cursor-pointer group">
-                <Card
-                  className={`relative h-full overflow-hidden hover:border-accent/50 ${section.tinted ? "bg-background" : ""}`}
-                >
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -inset-10 rounded-full bg-accent/20 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
-                  />
-                  <h3 className="relative font-medium mb-1 text-foreground">{section.title}</h3>
-                  <p className="relative text-sm text-muted-foreground">{section.description}</p>
-                </Card>
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
     </div>
