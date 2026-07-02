@@ -24,7 +24,7 @@ export const CRITERIA: Criterion[] = [
   {
     id: "relevance",
     label: "Uygunluk",
-    labelEn: "Relevance",
+    labelEn: "Relevance of the project",
     maxScore: 30,
     threshold: 15,
     aiPromptHint:
@@ -77,7 +77,7 @@ export const CRITERIA: Criterion[] = [
   {
     id: "design",
     label: "Tasarım Kalitesi",
-    labelEn: "Quality of Project Design and Implementation",
+    labelEn: "Quality of the project design and implementation",
     maxScore: 30,
     threshold: 15,
     aiPromptHint:
@@ -130,7 +130,7 @@ export const CRITERIA: Criterion[] = [
   {
     id: "partnership",
     label: "Ortaklık Kalitesi",
-    labelEn: "Quality of Partnership",
+    labelEn: "Quality of the partnership and the cooperation arrangements",
     maxScore: 20,
     threshold: 10,
     aiPromptHint:
