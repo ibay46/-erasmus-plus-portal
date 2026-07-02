@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import {
   calculateKa210Budget,
   isRateWithinRange,
@@ -140,6 +140,23 @@ function MobilitySection({
 
   const teacherRateValid = isRateWithinRange(mobility.teacherDailyRate, staffRange);
   const studentRateValid = isRateWithinRange(mobility.studentDailyRate, pupilRange);
+
+  const [distanceState, setDistanceState] = useState<Record<string, { loading: boolean; error: string | null }>>({});
+
+  const calculateDistance = useCallback(async (partnerId: string, fromCity: string, toCity: string) => {
+    if (!fromCity.trim() || !toCity.trim()) return;
+    setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: true, error: null } }));
+    try {
+      const res = await fetch(`/api/distance?from=${encodeURIComponent(fromCity)}&to=${encodeURIComponent(toCity)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Hesaplanamadı");
+      updatePartner(partnerId, { distanceKm: data.km });
+      setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: false, error: null } }));
+    } catch (err) {
+      setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: false, error: (err as Error).message } }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mobility.hostCity]);
 
   const mobilityFrameColor = MOBILITY_FRAME_COLORS[index % MOBILITY_FRAME_COLORS.length];
 
@@ -329,13 +346,27 @@ function MobilitySection({
                   <label className="block text-xs font-medium mb-1 text-muted-foreground">
                     Mesafe (KM)
                   </label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={partner.distanceKm}
-                    onChange={(e) => updatePartner(partner.id, { distanceKm: Number(e.target.value) || 0 })}
-                    className={inputClass}
-                  />
+                  <div className="flex gap-1">
+                    <input
+                      type="number"
+                      min={0}
+                      value={partner.distanceKm}
+                      onChange={(e) => updatePartner(partner.id, { distanceKm: Number(e.target.value) || 0 })}
+                      className={`${inputClass} flex-1 min-w-0`}
+                    />
+                    <button
+                      type="button"
+                      disabled={!mobility.hostCity.trim() || !partner.city.trim() || distanceState[partner.id]?.loading}
+                      onClick={() => calculateDistance(partner.id, partner.city, mobility.hostCity)}
+                      title={!mobility.hostCity.trim() ? "Ev sahibi şehri girin" : !partner.city.trim() ? "Ortak şehri girin" : "Mesafeyi otomatik hesapla"}
+                      className="cursor-pointer shrink-0 rounded-lg border border-border px-2 py-2 text-xs font-medium text-accent transition-colors duration-200 hover:border-accent/50 hover:bg-accent/5 disabled:cursor-not-allowed disabled:opacity-40 print:hidden"
+                    >
+                      {distanceState[partner.id]?.loading ? "…" : "Hesapla"}
+                    </button>
+                  </div>
+                  {distanceState[partner.id]?.error && (
+                    <p className="mt-1 text-xs text-red-500 print:hidden">{distanceState[partner.id].error}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-xs font-medium mb-1 text-muted-foreground">
