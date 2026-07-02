@@ -1,216 +1,301 @@
-export interface SubCriterion {
+// Kaynak: Guide for Experts on Quality Assessment 2026, KA210 bölümü (s. 58-64, 70-71)
+
+export type QualityBandKey = "very-good" | "good" | "fair" | "weak";
+export type ElementStatus = "addressed" | "partial" | "missing" | null;
+export type CriterionId = "relevance" | "design" | "partnership" | "impact";
+
+export interface QualityBand {
+  key: QualityBandKey;
+  labelTr: string;
+  min: number;
+  max: number;
+  /** Değerlendirici kılavuzundaki tanım */
+  description: string;
+}
+
+export interface Element {
   id: string;
+  /** Unsur etiketi — kılavuzdaki (a)(b)(c)... harfiyle başlar */
   label: string;
   description: string;
   tip: string;
 }
 
 export interface Criterion {
-  id: "relevance" | "design" | "partnership" | "impact";
+  id: CriterionId;
   label: string;
   labelEn: string;
   maxScore: number;
   threshold: number;
-  subCriteria: SubCriterion[];
-  aiPromptHint: string;
+  bands: QualityBand[];
+  elements: Element[];
+  /** Eşiğin altında puanlandığında gösterilecek kritik uyarı */
+  criticalNote?: string;
 }
 
-// Her alt kıstas 5 puan üzerinden değerlendirilir.
-// Gerçek KA210 rubriği (2024-2025 Programme Guide):
-// Relevance 30 + Design 30 + Partnership 20 + Impact 20 = 100
-// Toplam: 6×5=30 + 6×5=30 + 4×5=20 + 4×5=20 = 100
+// Bantlar iki kriter türüne göre sabit
+const BANDS_30: QualityBand[] = [
+  {
+    key: "very-good",
+    labelTr: "Çok İyi",
+    min: 26,
+    max: 30,
+    description: "Kriterin tüm ilgili yönlerini ikna edici ve başarılı şekilde ele alır; anlamlı zayıflık yoktur.",
+  },
+  {
+    key: "good",
+    labelTr: "İyi",
+    min: 21,
+    max: 25,
+    description: "Kriteri iyi ele alır; küçük iyileştirmeler yapılabilir.",
+  },
+  {
+    key: "fair",
+    labelTr: "Orta",
+    min: 15,
+    max: 20,
+    description: "Kriteri genel olarak ele alır; bazı zayıflıklar ve detay eksiklikleri var.",
+  },
+  {
+    key: "weak",
+    labelTr: "Zayıf",
+    min: 0,
+    max: 14,
+    description: "Kriteri ele almıyor veya yetersiz bilgi nedeniyle değerlendirilemez.",
+  },
+];
+
+const BANDS_20: QualityBand[] = [
+  {
+    key: "very-good",
+    labelTr: "Çok İyi",
+    min: 17,
+    max: 20,
+    description: "Kriterin tüm ilgili yönlerini ikna edici ve başarılı şekilde ele alır; anlamlı zayıflık yoktur.",
+  },
+  {
+    key: "good",
+    labelTr: "İyi",
+    min: 14,
+    max: 16,
+    description: "Kriteri iyi ele alır; küçük iyileştirmeler yapılabilir.",
+  },
+  {
+    key: "fair",
+    labelTr: "Orta",
+    min: 10,
+    max: 13,
+    description: "Kriteri genel olarak ele alır; bazı zayıflıklar ve detay eksiklikleri var.",
+  },
+  {
+    key: "weak",
+    labelTr: "Zayıf",
+    min: 0,
+    max: 9,
+    description: "Kriteri ele almıyor veya yetersiz bilgi nedeniyle değerlendirilemez.",
+  },
+];
+
+export function getBandForScore(score: number, bands: QualityBand[]): QualityBand {
+  return (
+    bands.find((b) => score >= b.min && score <= b.max) ?? bands[bands.length - 1]
+  );
+}
+
+export function bandMidpoint(band: QualityBand): number {
+  return Math.round((band.min + band.max) / 2);
+}
 
 export const CRITERIA: Criterion[] = [
+  // ─────────────────────────────────────────────────────────────────────
+  // 1. RELEVANCE / Uygunluk — 30 puan, eşik 15
+  // ─────────────────────────────────────────────────────────────────────
   {
     id: "relevance",
     label: "Uygunluk",
     labelEn: "Relevance of the project",
     maxScore: 30,
     threshold: 15,
-    aiPromptHint:
-      "Projenin ihtiyacını, hedef kitlesini, Erasmus+ öncelikleriyle bağlantısını, yenilikçi yönünü ve uluslararası işbirliğinin gerekliliğini değerlendir.",
-    subCriteria: [
+    bands: BANDS_30,
+    criticalNote:
+      "Kritik eşik: Teklif en az bir önceliğe ikna edici uyum kanıtı sunmuyorsa değerlendirici bu kriteri Zayıf (0-14) puanlamak ZORUNDADIR → proje otomatik reddedilir. Bazı Ulusal Ajanslar Uygunluk eşiğin altındaysa değerlendirmeyi durdurur.",
+    elements: [
       {
-        id: "need-evidence",
-        label: "İhtiyaç Kanıtları",
+        id: "rel-a",
+        label: "a) Eylem Hedefleri ve Önceliklere Uygunluk",
         description:
-          "Hedef grubun ihtiyaçları, sorunun varlığı somut veriler, araştırmalar veya anket bulgularıyla desteklenmiş.",
-        tip: "En sık puan kıran nokta. 'Bu alanda ihtiyaç var' yerine sayısal kanıt bekleniyor: okul anketi, PISA verisi, MEB raporu, belediye araştırması. 'Öğretmenlerimizle yaptığımız anket, %68'inin dijital araçlarda yetersiz hissettiğini gösteriyor' formatı güçlüdür.",
+          "Proje, Programme Guide'daki eylem hedeflerine atıfta bulunuyor ve en az bir yatay veya alana özgü önceliği nitelikli şekilde ele alıyor. 'Kapsayıcılık ve çeşitlilik' veya Ulusal Ajansın ilan ettiği ulusal bağlamdaki Avrupa önceliklerinden biriyse 'yüksek derecede uygun' sayılır.",
+        tip: "Sadece öncelik adını listelemek yetmez. Değerlendirici 'nitelikli ele alış' arar. Seçilen her öncelik için başvuruya 'Bu önceliği nasıl ele alıyoruz: [spesifik aktivite/çıktı]' cümlesi yazılmalı. Gerçek değerlendirme raporunda (2024 LT01): Seçilen 'erken okul terkini azaltma' önceliğine ikna edici bağlantı kurulamadı — puan kırıldı.",
       },
       {
-        id: "target-group",
-        label: "Hedef Grup Analizi",
+        id: "rel-b",
+        label: "b) AB Değerlerine Uygunluk",
         description:
-          "Projeden kimlerin faydalanacağı, sayısal büyüklükleri, profilleri ve neden bu grubun seçildiği açıklanmış.",
-        tip: "Reddedilen başvuruların büyük çoğunluğunda hedef kitle 'öğretmenler ve öğrenciler' gibi tanımlanmış. Kaç öğretmen? Hangi branşlar? Dezavantajlı profil var mı? Neden bu okul başvuruyor? Bu soruların hepsi yanıtlanmalı.",
+          "AB değerleri proje hedeflerine, metodolojisine, faaliyetlerine ve beklenen çıktılarına açıkça entegre edilmiş. Faaliyetler ayrımcılık yapmayan yaklaşımla tasarlanmış; cinsiyet, etnik köken, engellilik gibi alanlarda proaktif strateji içeriyor. Eğitsel bileşenler katılımcıların AB değerlerini anlamasını destekliyor. Göstergeler ve izleme mekanizmaları var.",
+        tip: "Gerçek rapordan doğrudan alıntı: 'AB değerlerinin proje aktivitelerinde veya metodolojisinde nasıl yer alacağı açıkça belirtilmemiş; değerler proje genelinde dağıtılmak yerine bağımsız unsur olarak duruyor.' Çözüm: Her aktivite açıklamasına 'Bu aktivitede şu AB değeri şu şekilde yerleştirilmiştir: ...' cümlesi ekleyin.",
       },
       {
-        id: "priority-link",
-        label: "Erasmus+ Öncelikleriyle Bağlantı",
+        id: "rel-c",
+        label: "c) Katılımcı Kuruluşların Profil ve Deneyim Uygunluğu",
         description:
-          "Proje, 2026 Programme Guide yatay ve/veya sektörel öncelikleriyle açıkça ve somut biçimde ilişkilendirilmiş.",
-        tip: "Öncelik adını listelemek yetmez. 'Bu proje [öncelik] kapsamındadır çünkü [spesifik bağlantı]' formatı kullanın. Değerlendirici öncelikle formdaki C1 bölümünü kontrol eder; orada seçtiğiniz önceliğin gerekçesi C2'de net yazılmalı.",
+          "Kuruluşlar başvurulan alanın gerçek bir parçası; bu, personel uzmanlığı ve önceki deneyimle kanıtlanmış pratik ilgidir (sadece resmi beyan değil). Önemli esneklik: small-scale ortaklıklar yeni gelen ve az deneyimli kuruluşları hedeflediğinden önceki Erasmus+ deneyimi olmayabilir — ancak kuruluşun projeye net katma değer getirmesi şarttır.",
+        tip: "Az deneyimli ortak için 'Bu kurumun özgün katkısı nedir?' sorusuna net cevap verin. 'Aynı alanda başka projeler yaptık' demek yerine 'Bu kurumun spesifik uzmanlığı şudur, projede şunu sağlayacak' deyin.",
       },
       {
-        id: "innovation",
-        label: "Yenilikçilik ve Yaratıcılık",
+        id: "rel-d",
+        label: "d) AB Düzeyinde Katma Değer",
         description:
-          "Projenin mevcut uygulamalardan farkı, özgün yaklaşımı veya yenilikçi yönleri belirtilmiş.",
-        tip: "Reddedilen başvuruların %40'ında yenilik bölümü ya boş ya da 'başka okullarda da yapılıyor' diyor. 'Okulumuzda daha önce denenmemiş', 'bölgemizde ilk kez uygulanacak', 'bu yöntem AB'de X ülkelerinde başarılı oldu, biz uyarlayacağız' ifadeleri güçlüdür.",
-      },
-      {
-        id: "european-value",
-        label: "Uluslararası İşbirliğinin Değeri",
-        description:
-          "Bu projenin neden uluslararası ortaklarla yapılması gerektiği; yabancı ortağın özgün katkısı açıklanmış.",
-        tip: "Değerlendirici 'Bu proje neden tek ülkede yapılamıyor?' sorusunu sorar. 'Uluslararası perspektif kazanmak' yeterli değil. Yabancı ortağın spesifik uzmanlığı, farklı ülkedeki uygulamayla ne öğrenileceği belirtilmeli.",
-      },
-      {
-        id: "context-analysis",
-        label: "Bağlam Analizi",
-        description:
-          "Mevcut durum, varsa önceki girişimler ve neden yeterli olmadığı analiz edilmiş.",
-        tip: "Güçlü başvurular mevcut durumu ve bu projenin eksik parçayı nasıl tamamladığını açıklar. 'Okulumuzda 2022'de benzer bir çalışma yapıldı, ancak sürdürülebilirlik sağlanamadı, bu proje o açığı kapatıyor' gibi.",
+          "Ulusötesi boyutun proje çıktıları açısından açıkça değer kattığı gösterilmiş. Kuruluşlar, tek bir ülkedeki kuruluşların ulaşamayacağı sonuçlara ulaşabiliyor. Faaliyetlerin neden çevrimiçi yapılamayacağı da gerekçelendirilmiş.",
+        tip: "Gerçek rapordan: 'Uluslararası işbirliğinin projeye katma değeri yeterince gösterilmemiş; etkinliklerin büyük çoğunluğu yerel okullarca da düzenlenebilir.' Güçlü cevap: Her ülkenin getirdiği özgün perspektif + 'bu sonuç tek ülkede elde edilemezdi çünkü...' gerekçesi.",
       },
     ],
   },
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 2. DESIGN / Tasarım Kalitesi — 30 puan, eşik 15
+  // ─────────────────────────────────────────────────────────────────────
   {
     id: "design",
     label: "Tasarım Kalitesi",
     labelEn: "Quality of the project design and implementation",
     maxScore: 30,
     threshold: 15,
-    aiPromptHint:
-      "Projenin hedeflerinin SMART olup olmadığını, aktivitelerin ne/kim/ne zaman/nasıl detaylandırılıp detaylandırılmadığını, zaman çizelgesinin gerçekçiliğini, metodoloji tutarlılığını, kalite izleme planını ve bütçe gerekçesini değerlendir.",
-    subCriteria: [
+    bands: BANDS_30,
+    criticalNote:
+      "Kritik eşik: Önerilen çıktılar talep edilen hibe tutarını gerekçelendiremiyorsa bu kriter eşiğin altında puanlanmak ZORUNDADIR → otomatik red. KA2'de götürü tutar sabittir; revize/azaltma imkânı yoktur. Maliyet etkinliği yetersizse tek seçenek reddedir.",
+    elements: [
       {
-        id: "smart-objectives",
-        label: "SMART Hedefler",
+        id: "des-a",
+        label: "a) Hedeflerin Netliği ve Gerçekçiliği",
         description:
-          "Proje hedefleri ölçülebilir, erişilebilir, zaman sınırlı ve belirlenen ihtiyaçlarla doğrudan bağlantılı.",
-        tip: "'Öğretmenlerin dijital becerilerini geliştirmek' bir hedef değil, görev tanımıdır. Güçlü hedef: 'Proje sonunda 20 öğretmenden 15'i eTwinning üzerinde bağımsız proje açabilecek' veya '1. sınıf öğrencilerinin okuma hızı %20 artacak (ön/son test ile ölçülecek).'",
+          "Önerilen hedefler ortak kuruluşların ihtiyaçlarıyla ve hedef gruplarının ihtiyaçlarıyla ilişkili olarak iyi açıklanmış ve gerçekçi.",
+        tip: "Gerçek rapordan: 'Öğrencilere yönelik hedef var ancak projenin öğrenci aktivitesi yok; hedef-aktivite-çıktı zinciri tutarsız.' Kontrol sorusu: Her hedef için 'Bu hedefe hangi aktivite ile ulaşılacak ve çıktı ne olacak?' diye sorun. Üçü de cevaplandıysa hedef güçlüdür.",
       },
       {
-        id: "activities-detail",
-        label: "Aktivite Detayı",
+        id: "des-b",
+        label: "b) Erişilebilirlik ve Kapsayıcılık",
         description:
-          "Her aktivite için 'ne yapılacak, kim yapacak, ne zaman, nasıl' soruları yanıtlanmış.",
-        tip: "Değerlendiriciler metinde şu 4 soruyu arar: Ne? Kim? Ne zaman? Nasıl? 'Çeşitli atölyeler düzenlenecek' → düşük puan. 'Mart 2025'te koordinatör okul tarafından 2 günlük dijital araçlar atölyesi düzenlenecek, Polonya ortağı eğitici olarak katılacak, 20 öğretmen katılımcı olarak yer alacak' → yüksek puan.",
+          "Faaliyet tasarımı imkânı kısıtlı bireylerin katılımını artırma potansiyeli taşıyor. Katılımı engelleyebilecek bariyerler kabul edilmiş ve bunları aşmak için gerçekçi eylemler önerilmiş. İmkânı kısıtlı hedef gruplar iyi tanımlanmış.",
+        tip: "Gerçek rapordan: 'İmkânı kısıtlı bireylerin dahil edileceğine dair ikna edici argüman yok; ek açıklama gerekiyor.' Bu unsur small-scale ortaklıkların temel amacıyla doğrudan bağlantılı — değerlendirici bunu mutlaka arar. Somut örnek: 'Proje boyunca görme engelliler için materyaller alternatif formatlarda hazırlanacak.'",
       },
       {
-        id: "timeline",
-        label: "Zaman Çizelgesi Gerçekçiliği",
+        id: "des-c",
+        label: "c) Metodoloji, İş Planı ve Maliyet Etkinliği",
         description:
-          "Aktiviteler proje süresine dengeli dağıtılmış, son aylara yığılma yok, hazırlık/uygulama/kapanış fazları ayırt edilmiş.",
-        tip: "36 aylık projelerde en sık hata: ilk 12 ay hazırlık toplantıları, son 6 aya tüm aktiviteler yığılmış. Reddedilen PDF'te de bu sorun belgelendi: Gantt tutarsızlığı puan kırdı. Hazırlık → uygulama → yaygınlaştırma fazlarını açıkça ayırın.",
+          "Faaliyetlerin içeriği ve beklenen sonuçlar spesifik, net, somut ve gerçekçi. Hazırlık, uygulama, izleme, değerlendirme ve sonuç paylaşımı aşamaları planlanmış. Bütçenin önerilen faaliyetlerle uyumu gösterilmiş; her kalem gerekçelendirilmiş. Değerlendirici faaliyetler bazında ve tüm proje bazında inceler.",
+        tip: "Gerçek rapordan: 'Yönetim için ayrılan 8.532 EUR'nun ne için kullanılacağı belirsiz; 400 EUR yerel etkinlik bütçesi yetersiz açıklanmış; bütçe maliyet etkin kabul edilemez.' Proje yönetimi götürü tutarın ~%20'si olabilir; küçük projelerde bu pay daha yüksek olabilir — ama her kaleme gerekçe yazılmalı.",
       },
       {
-        id: "methodology",
-        label: "Metodoloji ve Tutarlılık",
+        id: "des-d",
+        label: "d) Dijital Araçlar ve Erasmus+ Platformları",
         description:
-          "Öğrenme metodolojisi tanımlanmış; hedefler, aktiviteler ve beklenen çıktılar arasında mantıksal tutarlılık var.",
-        tip: "Reddedilen PDF'te kritik bulgu: 'Proje hedefleri aktivitelerle örtüşmüyor, öğrencilere yönelik hedef var ama öğrenci aktivitesi yok.' Metodolojinin her hedefi hangi aktiviteyle karşıladığını net yazın. Hedef → aktivite → çıktı zinciri metinde izlenebilir olmalı.",
+          "Dijital araçlar ve öğrenme yöntemleri işbirliğine ve faaliyetlere somut olarak dahil edilmiş. Katılımcılar harmanlanmış faaliyet biçimlerinden yararlanıyor. Erasmus+ çevrimiçi platformlarının (eTwinning, EPALE, School Education Gateway, OPR) kullanımı planlanmış.",
+        tip: "Gerçek rapordan 'güçlü yön': 'EPALE, eTwinning, School Education Gateway gibi platformların nasıl kullanılacağı kapsamlı açıklanmış.' Bu unsuru güçlendirmek için her platform için 'hangi aşamada, kim tarafından, ne amacıyla' kullanılacağını yazın.",
       },
       {
-        id: "quality-monitoring",
-        label: "Kalite Güvencesi ve İzleme",
+        id: "des-e",
+        label: "e) Çevre Dostu Tasarım",
         description:
-          "Risklerin nasıl yönetileceği, ilerlemenin nasıl ölçüleceği ve kalite güvence mekanizmaları açıklanmış.",
-        tip: "'Düzenli toplantılar yapılacak' ve 'değerlendirme raporu yazılacak' yetersiz. Kim hangi veriyi ne zaman toplayacak? Hangi KPI'lar kullanılacak? Bir şeyler yolunda gitmezse plan B nedir? Bu soruların yanıtı metinde olmalı.",
+          "Proje, çevre ve iklim değişikliği konularında farkındalık yaratma potansiyeline sahip. Ekolojik uygulamalar (kaynak tasarrufu, enerji ve atık azaltımı, karbon ayak izi telafisi, sürdürülebilir gıda/ulaşım) yoluyla davranış değişikliği öngörülmüş.",
+        tip: "Gerçek rapordan: 'Eko-uygulamaların faaliyetlere nasıl entegre edileceğine dair kapsamlı açıklama yok; ifadeler çok soyut.' Somut örnekler: dijital materyaller basılı yerine kullanılacak, hareketlilik için tren/toplu taşıma tercih edilecek, toplantılarda atık azaltma politikası uygulanacak.",
       },
       {
-        id: "budget-justification",
-        label: "Bütçe Gerekçesi ve Maliyet Etkinliği",
+        id: "des-f",
+        label: "f) Katılım ve Sivil Angajman",
         description:
-          "Her bütçe kalemi gerekçelendirilmiş; harcamaların beklenen çıktılarla orantılı olduğu gösterilmiş.",
-        tip: "Reddedilen PDF'te aynen şu yazıyor: '8.532 EUR yönetime ayrılmış, bunun ne için kullanılacağı belirsiz. Bütçe maliyet etkin kabul edilemiyor.' Her satır için 'Bu X EUR şu nedenle gerekli: ...' açıklaması yapın. Hareketlilik maliyetleri toplam bütçenin büyük bölümünü tutuyorsa bunu gerekçelendirin.",
+          "Hedef grupların aktif katılımını teşvik eden ve toplum yaşamına angajmanlarını güçlendiren inandırıcı faaliyetler içeriyor. Katılımcılara kararlara katkı, faaliyetleri birlikte tasarlama veya topluma yönelik girişimlerde yer alma gibi anlamlı aktif rol fırsatları sunuluyor.",
+        tip: "Salt alıcı (pasif) katılımcı değil, aktif paydaş olarak konumlandırma. 'Öğrenciler atölyelere katılacak' yerine 'Öğrenciler yerel etkinliği planlayacak, içerikleri birlikte tasarlayacak ve sunumu yönetecek' ifadesi bu unsuru karşılar.",
       },
     ],
   },
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 3. PARTNERSHIP / Ortaklık — 20 puan, eşik 10
+  // ─────────────────────────────────────────────────────────────────────
   {
     id: "partnership",
     label: "Ortaklık Kalitesi",
     labelEn: "Quality of the partnership and the cooperation arrangements",
     maxScore: 20,
     threshold: 10,
-    aiPromptHint:
-      "Ortakların projeye uygunluğunu, görev dağılımını, yönetim yapısını ve ortakların birbirini nasıl tamamladığını değerlendir.",
-    subCriteria: [
+    bands: BANDS_20,
+    elements: [
       {
-        id: "partner-profile",
-        label: "Ortak Profili Uyumu",
+        id: "par-a",
+        label: "a) Uygun Kuruluş Karması",
         description:
-          "Her ortağın uzmanlığı, deneyimi ve kapasitesi projenin ihtiyacıyla birebir eşleşiyor.",
-        tip: "Reddedilen başvuruların en yaygın hatasıdır: 'AB'den bir okul bulduk, Finlandiya'dan bir STK ekledik' ama bu ortakların neden SEÇİLDİĞİ açıklanmamış. Her ortak için 'Bu ortak bu projede şu nedenle kritik: ...' cümlesi olmalı.",
+          "Katılan kuruluşların katılım nedenleri ve ortak çıkarları açıkça anlatılmış. Her kuruluşun rolü ve katkısı net tanımlanmış. Kuruluşlar önerilen faaliyetleri yürütecek beceri ve yetkinliklere sahip — Erasmus+ deneyimi az olsa da uygulamada yeterli kaliteyi sağlamaları beklenir.",
+        tip: "Her ortak için şu soruyu yanıtlayın: 'Bu kuruluş bu projede neden vazgeçilmez?' Projeye özgün katkı: teknik uzmanlık, hedef gruba erişim, ülke deneyimi, kurumsal kapasite — bunlardan en az biri somut yazılmalı.",
       },
       {
-        id: "task-distribution",
-        label: "Görev Dağılımı",
+        id: "par-b",
+        label: "b) Yeni Gelen / Az Deneyimli Kuruluşların Dahil Edilmesi",
         description:
-          "Her ortağın proje sürecinde üstlendiği spesifik görev ve sorumluluklar net biçimde tanımlanmış.",
-        tip: "'Tüm ortaklar tüm aktivitelere eşit şekilde katılacak' en yaygın ortaklık hatası. Değerlendirici WP (iş paketi) bazında kimin ne yapacağını görmek ister. Örnek: 'Ortak A materyalleri tasarlar; Ortak B sınıfta test eder; Ortak C değerlendirme yapısını yönetir.'",
+          "Small-scale ortaklıklar daha önce bu eylemden düzenli yararlanmamış kuruluşlar için bir 'basamak taşı'dır. Değerlendirici başvuru formundaki geçmiş katılım bilgilerini kullanır ve Programme Guide sözlüğündeki 'newcomer' ve 'less experienced organisation' tanımlarını birebir uygular.",
+        tip: "Başvuru formundaki E1/E2 bölümlerinde her ortağın geçmiş Erasmus+ projeleri doğru doldurulmalı. İlk kez başvuran veya az deneyimli ortaklar varsa bunu açıkça belirtin — bu small-scale programının ruhuna uygundur ve olumlu karşılanır.",
       },
       {
-        id: "management-structure",
-        label: "Yönetim Yapısı",
+        id: "par-c",
+        label: "c) Görev Dağılımı",
         description:
-          "Koordinatör rolü, karar alma süreçleri, iletişim planı ve anlaşmazlık çözüm mekanizması tanımlanmış.",
-        tip: "Bu bölümü soyut bırakan başvurular ortaklık puanının %30'unu kaybeder. 'Proje yönetim komitesi aylık online toplantı yapar; kararlar oybirliğiyle alınır; 2 ay üst üste inaktif olan ortak uyarılır' gibi somut ifadeler bekleniyor.",
+          "Roller ve görevler net tanımlanmış, faaliyetlerin doğasına ve ortakların deneyimine göre dengeli dağıtılmış. Yeni gelen ve az deneyimli kuruluşların proje görevlerinde aktif rol ve önemli katılımı tanımlanmış.",
+        tip: "Gerçek rapordan: 'Görevler çok geniş/soyut; Makedonya ortağı için tanımlanan teknik destek görevinin aktivitelerle ilişkisi belirsiz.' Her ortak için 'WP/aktivite X: bu ortak şunu yapar, şu çıktıdan sorumludur' formatı kullanın.",
       },
       {
-        id: "complementarity",
-        label: "Tamamlayıcılık",
+        id: "par-d",
+        label: "d) Koordinasyon ve İletişim Mekanizmaları",
         description:
-          "Ortaklar birbirinin güçlü yanlarını tamamlıyor; bu işbirliği tek ülkede yapılamayacak bir değer yaratıyor.",
-        tip: "Güçlü soru: 'Bu projeyi 3 Türk okuluyla da yapabilir miydiniz?' Cevap evetse uluslararası boyutu gerekçelendirmediniz demektir. Her ülkenin özgün katkısı: farklı eğitim sistemi deneyimi, farklı mevzuat, farklı kültürel perspektif — bunlar metinde somut yazılmalı.",
+          "Proje koordinasyon yöntemleri ve iletişim araçları net tanımlanmış; kuruluşlar arası iyi işbirliğini sağlamaya uygun.",
+        tip: "Gerçek rapordan 'güçlü yön': 'İletişim araçları ve kanalları kısaca da olsa yeterli görülüyor.' Minimum: toplantı sıklığı, platform (Zoom/Teams/email), koordinatör rolü, karar alma mekanizması. Anlaşmazlık çözüm yöntemi eklenirse daha güçlü olur.",
       },
     ],
   },
+
+  // ─────────────────────────────────────────────────────────────────────
+  // 4. IMPACT / Etki — 20 puan, eşik 10
+  // ─────────────────────────────────────────────────────────────────────
   {
     id: "impact",
     label: "Etki",
     labelEn: "Impact",
     maxScore: 20,
     threshold: 10,
-    aiPromptHint:
-      "Ölçülebilir çıktıları ve değerlendirme göstergelerini, katılımcı/kurumsal etkiyi, yaygınlaştırma planını ve sürdürülebilirliği değerlendir.",
-    subCriteria: [
+    bands: BANDS_20,
+    elements: [
       {
-        id: "measurable-outcomes",
-        label: "Ölçülebilir Çıktılar ve Değerlendirme",
+        id: "imp-a",
+        label: "a) Sonuçların Kurumlara Entegrasyonu",
         description:
-          "Proje çıktıları sayısal/niteliksel göstergelerle tanımlanmış; başarının nasıl ölçüleceği ve değerlendirme araçları belirtilmiş.",
-        tip: "Reddedilen PDF'te aynen: 'Başvuru, yeterince net nicel ve nitel göstergeler içermiyor; farklı bölümlerde beklenen çıktılar birbiriyle çelişiyor.' Çıktıları form, Gantt ve ek belgelerde tutarlı yazın; en az 2-3 ölçülebilir KPI belirtin (anket puanı, oluşturulan materyal sayısı, eğitilen kişi sayısı vb.).",
+          "Ortaklığın elde edilen sonuçları ortak kuruluşların günlük çalışmalarına entegre etme önerileri spesifik, net ve etkili. Sonuçların proje bittikten sonra kurumsal rutine nasıl yerleşeceği açıkça tanımlanmış.",
+        tip: "Gerçek rapordan: 'Sonuçların günlük aktivitelere entegrasyon planı belirsiz; ifadeler deklaratif.' Güçlü örnek: 'Geliştirilen dijital okuryazarlık modülü Eylül 2027'de X dersin müfredatına Okul Kurulu kararıyla eklenecek; sorumlu: Müdür Yardımcısı Y.'",
       },
       {
-        id: "beneficiary-impact",
-        label: "Katılımcı ve Kurumsal Etki",
+        id: "imp-b",
+        label: "b) Katılımcı, Kurum ve Topluma Etki",
         description:
-          "Bireysel katılımcıların mesleki/kişisel gelişimi ve katılımcı kurumların uzun vadeli kapasitesindeki değişim somut biçimde tanımlanmış.",
-        tip: "PDF'te bulunan hata: 'Sonuçların günlük aktivitelere nasıl entegre edileceği belirsiz; ifadeler deklaratif, somut örnekle desteklenmiyor.' Katılımcı için bireysel yolculuk + kurum için 'bu proje bittikten sonra kurumsal olarak ne değişecek?' sorusu yanıtlanmalı.",
+          "Proje uygulama sırasında ve sonrasında katılımcı kuruluşlar, personel ve öğrenenler üzerinde önemli olumlu etki yaratabilir. Projeye katılmayan ancak faaliyetlerden olumlu etkilenecek hedef grup veya kuruluşlar da tanımlanmış (proje boyutu ve doğasıyla orantılı).",
+        tip: "Üç katman gerekiyor: (1) bireysel katılımcı etkisi (kişisel/mesleki gelişim), (2) kurumsal etki (kapasite artışı, politika değişikliği), (3) toplumsal/geniş etki (projeye katılmayan ama etkilenenler). Gerçek rapordan: 'Etki potansiyeli var ancak ifadeler çok deklaratif; somut örneklerle desteklenmiyor.'",
       },
       {
-        id: "dissemination",
-        label: "Yaygınlaştırma Planı",
+        id: "imp-c",
+        label: "c) Değerlendirme Yöntemi",
         description:
-          "Proje sonuçlarının paylaşılacağı hedef kitle, kanal, zaman ve format belirtilmiş.",
-        tip: "PDF'te yaygınlaştırma 'düşünülmüş' bulundu ve puan aldı — ancak çoğu başvuruda 'sosyal medyada paylaşılacak' yazıyor ve bununla bitiyor. Güçlü yaygınlaştırma: platform adı + takipçi sayısı + tarih + format + hedef kitle. Erasmus+ platformları (EPALE, School Education Gateway) ekstra güçlendiriyor.",
+          "Ortaklık, önerilen faaliyetlerin beklenen faydalarının elde edilip edilmediğini nasıl değerlendireceğine dair plana sahip. Hedefler açısından belirtilen hedeflere ulaşılıp ulaşılmadığı ölçülebilir göstergelerle izlenecek. Proje boyutuyla orantılı değerlendirme araçları belirlenmiş.",
+        tip: "Gerçek rapordan: 'SMART göstergelere dayanan performans izleme sistemi var, sınıf gözlemi ve anket araçları belirtilmiş — ancak açıklama soyut, yeterince net nicel/nitel gösterge yok.' Minimum 2-3 somut KPI yazın: 'Anket puanı X'ten Y'ye çıkacak; ön/son test ile ölçülecek; sorumlu: Koordinatör, Aralık 2025.'",
       },
       {
-        id: "sustainability",
-        label: "Sürdürülebilirlik",
+        id: "imp-d",
+        label: "d) Yaygınlaştırma ve AB Görünürlüğü",
         description:
-          "Proje bittikten sonra faaliyetlerin/çıktıların devamı için somut mekanizmalar veya kurumsal entegrasyon planı.",
-        tip: "PDF'te: 'Sonuçların sürdürülebilirliği şüpheli.' Güçlü sürdürülebilirlik: geliştirilen materyal müfredata eklenecek, kim ne zaman yapacak, web sitesini kim yönetecek ve masrafı kim karşılayacak, peer-coaching zinciri nasıl devam edecek — bunların hepsine somut cevap verin.",
+          "İlgili hedef gruplara sunulabilecek proje sonuçları tanımlanmış. Ortak kuruluşlar proje sonuçları ve Erasmus+ programı hakkındaki bilginin mümkün olduğunca geniş yayılması için ellerindeki tüm imkânları kullanacak.",
+        tip: "Gerçek rapordan 'güçlü yön': 'Sosyal medya, atölyeler, Erasmus+ platformları, yerel etkinlikler ve yayınlar dahil çeşitli kanal ve araçlar belirlenmiş — düşünülmüş bir yaygınlaştırma stratejisi.' Bu başvuru bu unsurda puan aldı. Erasmus+ platformlarını (OPR, EPALE) mutlaka ekleyin; bunlar AB görünürlüğü için özel güçlendiricidir.",
       },
     ],
   },
 ];
 
-export const TOTAL_MAX = CRITERIA.reduce((s, c) => s + c.maxScore, 0); // 100
+export const TOTAL_MAX = 100;
 export const TOTAL_THRESHOLD = 60;
-
-export type CriterionId = Criterion["id"];
 
 export interface AiSectionFeedback {
   suggestedScore: number;

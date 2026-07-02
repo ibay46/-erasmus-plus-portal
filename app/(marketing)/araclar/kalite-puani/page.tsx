@@ -1,4 +1,4 @@
-import { KaScoreSimulator } from "@/components/tools/KaScoreSimulator";
+import KaScoreSimulator from "@/components/tools/KaScoreSimulator";
 
 export const metadata = {
   title: "KA210 Kalite Puanı Simülatörü | Erasmus+ Portal",

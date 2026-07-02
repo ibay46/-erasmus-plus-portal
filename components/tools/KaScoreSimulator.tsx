@@ -1,192 +1,330 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   CRITERIA,
   TOTAL_MAX,
   TOTAL_THRESHOLD,
+  getBandForScore,
+  bandMidpoint,
   type Criterion,
+  type QualityBand,
+  type QualityBandKey,
+  type ElementStatus,
   type AiFeedback,
-  type AiSectionFeedback,
+  type CriterionId,
 } from "@/lib/ka-score/criteria";
-import { Card } from "@/components/ui/Card";
 
-const SUB_MAX = 5;
+// ─── helpers ──────────────────────────────────────────────────────────────────
 
-// ── Yardımcı bileşenler ──────────────────────────────────────────────────────
+const BAND_STYLES: Record<QualityBandKey, { bg: string; text: string; border: string; ring: string }> = {
+  "very-good": {
+    bg: "bg-emerald-50",
+    text: "text-emerald-800",
+    border: "border-emerald-400",
+    ring: "ring-emerald-400",
+  },
+  good: {
+    bg: "bg-blue-50",
+    text: "text-blue-800",
+    border: "border-blue-400",
+    ring: "ring-blue-400",
+  },
+  fair: {
+    bg: "bg-amber-50",
+    text: "text-amber-800",
+    border: "border-amber-400",
+    ring: "ring-amber-400",
+  },
+  weak: {
+    bg: "bg-red-50",
+    text: "text-red-800",
+    border: "border-red-400",
+    ring: "ring-red-400",
+  },
+};
+
+const ELEMENT_STATUS_OPTIONS: { value: ElementStatus; label: string; icon: string; color: string }[] = [
+  { value: "addressed", label: "Ele alındı", icon: "✓", color: "text-emerald-700 bg-emerald-50 border-emerald-300" },
+  { value: "partial", label: "Kısmen", icon: "~", color: "text-amber-700 bg-amber-50 border-amber-300" },
+  { value: "missing", label: "Eksik", icon: "✕", color: "text-red-700 bg-red-50 border-red-300" },
+];
+
+function clamp(val: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, val));
+}
+
+// ─── sub-components ───────────────────────────────────────────────────────────
+
+function BandButton({
+  band,
+  selected,
+  onClick,
+}: {
+  band: QualityBand;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  const s = BAND_STYLES[band.key];
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex flex-col items-center px-3 py-2 rounded-lg border-2 text-xs font-semibold transition-all flex-1 min-w-0
+        ${selected ? `${s.bg} ${s.text} ${s.border} ring-2 ${s.ring} ring-offset-1 shadow-sm` : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"}`}
+    >
+      <span className="font-bold text-sm">{band.labelTr}</span>
+      <span className={`text-[10px] mt-0.5 font-normal ${selected ? s.text : "text-gray-400"}`}>
+        {band.min}–{band.max}
+      </span>
+    </button>
+  );
+}
 
 function ScoreBar({
   score,
   max,
   threshold,
+  bandKey,
 }: {
   score: number;
   max: number;
   threshold: number;
+  bandKey: QualityBandKey;
 }) {
-  const pct = Math.round((score / max) * 100);
-  const threshPct = Math.round((threshold / max) * 100);
-  const color =
-    score >= threshold
-      ? score >= max * 0.75
-        ? "bg-green-500"
-        : "bg-accent"
-      : "bg-red-500";
+  const pct = (score / max) * 100;
+  const thresholdPct = (threshold / max) * 100;
+  const barColor =
+    bandKey === "very-good"
+      ? "bg-emerald-500"
+      : bandKey === "good"
+        ? "bg-blue-500"
+        : bandKey === "fair"
+          ? "bg-amber-500"
+          : "bg-red-500";
 
   return (
-    <div className="relative h-2 flex-1 rounded-full bg-border overflow-hidden">
+    <div className="relative h-3 bg-gray-100 rounded-full overflow-visible">
       <div
-        className={`h-full rounded-full transition-all duration-300 ${color}`}
+        className={`absolute inset-y-0 left-0 rounded-full transition-all ${barColor}`}
         style={{ width: `${pct}%` }}
       />
-      {/* Eşik çizgisi */}
       <div
-        className="absolute top-0 h-full w-px bg-foreground/40"
-        style={{ left: `${threshPct}%` }}
+        className="absolute top-1/2 -translate-y-1/2 w-0.5 h-5 bg-gray-600 z-10"
+        style={{ left: `${thresholdPct}%` }}
         title={`Eşik: ${threshold}`}
       />
     </div>
   );
 }
 
-function PassBadge({ pass }: { pass: boolean }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${
-        pass
-          ? "border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400"
-          : "border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400"
-      }`}
-    >
-      {pass ? "✓ Eşik Geçildi" : "✗ Eşiğin Altında"}
-    </span>
-  );
-}
-
-function ScoreButtons({
-  value,
-  onChange,
+function ElementChecklist({
+  elements,
+  statuses,
+  onStatusChange,
 }: {
-  value: number;
-  onChange: (v: number) => void;
+  elements: Criterion["elements"];
+  statuses: Record<string, ElementStatus>;
+  onStatusChange: (id: string, status: ElementStatus) => void;
 }) {
-  const LABELS = ["Yok", "Çok Zayıf", "Orta", "İyi", "Çok İyi", "Mükemmel"];
+  const [expanded, setExpanded] = useState<string | null>(null);
+
   return (
-    <div className="flex gap-1 flex-wrap">
-      {Array.from({ length: SUB_MAX + 1 }, (_, i) => (
-        <button
-          key={i}
-          type="button"
-          onClick={() => onChange(i)}
-          title={LABELS[i]}
-          className={`h-8 w-8 rounded-lg border text-xs font-semibold transition-colors duration-150 cursor-pointer ${
-            i === value
-              ? "border-accent bg-accent text-accent-foreground"
-              : "border-border bg-background text-muted-foreground hover:border-accent/50 hover:text-foreground"
-          }`}
-        >
-          {i}
-        </button>
-      ))}
+    <div className="mt-3 space-y-2">
+      {elements.map((el) => {
+        const current = statuses[el.id] ?? null;
+        const isOpen = expanded === el.id;
+        return (
+          <div key={el.id} className="border border-gray-100 rounded-lg bg-gray-50/50">
+            <div className="flex items-start gap-2 p-2.5">
+              <div className="flex gap-1 mt-0.5 shrink-0">
+                {ELEMENT_STATUS_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value as string}
+                    type="button"
+                    title={opt.label}
+                    onClick={() =>
+                      onStatusChange(el.id, current === opt.value ? null : opt.value)
+                    }
+                    className={`w-6 h-6 rounded text-[11px] font-bold border transition-all
+                      ${current === opt.value ? opt.color : "text-gray-300 bg-white border-gray-200 hover:border-gray-300"}`}
+                  >
+                    {opt.icon}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="flex-1 text-left text-xs font-medium text-gray-700 leading-snug hover:text-gray-900"
+                onClick={() => setExpanded(isOpen ? null : el.id)}
+              >
+                {el.label}
+              </button>
+              <span className={`text-gray-400 text-xs mt-0.5 transition-transform ${isOpen ? "rotate-180" : ""}`}>
+                ▾
+              </span>
+            </div>
+            {isOpen && (
+              <div className="px-2.5 pb-2.5 border-t border-gray-100 pt-2 space-y-1.5">
+                <p className="text-xs text-gray-600 leading-relaxed">{el.description}</p>
+                <p className="text-xs text-amber-700 bg-amber-50 rounded px-2 py-1 leading-relaxed">
+                  💡 {el.tip}
+                </p>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
 
-// ── Kriter kartı ─────────────────────────────────────────────────────────────
-
-function CriterionCard({
-  criterion,
-  scores,
-  onScore,
-  text,
-  onText,
-  aiFeedback,
-  aiMode,
-}: {
+interface CriterionPanelProps {
   criterion: Criterion;
-  scores: Record<string, number>;
-  onScore: (id: string, v: number) => void;
-  text: string;
-  onText: (v: string) => void;
-  aiFeedback: AiSectionFeedback | null;
+  score: number;
+  elementStatuses: Record<string, ElementStatus>;
+  aiText: string;
   aiMode: boolean;
-}) {
-  const [tipsOpen, setTipsOpen] = useState<Record<string, boolean>>({});
-  const [collapsed, setCollapsed] = useState(false);
+  aiFeedback?: { suggestedScore: number; strengths: string[]; weaknesses: string[]; suggestions: string[] };
+  onScoreChange: (score: number) => void;
+  onElementStatusChange: (id: string, status: ElementStatus) => void;
+  onAiTextChange: (text: string) => void;
+}
 
-  const sectionScore = criterion.subCriteria.reduce(
-    (s, sc) => s + (scores[sc.id] ?? 0),
-    0
-  );
-  const sectionMax = criterion.subCriteria.length * SUB_MAX;
-  const pass = sectionScore >= criterion.threshold;
+function CriterionPanel({
+  criterion,
+  score,
+  elementStatuses,
+  aiText,
+  aiMode,
+  aiFeedback,
+  onScoreChange,
+  onElementStatusChange,
+  onAiTextChange,
+}: CriterionPanelProps) {
+  const [open, setOpen] = useState(true);
+  const currentBand = getBandForScore(score, criterion.bands);
+  const style = BAND_STYLES[currentBand.key];
+  const belowThreshold = score < criterion.threshold;
 
   return (
-    <div className="rounded-xl border border-border bg-card overflow-hidden">
-      {/* Başlık */}
+    <div className={`border-2 rounded-xl overflow-hidden transition-all ${belowThreshold ? "border-red-300" : "border-gray-200"}`}>
       <button
         type="button"
-        onClick={() => setCollapsed((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-muted/30 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 bg-white hover:bg-gray-50 text-left"
+        onClick={() => setOpen((o) => !o)}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <h2 className="font-semibold text-foreground">
-            {criterion.label}
-            <span className="ml-2 text-xs font-normal text-muted-foreground">
-              ({criterion.labelEn})
-            </span>
-          </h2>
-          <PassBadge pass={pass} />
-        </div>
-        <div className="flex items-center gap-3 shrink-0 ml-4">
-          <span className="text-sm font-mono">
-            <strong
-              className={pass ? "text-foreground" : "text-red-500"}
-            >
-              {sectionScore}
-            </strong>
-            <span className="text-muted-foreground">/{sectionMax}</span>
+          <span className={`px-2 py-0.5 rounded-full text-xs font-bold border ${style.bg} ${style.text} ${style.border} shrink-0`}>
+            {currentBand.labelTr}
           </span>
-          <svg
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className={`h-4 w-4 text-muted-foreground transition-transform ${collapsed ? "" : "rotate-180"}`}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 8l5 5 5-5" />
-          </svg>
+          <div>
+            <p className="font-semibold text-gray-900 text-sm">{criterion.label}</p>
+            <p className="text-[10px] text-gray-400">{criterion.labelEn}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0 ml-3">
+          <span className={`text-lg font-bold ${belowThreshold ? "text-red-600" : "text-gray-800"}`}>
+            {score}
+            <span className="text-xs font-normal text-gray-400">/{criterion.maxScore}</span>
+          </span>
+          {belowThreshold && <span title="Eşik altı — red riski">⚠️</span>}
+          <span className={`text-gray-400 text-sm transition-transform ${open ? "rotate-180" : ""}`}>▾</span>
         </div>
       </button>
 
-      {/* Puan barı */}
-      <div className="px-4 pb-2 flex items-center gap-3">
-        <ScoreBar score={sectionScore} max={sectionMax} threshold={criterion.threshold} />
-        <span className="text-xs text-muted-foreground shrink-0">
-          Eşik: {criterion.threshold}
-        </span>
-      </div>
+      {open && (
+        <div className="px-4 pb-4 bg-white border-t border-gray-100 space-y-4">
+          {criterion.criticalNote && belowThreshold && (
+            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 leading-relaxed">
+              🚨 {criterion.criticalNote}
+            </div>
+          )}
 
-      {!collapsed && (
-        <div className="px-4 pb-4 space-y-4 border-t border-border pt-4">
-          {/* AI geri bildirim */}
+          <div className="mt-3">
+            <ScoreBar
+              score={score}
+              max={criterion.maxScore}
+              threshold={criterion.threshold}
+              bandKey={currentBand.key}
+            />
+            <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+              <span>0</span>
+              <span>Eşik: {criterion.threshold}</span>
+              <span>{criterion.maxScore}</span>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 mb-1.5 font-medium">Kalite Bandı Seçin</p>
+            <div className="flex gap-1.5">
+              {criterion.bands.map((band) => (
+                <BandButton
+                  key={band.key}
+                  band={band}
+                  selected={currentBand.key === band.key}
+                  onClick={() => onScoreChange(bandMidpoint(band))}
+                />
+              ))}
+            </div>
+            <p className="text-[10px] text-gray-400 mt-1.5 italic">{currentBand.description}</p>
+          </div>
+
+          <div>
+            <p className="text-xs text-gray-500 mb-1.5 font-medium">
+              Hassas Puan ({currentBand.min}–{currentBand.max})
+            </p>
+            <div className="flex items-center gap-2">
+              <input
+                type="range"
+                min={currentBand.min}
+                max={currentBand.max}
+                value={score}
+                onChange={(e) => onScoreChange(Number(e.target.value))}
+                className="flex-1 accent-gray-700"
+              />
+              <input
+                type="number"
+                min={0}
+                max={criterion.maxScore}
+                value={score}
+                onChange={(e) => {
+                  const v = Number(e.target.value);
+                  if (!isNaN(v)) onScoreChange(clamp(v, 0, criterion.maxScore));
+                }}
+                className="w-14 border border-gray-200 rounded-lg text-center text-sm font-bold py-1 focus:outline-none focus:ring-1 focus:ring-gray-400"
+              />
+            </div>
+          </div>
+
+          {aiMode && (
+            <div>
+              <p className="text-xs text-gray-500 mb-1 font-medium">
+                Bu kriter için başvuru metni / notunuz
+              </p>
+              <textarea
+                value={aiText}
+                onChange={(e) => onAiTextChange(e.target.value)}
+                rows={4}
+                placeholder={`${criterion.label} kriteri açısından proje özeti veya ilgili bölümleri yapıştırın…`}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-400 resize-y"
+              />
+            </div>
+          )}
+
           {aiFeedback && (
-            <div className="rounded-lg border border-accent/30 bg-accent/5 p-3 space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="font-medium text-accent text-xs uppercase tracking-wide">
-                  AI Önerisi
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Önerilen puan: <strong>{aiFeedback.suggestedScore}</strong>/{sectionMax}
-                </span>
-              </div>
+            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3 space-y-2">
+              <p className="text-xs font-semibold text-indigo-700">
+                AI Önerisi: {aiFeedback.suggestedScore} puan
+              </p>
               {aiFeedback.strengths.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-green-600 dark:text-green-400 mb-1">Güçlü Yönler</p>
+                  <p className="text-[10px] font-semibold text-emerald-700 mb-0.5">Güçlü Yönler</p>
                   <ul className="space-y-0.5">
                     {aiFeedback.strengths.map((s, i) => (
-                      <li key={i} className="text-xs text-muted-foreground flex gap-1.5">
-                        <span className="text-green-500 shrink-0">+</span>{s}
+                      <li key={i} className="text-xs text-gray-700 flex gap-1">
+                        <span className="text-emerald-500 shrink-0">+</span>
+                        {s}
                       </li>
                     ))}
                   </ul>
@@ -194,11 +332,12 @@ function CriterionCard({
               )}
               {aiFeedback.weaknesses.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-red-500 mb-1">Eksik / Zayıf Noktalar</p>
+                  <p className="text-[10px] font-semibold text-red-700 mb-0.5">Zayıf Noktalar</p>
                   <ul className="space-y-0.5">
                     {aiFeedback.weaknesses.map((w, i) => (
-                      <li key={i} className="text-xs text-muted-foreground flex gap-1.5">
-                        <span className="text-red-500 shrink-0">−</span>{w}
+                      <li key={i} className="text-xs text-gray-700 flex gap-1">
+                        <span className="text-red-500 shrink-0">−</span>
+                        {w}
                       </li>
                     ))}
                   </ul>
@@ -206,119 +345,87 @@ function CriterionCard({
               )}
               {aiFeedback.suggestions.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-amber-500 mb-1">Öneriler</p>
+                  <p className="text-[10px] font-semibold text-blue-700 mb-0.5">Öneriler</p>
                   <ul className="space-y-0.5">
                     {aiFeedback.suggestions.map((s, i) => (
-                      <li key={i} className="text-xs text-muted-foreground flex gap-1.5">
-                        <span className="text-amber-500 shrink-0">→</span>{s}
+                      <li key={i} className="text-xs text-gray-700 flex gap-1">
+                        <span className="text-blue-500 shrink-0">→</span>
+                        {s}
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
+              <button
+                type="button"
+                onClick={() => onScoreChange(aiFeedback.suggestedScore)}
+                className="text-xs text-indigo-700 underline hover:text-indigo-900"
+              >
+                Bu puanı kabul et
+              </button>
             </div>
           )}
 
-          {/* Alt kriterler */}
-          {criterion.subCriteria.map((sc) => (
-            <div key={sc.id} className="space-y-2">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{sc.label}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{sc.description}</p>
-                </div>
-                <div className="shrink-0 text-xs text-muted-foreground font-mono">
-                  {scores[sc.id] ?? 0}/{SUB_MAX}
-                </div>
-              </div>
-              <ScoreButtons
-                value={scores[sc.id] ?? 0}
-                onChange={(v) => onScore(sc.id, v)}
-              />
-              {/* İpucu */}
-              <div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setTipsOpen((prev) => ({ ...prev, [sc.id]: !prev[sc.id] }))
-                  }
-                  className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-                >
-                  <span className="text-amber-500">💡</span>
-                  {tipsOpen[sc.id] ? "İpucunu gizle" : "Reddedilen başvurulardan ipucu"}
-                  <svg
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className={`h-3 w-3 transition-transform ${tipsOpen[sc.id] ? "rotate-180" : ""}`}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6l4 4 4-4" />
-                  </svg>
-                </button>
-                {tipsOpen[sc.id] && (
-                  <div className="mt-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-muted-foreground leading-relaxed">
-                    {sc.tip}
-                  </div>
-                )}
-              </div>
-              <div className="border-b border-border/50 last:hidden" />
-            </div>
-          ))}
-
-          {/* AI metin alanı */}
-          {aiMode && (
-            <div className="mt-2">
-              <label className="block text-xs font-medium text-muted-foreground mb-1">
-                {criterion.label} bölümünüzden metni yapıştırın (AI analizi için)
-              </label>
-              <textarea
-                value={text}
-                onChange={(e) => onText(e.target.value)}
-                rows={5}
-                placeholder="Başvuru formunuzdaki ilgili bölümü buraya yapıştırın..."
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent/30 resize-y"
-              />
-            </div>
-          )}
+          <div>
+            <p className="text-xs text-gray-500 font-medium mb-0.5">
+              Değerlendirme Unsurları
+              <span className="ml-1 text-gray-400 font-normal">(bilgi amaçlı — puana etkisi yok)</span>
+            </p>
+            <ElementChecklist
+              elements={criterion.elements}
+              statuses={elementStatuses}
+              onStatusChange={onElementStatusChange}
+            />
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// ── Ana bileşen ───────────────────────────────────────────────────────────────
+// ─── main component ───────────────────────────────────────────────────────────
 
-export function KaScoreSimulator() {
-  const [scores, setScores] = useState<Record<string, number>>({});
+export default function KaScoreSimulator() {
+  const [scores, setScores] = useState<Record<CriterionId, number>>({
+    relevance: 0,
+    design: 0,
+    partnership: 0,
+    impact: 0,
+  });
+
+  const [elementStatuses, setElementStatuses] = useState<Record<string, ElementStatus>>({});
+
   const [aiMode, setAiMode] = useState(false);
-  const [texts, setTexts] = useState<Record<string, string>>({
+  const [aiTexts, setAiTexts] = useState<Record<CriterionId, string>>({
     relevance: "",
     design: "",
     partnership: "",
     impact: "",
   });
-  const [aiLoading, setAiLoading] = useState(false);
+
   const [aiFeedback, setAiFeedback] = useState<AiFeedback | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
 
-  const handleScore = useCallback((id: string, v: number) => {
-    setScores((prev) => ({ ...prev, [id]: v }));
+  const total = Object.values(scores).reduce((s, v) => s + v, 0);
+  const passes = total >= TOTAL_THRESHOLD;
+
+  const autoRejectRelevance = scores.relevance < CRITERIA.find((c) => c.id === "relevance")!.threshold;
+  const autoRejectDesign = scores.design < CRITERIA.find((c) => c.id === "design")!.threshold;
+
+  const handleScoreChange = useCallback((id: CriterionId, score: number) => {
+    setScores((prev) => ({ ...prev, [id]: score }));
   }, []);
 
-  const sectionScore = useCallback(
-    (criterion: Criterion) =>
-      criterion.subCriteria.reduce((s, sc) => s + (scores[sc.id] ?? 0), 0),
-    [scores]
-  );
+  const handleElementStatusChange = useCallback((id: string, status: ElementStatus) => {
+    setElementStatuses((prev) => ({ ...prev, [id]: status }));
+  }, []);
 
-  const { totalScore, allPass } = useMemo(() => {
-    const total = CRITERIA.reduce((s, c) => s + sectionScore(c), 0);
-    const sectionsPass = CRITERIA.every((c) => sectionScore(c) >= c.threshold);
-    return { totalScore: total, allPass: total >= TOTAL_THRESHOLD && sectionsPass };
-  }, [sectionScore]);
+  const handleAiTextChange = useCallback((id: CriterionId, text: string) => {
+    setAiTexts((prev) => ({ ...prev, [id]: text }));
+  }, []);
 
-  async function runAiAnalysis() {
+  const handleAiEvaluate = useCallback(async () => {
     setAiLoading(true);
     setAiError(null);
     setAiFeedback(null);
@@ -326,157 +433,201 @@ export function KaScoreSimulator() {
       const res = await fetch("/api/ka-score", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(texts),
+        body: JSON.stringify(aiTexts),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "AI analizi başarısız");
+      if (!res.ok) throw new Error(data.error ?? "Bilinmeyen hata");
       setAiFeedback(data as AiFeedback);
-      // AI önerilen puanları alt kriterlere dağıt (bölüm toplamını orantıla)
-      const next = { ...scores };
-      CRITERIA.forEach((c) => {
-        const suggested = (data as AiFeedback)[c.id]?.suggestedScore ?? null;
-        if (suggested === null) return;
-        const subCount = c.subCriteria.length;
-        const perSub = Math.round(suggested / subCount);
-        c.subCriteria.forEach((sc) => {
-          next[sc.id] = Math.max(0, Math.min(SUB_MAX, perSub));
-        });
+      setScores({
+        relevance: clamp(data.relevance.suggestedScore, 0, 30),
+        design: clamp(data.design.suggestedScore, 0, 30),
+        partnership: clamp(data.partnership.suggestedScore, 0, 20),
+        impact: clamp(data.impact.suggestedScore, 0, 20),
       });
-      setScores(next);
-    } catch (err) {
-      setAiError((err as Error).message);
+    } catch (e: unknown) {
+      setAiError(e instanceof Error ? e.message : "Bilinmeyen hata");
     } finally {
       setAiLoading(false);
     }
-  }
+  }, [aiTexts]);
 
-  const totalMax = CRITERIA.reduce((s, c) => s + c.subCriteria.length * SUB_MAX, 0);
+  const totalBandColor = passes
+    ? "text-emerald-700 bg-emerald-50 border-emerald-300"
+    : "text-red-700 bg-red-50 border-red-300";
 
   return (
-    <div className="space-y-6">
-      {/* Özet paneli */}
-      <div
-        className={`rounded-xl border-2 p-4 transition-colors ${
-          allPass ? "border-green-500/40 bg-green-500/5" : "border-red-500/30 bg-red-500/5"
-        }`}
-      >
-        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Toplam Puan
-            </p>
-            <p className="text-4xl font-bold text-foreground tabular-nums">
-              {totalScore}
-              <span className="text-lg font-normal text-muted-foreground">/{TOTAL_MAX}</span>
-            </p>
-          </div>
-          <div className="text-right">
-            <span
-              className={`text-xl font-semibold ${
-                allPass ? "text-green-600 dark:text-green-400" : "text-red-500"
-              }`}
-            >
-              {allPass ? "✓ Eşikler Geçildi" : "✗ Eşik Geçilemedi"}
-            </span>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Geçme koşulu: toplam ≥ 60 ve her bölüm ≥ %50
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {CRITERIA.map((c) => {
-            const s = sectionScore(c);
-            const subMax = c.subCriteria.length * SUB_MAX;
-            const pass = s >= c.threshold;
-            return (
-              <div key={c.id} className="space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground truncate">{c.label}</span>
-                  <span
-                    className={`font-mono font-semibold ${pass ? "text-foreground" : "text-red-500"}`}
-                  >
-                    {s}/{subMax}
-                  </span>
-                </div>
-                <ScoreBar score={s} max={subMax} threshold={c.threshold} />
-                <p className="text-xs text-muted-foreground">eşik: {c.threshold}</p>
-              </div>
-            );
-          })}
-        </div>
+    <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">KA210 Kalite Puanı Simülatörü</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Guide for Experts on Quality Assessment 2026 rubriğine göre proje taslağınızı öz değerlendirin.
+        </p>
       </div>
 
-      {/* AI modu toggle */}
-      <div className="flex items-start justify-between gap-4 rounded-xl border border-border bg-card px-4 py-3">
+      {/* AI mode toggle */}
+      <div className="flex items-center justify-between bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3">
         <div>
-          <p className="text-sm font-medium text-foreground">Yapay Zeka Destekli Analiz</p>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Başvuru metinlerinizi yapıştırın, AI her bölümü puanlayıp geri bildirim versin.
-            Sunucuda <code className="text-xs bg-muted px-1 rounded">ANTHROPIC_API_KEY</code>{" "}
-            gerektirir.
+          <p className="text-sm font-semibold text-indigo-900">Yapay Zeka Destekli Değerlendirme</p>
+          <p className="text-xs text-indigo-600 mt-0.5">
+            Her kriter için başvuru metnini yapıştırın, AI puan önersin ve geri bildirim alsın.
           </p>
         </div>
         <button
           type="button"
-          onClick={() => setAiMode((v) => !v)}
-          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
-            aiMode ? "bg-accent" : "bg-muted"
-          }`}
-          role="switch"
-          aria-checked={aiMode}
+          onClick={() => setAiMode((m) => !m)}
+          className={`relative w-11 h-6 rounded-full transition-all ${aiMode ? "bg-indigo-600" : "bg-gray-300"}`}
         >
           <span
-            className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ${
-              aiMode ? "translate-x-5" : "translate-x-0"
-            }`}
+            className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all"
+            style={{ left: aiMode ? "22px" : "2px" }}
           />
         </button>
       </div>
 
-      {/* AI çalıştır butonu */}
+      {/* criteria panels */}
+      <div className="space-y-4">
+        {CRITERIA.map((c) => {
+          const prefix = c.id.slice(0, 3);
+          const criterionStatuses = Object.fromEntries(
+            Object.entries(elementStatuses).filter(([k]) => k.startsWith(prefix))
+          );
+          return (
+            <CriterionPanel
+              key={c.id}
+              criterion={c}
+              score={scores[c.id]}
+              elementStatuses={criterionStatuses}
+              aiText={aiTexts[c.id]}
+              aiMode={aiMode}
+              aiFeedback={aiFeedback?.[c.id]}
+              onScoreChange={(score) => handleScoreChange(c.id, score)}
+              onElementStatusChange={handleElementStatusChange}
+              onAiTextChange={(text) => handleAiTextChange(c.id, text)}
+            />
+          );
+        })}
+      </div>
+
+      {/* AI evaluate button */}
       {aiMode && (
-        <div className="space-y-2">
-          <button
-            type="button"
-            onClick={runAiAnalysis}
-            disabled={aiLoading || Object.values(texts).every((t) => !t.trim())}
-            className="w-full cursor-pointer rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {aiLoading ? "Analiz ediliyor…" : "AI ile Değerlendir"}
-          </button>
-          {aiError && (
-            <p className="text-xs text-red-500 text-center">{aiError}</p>
-          )}
-          {aiFeedback?.overallComment && (
-            <div className="rounded-lg border border-accent/20 bg-accent/5 px-4 py-3 text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">AI Genel Değerlendirme: </span>
-              {aiFeedback.overallComment}
-            </div>
-          )}
+        <button
+          type="button"
+          onClick={handleAiEvaluate}
+          disabled={aiLoading}
+          className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all disabled:opacity-60 disabled:cursor-wait text-sm"
+        >
+          {aiLoading ? "Değerlendiriliyor…" : "AI ile Değerlendir"}
+        </button>
+      )}
+      {aiError && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2">
+          ⚠️ {aiError}
+        </p>
+      )}
+
+      {aiFeedback?.overallComment && (
+        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm text-indigo-800">
+          <p className="font-semibold mb-1">Genel Değerlendirme (AI)</p>
+          <p className="leading-relaxed">{aiFeedback.overallComment}</p>
         </div>
       )}
 
-      {/* Kriter kartları */}
-      <div className="space-y-4">
-        {CRITERIA.map((criterion) => (
-          <CriterionCard
-            key={criterion.id}
-            criterion={criterion}
-            scores={scores}
-            onScore={handleScore}
-            text={texts[criterion.id] ?? ""}
-            onText={(v) => setTexts((prev) => ({ ...prev, [criterion.id]: v }))}
-            aiFeedback={aiFeedback?.[criterion.id] ?? null}
-            aiMode={aiMode}
+      {/* total score panel */}
+      <div className="border-2 border-gray-200 rounded-xl p-5 bg-white">
+        <div className="flex items-center justify-between mb-3">
+          <p className="font-semibold text-gray-900">Toplam Puan</p>
+          <span className={`px-3 py-1 rounded-full border text-sm font-bold ${totalBandColor}`}>
+            {passes ? "Geçer" : "Geçemez"}
+          </span>
+        </div>
+
+        <div className="flex items-end gap-2 mb-3">
+          <span className="text-4xl font-extrabold text-gray-900">{total}</span>
+          <span className="text-lg text-gray-400 mb-1">/ {TOTAL_MAX}</span>
+          <span className="text-xs text-gray-400 mb-1.5 ml-1">(eşik: {TOTAL_THRESHOLD})</span>
+        </div>
+
+        <div className="relative h-4 bg-gray-100 rounded-full overflow-visible mb-2">
+          <div
+            className={`absolute inset-y-0 left-0 rounded-full transition-all ${passes ? "bg-emerald-500" : "bg-red-400"}`}
+            style={{ width: `${(total / TOTAL_MAX) * 100}%` }}
           />
-        ))}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-0.5 h-6 bg-gray-600 z-10"
+            style={{ left: `${(TOTAL_THRESHOLD / TOTAL_MAX) * 100}%` }}
+            title={`Geçme eşiği: ${TOTAL_THRESHOLD}`}
+          />
+        </div>
+
+        <div className="mt-4 space-y-1.5">
+          {CRITERIA.map((c) => {
+            const s = scores[c.id];
+            const band = getBandForScore(s, c.bands);
+            const style = BAND_STYLES[band.key];
+            const below = s < c.threshold;
+            const barColor =
+              band.key === "very-good"
+                ? "bg-emerald-400"
+                : band.key === "good"
+                  ? "bg-blue-400"
+                  : band.key === "fair"
+                    ? "bg-amber-400"
+                    : "bg-red-400";
+            const dotColor =
+              band.key === "very-good"
+                ? "bg-emerald-500"
+                : band.key === "good"
+                  ? "bg-blue-500"
+                  : band.key === "fair"
+                    ? "bg-amber-500"
+                    : "bg-red-500";
+            return (
+              <div key={c.id} className="flex items-center gap-2 text-xs">
+                <span className={`w-2 h-2 rounded-full shrink-0 ${dotColor}`} />
+                <span className="text-gray-600 w-32 shrink-0 truncate">{c.label}</span>
+                <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${barColor}`}
+                    style={{ width: `${(s / c.maxScore) * 100}%` }}
+                  />
+                </div>
+                <span className={`font-semibold w-12 text-right ${below ? "text-red-600" : "text-gray-700"}`}>
+                  {s}/{c.maxScore}
+                </span>
+                <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${style.bg} ${style.text}`}>
+                  {band.labelTr}
+                </span>
+                {below && <span title="Eşik altı">⚠️</span>}
+              </div>
+            );
+          })}
+        </div>
+
+        {(autoRejectRelevance || autoRejectDesign) && (
+          <div className="mt-4 space-y-2">
+            {autoRejectRelevance && (
+              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">
+                🚨 <strong>Otomatik Red:</strong> Uygunluk kriteri Zayıf bantta — bu eşiğin altındaki projeler otomatik reddedilir.
+              </div>
+            )}
+            {autoRejectDesign && (
+              <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">
+                🚨 <strong>Otomatik Red Riski:</strong> Tasarım Kalitesi eşiğin altında — çıktılar hibe tutarını gerekçeleyemiyorsa otomatik red uygulanır.
+              </div>
+            )}
+          </div>
+        )}
+
+        {passes && !autoRejectRelevance && !autoRejectDesign && (
+          <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 text-xs text-emerald-700">
+            ✅ Toplam puan eşiği ve tüm bölüm eşiklerini geçiyor. Finans değerlendirmesine alınabilir.
+          </div>
+        )}
       </div>
 
-      <p className="text-xs text-muted-foreground border-t border-border pt-4">
-        Bu simülatör 2026 Erasmus+ Programme Guide değerlendirme kriterlerini esas alır ve
-        tahmini bir öz değerlendirme aracıdır. Gerçek değerlendirme Ulusal Ajans tarafından
-        atanan bağımsız uzmanlar tarafından yapılır; bu araçtaki puanlar resmi değildir.
+      <p className="text-[11px] text-gray-400 text-center leading-relaxed">
+        Bu simülatör bilgi amaçlıdır. Gerçek değerlendirme Ulusal Ajans tarafından bağımsız uzmanlar aracılığıyla yapılır.
+        Puanlar farklılık gösterebilir.
       </p>
     </div>
   );
