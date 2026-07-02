@@ -16,7 +16,9 @@ export interface Criterion {
 }
 
 // Her alt kıstas 5 puan üzerinden değerlendirilir.
-// Toplam: 6×5=30 + 4×5=20 + 4×5=20 + 6×5=30 = 100
+// Gerçek KA210 rubriği (2024-2025 Programme Guide):
+// Relevance 30 + Design 30 + Partnership 20 + Impact 20 = 100
+// Toplam: 6×5=30 + 6×5=30 + 4×5=20 + 4×5=20 = 100
 
 export const CRITERIA: Criterion[] = [
   {
@@ -75,11 +77,11 @@ export const CRITERIA: Criterion[] = [
   {
     id: "design",
     label: "Tasarım Kalitesi",
-    labelEn: "Quality of Project Design",
-    maxScore: 20,
-    threshold: 10,
+    labelEn: "Quality of Project Design and Implementation",
+    maxScore: 30,
+    threshold: 15,
     aiPromptHint:
-      "Projenin hedeflerinin SMART olup olmadığını, aktivitelerin ne/kim/ne zaman/nasıl detaylandırılıp detaylandırılmadığını, zaman çizelgesinin gerçekçiliğini ve kalite izleme planını değerlendir.",
+      "Projenin hedeflerinin SMART olup olmadığını, aktivitelerin ne/kim/ne zaman/nasıl detaylandırılıp detaylandırılmadığını, zaman çizelgesinin gerçekçiliğini, metodoloji tutarlılığını, kalite izleme planını ve bütçe gerekçesini değerlendir.",
     subCriteria: [
       {
         id: "smart-objectives",
@@ -99,8 +101,15 @@ export const CRITERIA: Criterion[] = [
         id: "timeline",
         label: "Zaman Çizelgesi Gerçekçiliği",
         description:
-          "Aktiviteler proje süresine dengeli dağıtılmış, son aylara yığılma yok, hazırlık süresi makul.",
-        tip: "36 aylık projelerde en sık hata: ilk 12 ay hazırlık toplantıları, son 6 aya tüm aktiviteler yığılmış. Değerlendirici timeline tablosunu inceler. Gantt formatında sunmak ve neden bu sıralamanın seçildiğini bir cümle ile açıklamak güçlüdür.",
+          "Aktiviteler proje süresine dengeli dağıtılmış, son aylara yığılma yok, hazırlık/uygulama/kapanış fazları ayırt edilmiş.",
+        tip: "36 aylık projelerde en sık hata: ilk 12 ay hazırlık toplantıları, son 6 aya tüm aktiviteler yığılmış. Reddedilen PDF'te de bu sorun belgelendi: Gantt tutarsızlığı puan kırdı. Hazırlık → uygulama → yaygınlaştırma fazlarını açıkça ayırın.",
+      },
+      {
+        id: "methodology",
+        label: "Metodoloji ve Tutarlılık",
+        description:
+          "Öğrenme metodolojisi tanımlanmış; hedefler, aktiviteler ve beklenen çıktılar arasında mantıksal tutarlılık var.",
+        tip: "Reddedilen PDF'te kritik bulgu: 'Proje hedefleri aktivitelerle örtüşmüyor, öğrencilere yönelik hedef var ama öğrenci aktivitesi yok.' Metodolojinin her hedefi hangi aktiviteyle karşıladığını net yazın. Hedef → aktivite → çıktı zinciri metinde izlenebilir olmalı.",
       },
       {
         id: "quality-monitoring",
@@ -108,6 +117,13 @@ export const CRITERIA: Criterion[] = [
         description:
           "Risklerin nasıl yönetileceği, ilerlemenin nasıl ölçüleceği ve kalite güvence mekanizmaları açıklanmış.",
         tip: "'Düzenli toplantılar yapılacak' ve 'değerlendirme raporu yazılacak' yetersiz. Kim hangi veriyi ne zaman toplayacak? Hangi KPI'lar kullanılacak? Bir şeyler yolunda gitmezse plan B nedir? Bu soruların yanıtı metinde olmalı.",
+      },
+      {
+        id: "budget-justification",
+        label: "Bütçe Gerekçesi ve Maliyet Etkinliği",
+        description:
+          "Her bütçe kalemi gerekçelendirilmiş; harcamaların beklenen çıktılarla orantılı olduğu gösterilmiş.",
+        tip: "Reddedilen PDF'te aynen şu yazıyor: '8.532 EUR yönetime ayrılmış, bunun ne için kullanılacağı belirsiz. Bütçe maliyet etkin kabul edilemiyor.' Her satır için 'Bu X EUR şu nedenle gerekli: ...' açıklaması yapın. Hareketlilik maliyetleri toplam bütçenin büyük bölümünü tutuyorsa bunu gerekçelendirin.",
       },
     ],
   },
@@ -154,52 +170,38 @@ export const CRITERIA: Criterion[] = [
     id: "impact",
     label: "Etki",
     labelEn: "Impact",
-    maxScore: 30,
-    threshold: 15,
+    maxScore: 20,
+    threshold: 10,
     aiPromptHint:
-      "Ölçülebilir çıktıları, katılımcılara ve kurumlara etkiyi, yaygınlaştırma planını, sürdürülebilirliği ve geniş kapsamlı etkiyi değerlendir.",
+      "Ölçülebilir çıktıları ve değerlendirme göstergelerini, katılımcı/kurumsal etkiyi, yaygınlaştırma planını ve sürdürülebilirliği değerlendir.",
     subCriteria: [
       {
         id: "measurable-outcomes",
-        label: "Ölçülebilir Çıktılar",
+        label: "Ölçülebilir Çıktılar ve Değerlendirme",
         description:
-          "Proje çıktıları sayısal hedefler ve başarı göstergeleriyle tanımlanmış; nasıl ölçüleceği belirtilmiş.",
-        tip: "'Öğrenciler faydalanacak' yerine: 'Proje süresince 120 öğrenci 40 saatlik eğitime katılacak; ön-test/son-test ile dijital okuryazarlık düzeyi ölçülecek; hedef: %70'inin temel seviyeye ulaşması.' Değerlendirici sayısal hedefleri kontrol ettiğinde boş görürse puan kırar.",
+          "Proje çıktıları sayısal/niteliksel göstergelerle tanımlanmış; başarının nasıl ölçüleceği ve değerlendirme araçları belirtilmiş.",
+        tip: "Reddedilen PDF'te aynen: 'Başvuru, yeterince net nicel ve nitel göstergeler içermiyor; farklı bölümlerde beklenen çıktılar birbiriyle çelişiyor.' Çıktıları form, Gantt ve ek belgelerde tutarlı yazın; en az 2-3 ölçülebilir KPI belirtin (anket puanı, oluşturulan materyal sayısı, eğitilen kişi sayısı vb.).",
       },
       {
-        id: "participant-impact",
-        label: "Katılımcılara Etki",
+        id: "beneficiary-impact",
+        label: "Katılımcı ve Kurumsal Etki",
         description:
-          "Bireysel katılımcıların kişisel, mesleki veya eğitimsel gelişimi somut biçimde tanımlanmış.",
-        tip: "'Öğretmenler gelişecek' yerine: 'Katılan öğretmenler geri döndüklerinde: (a) eTwinning hesabı açmış olacak, (b) okulda 1 meslektaşını eğitecek, (c) Avrupa Pasaportu için başvuru yapacak.' Bireysel yolculuğu somutlaştırın.",
-      },
-      {
-        id: "org-impact",
-        label: "Kurumsal Etki",
-        description:
-          "Katılımcı kurumlar için uzun vadeli değişim, kapasite artışı veya politika değişikliği tanımlanmış.",
-        tip: "Kurumsal düzey sıklıkla atlanır. 'Okulumuz bu projeden sonra dijital dönüşüm eylem planını güncelleyecek' veya 'Yeni öğretmen yetiştirme programımıza bu içerik entegre edilecek' gibi somut kurumsal değişimler güçlü puanlar alır.",
+          "Bireysel katılımcıların mesleki/kişisel gelişimi ve katılımcı kurumların uzun vadeli kapasitesindeki değişim somut biçimde tanımlanmış.",
+        tip: "PDF'te bulunan hata: 'Sonuçların günlük aktivitelere nasıl entegre edileceği belirsiz; ifadeler deklaratif, somut örnekle desteklenmiyor.' Katılımcı için bireysel yolculuk + kurum için 'bu proje bittikten sonra kurumsal olarak ne değişecek?' sorusu yanıtlanmalı.",
       },
       {
         id: "dissemination",
         label: "Yaygınlaştırma Planı",
         description:
           "Proje sonuçlarının paylaşılacağı hedef kitle, kanal, zaman ve format belirtilmiş.",
-        tip: "Reddedilen başvuruların %60'ında 'sosyal medyada paylaşılacak' yazıyor ve bununla bitiyor. Güçlü yaygınlaştırma: 'Hangi sosyal medya? Kaç takipçi? Yerel gazete makale tarihleri? Belediye web sitesi? Veli toplantısında sunum? İl MEM'ine rapor? Konferans bildirisi? Bu kanalların her biri için ad soyad, tarih, format belirtilmeli.'",
+        tip: "PDF'te yaygınlaştırma 'düşünülmüş' bulundu ve puan aldı — ancak çoğu başvuruda 'sosyal medyada paylaşılacak' yazıyor ve bununla bitiyor. Güçlü yaygınlaştırma: platform adı + takipçi sayısı + tarih + format + hedef kitle. Erasmus+ platformları (EPALE, School Education Gateway) ekstra güçlendiriyor.",
       },
       {
         id: "sustainability",
         label: "Sürdürülebilirlik",
         description:
-          "Proje bittikten sonra faaliyetlerin devamı için somut mekanizmalar, finansman kaynakları veya kurumsal entegrasyon planı.",
-        tip: "'Proje bittikten sonra devam edeceğiz' = düşük puan. Güçlü sürdürülebilirlik: 'Geliştirilen dijital materyal okulun müfredat arşivine kalıcı olarak eklenecek; eğitilen 5 öğretmen gelecek yıllarda peer-coaching verecek; KA121 akreditasyonu için başvuru yapılacak.' Kim, nasıl, nereden finansman sağlayacak?",
-      },
-      {
-        id: "wider-impact",
-        label: "Geniş Kapsamlı Etki",
-        description:
-          "Projenin yerel topluluk, politika yapıcılar veya sektör düzeyinde yaratabileceği sistematik etki.",
-        tip: "Bu kıstas eksik olsa da diğerleri güçlüyse proje geçebilir. Ancak ekstra puan için: 'Sonuçlar ilçe eğitim müdürlüğüne sunulacak, pilot model olarak önerilecek' veya 'Bulgular ulusal konferansa bildiri olarak gönderilecek' gibi ifadeler değerlendirici üzerinde güçlü etki bırakır.",
+          "Proje bittikten sonra faaliyetlerin/çıktıların devamı için somut mekanizmalar veya kurumsal entegrasyon planı.",
+        tip: "PDF'te: 'Sonuçların sürdürülebilirliği şüpheli.' Güçlü sürdürülebilirlik: geliştirilen materyal müfredata eklenecek, kim ne zaman yapacak, web sitesini kim yönetecek ve masrafı kim karşılayacak, peer-coaching zinciri nasıl devam edecek — bunların hepsine somut cevap verin.",
       },
     ],
   },
