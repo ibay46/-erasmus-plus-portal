@@ -141,17 +141,29 @@ function MobilitySection({
   const teacherRateValid = isRateWithinRange(mobility.teacherDailyRate, staffRange);
   const studentRateValid = isRateWithinRange(mobility.studentDailyRate, pupilRange);
 
-  const [distanceState, setDistanceState] = useState<Record<string, { loading: boolean; error: string | null }>>({});
+  const [distanceState, setDistanceState] = useState<Record<string, { loading: boolean; error: string | null; nearBoundary?: boolean }>>({});
 
-  async function calculateDistance(partnerId: string, fromCity: string, toCity: string) {
+  async function calculateDistance(
+    partnerId: string,
+    fromCity: string,
+    fromCountry: string,
+    toCity: string,
+    toCountry: string,
+  ) {
     if (!fromCity.trim() || !toCity.trim()) return;
     setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: true, error: null } }));
     try {
-      const res = await fetch(`/api/distance?from=${encodeURIComponent(fromCity)}&to=${encodeURIComponent(toCity)}`);
+      const params = new URLSearchParams({
+        from: fromCity,
+        to: toCity,
+        fromCountry,
+        toCountry,
+      });
+      const res = await fetch(`/api/distance?${params}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Hesaplanamadı");
       updatePartner(partnerId, { distanceKm: data.km });
-      setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: false, error: null } }));
+      setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: false, error: null, nearBoundary: data.nearBoundary } }));
     } catch (err) {
       setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: false, error: (err as Error).message } }));
     }
@@ -356,7 +368,15 @@ function MobilitySection({
                     <button
                       type="button"
                       disabled={!mobility.hostCity.trim() || !partner.city.trim() || distanceState[partner.id]?.loading}
-                      onClick={() => calculateDistance(partner.id, partner.city, mobility.hostCity)}
+                      onClick={() =>
+                        calculateDistance(
+                          partner.id,
+                          partner.city,
+                          partner.countryLabel,
+                          mobility.hostCity,
+                          mobility.hostCountry,
+                        )
+                      }
                       title={!mobility.hostCity.trim() ? "Ev sahibi şehri girin" : !partner.city.trim() ? "Ortak şehri girin" : "Mesafeyi otomatik hesapla"}
                       className="cursor-pointer shrink-0 rounded-lg border border-border px-2 py-2 text-xs font-medium text-accent transition-colors duration-200 hover:border-accent/50 hover:bg-accent/5 disabled:cursor-not-allowed disabled:opacity-40 print:hidden"
                     >
@@ -365,6 +385,20 @@ function MobilitySection({
                   </div>
                   {distanceState[partner.id]?.error && (
                     <p className="mt-1 text-xs text-red-500 print:hidden">{distanceState[partner.id].error}</p>
+                  )}
+                  {distanceState[partner.id]?.nearBoundary && !distanceState[partner.id]?.error && (
+                    <p className="mt-1 text-xs text-amber-500 print:hidden">
+                      Bu mesafe bir Erasmus+ bant sınırına yakın — lütfen{" "}
+                      <a
+                        href="https://erasmus-plus.ec.europa.eu/resources-and-tools/distance-calculator"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline"
+                      >
+                        EC hesaplayıcıdan
+                      </a>{" "}
+                      doğrulayın.
+                    </p>
                   )}
                 </div>
                 <div>

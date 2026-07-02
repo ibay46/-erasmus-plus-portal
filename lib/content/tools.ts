@@ -6,6 +6,12 @@ export interface ToolContent {
 
 export const TOOLS: ToolContent[] = [
   {
+    href: "/araclar/oncelik-eslestirici",
+    title: "Öncelik–Proje Fikri Eşleştirici",
+    description:
+      "Proje temanızı seçin, 2026 Erasmus+ yatay ve sektörel öncelikleriyle uyumunu görün ve başvuru formunda kullanabileceğiniz gerekçe taslağını alın.",
+  },
+  {
     href: "/araclar/ka210-butce-hesaplama",
     title: "KA210 Bütçe Hesaplama",
     description: "Seyahat mesafe bandı ve bireysel destek oranlarına göre KA210 hareketlilik bütçenizi hesaplayın.",

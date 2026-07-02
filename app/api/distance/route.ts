@@ -11,8 +11,16 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): nu
   return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
-async function geocode(city: string): Promise<{ lat: number; lon: number } | null> {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`;
+// Erasmus+ seyahat mesafe bant sınırları (km)
+const BAND_BOUNDARIES = [99, 499, 1999, 2999, 3999, 7999];
+
+function isNearBandBoundary(km: number): boolean {
+  return BAND_BOUNDARIES.some((b) => Math.abs(km - b) <= 50);
+}
+
+async function geocode(city: string, country?: string): Promise<{ lat: number; lon: number } | null> {
+  const query = country ? `${city}, ${country}` : city;
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
   const res = await fetch(url, {
     headers: { "User-Agent": "erasmusportal.com/distance-calculator" },
     next: { revalidate: 86400 },
@@ -26,12 +34,14 @@ async function geocode(city: string): Promise<{ lat: number; lon: number } | nul
 export async function GET(req: NextRequest) {
   const from = req.nextUrl.searchParams.get("from")?.trim();
   const to = req.nextUrl.searchParams.get("to")?.trim();
+  const fromCountry = req.nextUrl.searchParams.get("fromCountry")?.trim() || undefined;
+  const toCountry = req.nextUrl.searchParams.get("toCountry")?.trim() || undefined;
 
   if (!from || !to) {
     return NextResponse.json({ error: "from ve to parametreleri gerekli" }, { status: 400 });
   }
 
-  const [coordFrom, coordTo] = await Promise.all([geocode(from), geocode(to)]);
+  const [coordFrom, coordTo] = await Promise.all([geocode(from, fromCountry), geocode(to, toCountry)]);
 
   if (!coordFrom) {
     return NextResponse.json({ error: `"${from}" bulunamadı — şehir adını kontrol edin` }, { status: 404 });
@@ -41,5 +51,5 @@ export async function GET(req: NextRequest) {
   }
 
   const km = haversineKm(coordFrom.lat, coordFrom.lon, coordTo.lat, coordTo.lon);
-  return NextResponse.json({ km });
+  return NextResponse.json({ km, nearBoundary: isNearBandBoundary(km) });
 }
