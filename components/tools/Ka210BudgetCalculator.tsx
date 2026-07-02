@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useCallback, useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import {
   calculateKa210Budget,
   isRateWithinRange,
@@ -143,7 +143,7 @@ function MobilitySection({
 
   const [distanceState, setDistanceState] = useState<Record<string, { loading: boolean; error: string | null }>>({});
 
-  const calculateDistance = useCallback(async (partnerId: string, fromCity: string, toCity: string) => {
+  async function calculateDistance(partnerId: string, fromCity: string, toCity: string) {
     if (!fromCity.trim() || !toCity.trim()) return;
     setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: true, error: null } }));
     try {
@@ -155,8 +155,7 @@ function MobilitySection({
     } catch (err) {
       setDistanceState((prev) => ({ ...prev, [partnerId]: { loading: false, error: (err as Error).message } }));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobility.hostCity]);
+  }
 
   const mobilityFrameColor = MOBILITY_FRAME_COLORS[index % MOBILITY_FRAME_COLORS.length];
 
