@@ -1,5 +1,19 @@
 import { NextResponse } from "next/server";
-import { CRITERIA, type AiFeedback } from "@/lib/ka-score/criteria";
+import { CRITERIA } from "@/lib/ka-score/criteria";
+
+interface AiSectionFeedback {
+  suggestedScore: number;
+  strengths: string[];
+  weaknesses: string[];
+  suggestions: string[];
+}
+interface AiFeedback {
+  relevance: AiSectionFeedback;
+  design: AiSectionFeedback;
+  partnership: AiSectionFeedback;
+  impact: AiSectionFeedback;
+  overallComment: string;
+}
 
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 
