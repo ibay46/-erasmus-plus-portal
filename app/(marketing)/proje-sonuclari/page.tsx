@@ -83,19 +83,28 @@ export default async function ProjeSonuclariPage({
                       <Link
                         key={item.slug}
                         href={`/proje-sonuclari/${item.slug}`}
-                        className="group flex items-center gap-3 px-4 py-3 bg-card hover:bg-accent/5 transition-colors duration-200 cursor-pointer"
+                        className="group block bg-card px-4 py-3.5 transition-colors duration-200 hover:bg-accent/5 cursor-pointer sm:flex sm:items-center sm:gap-3 sm:py-3"
                       >
+                        {/* Mobile layout: stacked */}
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-foreground group-hover:text-accent transition-colors duration-200 truncate">
+                          <p className="font-medium text-foreground transition-colors duration-200 group-hover:text-accent sm:truncate">
                             {item.title}
                           </p>
-                          <div className="flex flex-wrap items-center gap-1.5 mt-1 sm:hidden">
-                            <span className="text-xs text-muted-foreground">{country}</span>
+
+                          {/* Mobile meta row */}
+                          <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:hidden">
+                            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                              {country}
+                            </span>
                             {kaList.map((a) => <TagChip key={a} variant="ka">{a}</TagChip>)}
                             {sectorList.map((s) => <TagChip key={s} variant="sector">{EDUCATION_SECTOR_LABELS[s] ?? s}</TagChip>)}
                           </div>
-                          <p className="hidden sm:block text-sm text-muted-foreground truncate mt-0.5">{item.summary}</p>
+
+                          {/* Desktop summary */}
+                          <p className="mt-0.5 hidden text-sm text-muted-foreground truncate sm:block">{item.summary}</p>
                         </div>
+
+                        {/* Desktop-only columns */}
                         <span className="hidden sm:block text-xs text-muted-foreground shrink-0 w-24 text-right font-mono">
                           {country}
                         </span>
@@ -103,8 +112,9 @@ export default async function ProjeSonuclariPage({
                           {kaList.map((a) => <TagChip key={a} variant="ka">{a}</TagChip>)}
                           {sectorList.map((s) => <TagChip key={s} variant="sector">{EDUCATION_SECTOR_LABELS[s] ?? s}</TagChip>)}
                         </div>
+
                         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2"
-                          className="h-4 w-4 text-muted-foreground shrink-0">
+                          className="mt-2 h-4 w-4 shrink-0 text-muted-foreground/40 sm:mt-0">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5l5 5-5 5" />
                         </svg>
                       </Link>
