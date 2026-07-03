@@ -15,7 +15,7 @@ export default async function TopluluPage() {
   await requireTier("PREMIUM");
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Kapalı Topluluk Grubu</h1>
       <p className="text-muted-foreground mb-8">
         Premium üyelere özel, deneyim paylaşımı ve hızlı soru-cevap için kapalı bir topluluk

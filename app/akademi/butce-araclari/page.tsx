@@ -8,7 +8,7 @@ export default async function ButceAraclariPage() {
   await requireTier("STANDARD");
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Bütçe Hesaplama Araçları</h1>
       <p className="text-muted-foreground mb-8">
         Erasmus+ hareketlilik bütçenizi (seyahat ve bireysel destek) otomatik olarak hesaplayan

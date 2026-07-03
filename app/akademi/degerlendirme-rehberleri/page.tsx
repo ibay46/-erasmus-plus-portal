@@ -30,7 +30,7 @@ export default async function DegerlendirmeRehberleriPage() {
   await requireTier("PREMIUM");
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Proje Değerlendirme Rehberleri</h1>
       <p className="text-muted-foreground mb-8">
         Değerlendiricilerin başvuruları puanlarken baktığı temel kriterler ve bu kriterleri

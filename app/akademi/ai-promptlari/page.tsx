@@ -83,7 +83,7 @@ export default async function AiPromptlariPage() {
   await requireTier("PREMIUM");
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Yapay Zeka Promptları</h1>
       <p className="text-muted-foreground mb-8">
         Proje yazım sürecinde ChatGPT, Claude gibi araçlarla kullanabileceğiniz, köşeli

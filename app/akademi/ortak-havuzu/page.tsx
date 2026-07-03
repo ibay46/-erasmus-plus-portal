@@ -8,7 +8,7 @@ export default async function OrtakHavuzuPage() {
   await requireTier("PREMIUM");
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Ortak Havuzu</h1>
       <p className="text-muted-foreground mb-8">
         Premium üyelere özel, doğrulanmış okul, belediye, STK ve üniversite ortaklarına öncelikli

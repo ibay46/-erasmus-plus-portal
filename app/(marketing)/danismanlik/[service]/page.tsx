@@ -27,7 +27,7 @@ export default async function DanismanlikServisPage({
   if (!found) notFound();
 
   return (
-    <div className="max-w-2xl">
+    <div>
       <h1 className="text-3xl font-semibold mb-3 text-foreground">{found.title}</h1>
       <p className="text-foreground mb-8">{found.description}</p>
       <Link
