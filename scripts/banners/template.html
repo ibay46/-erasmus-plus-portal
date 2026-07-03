@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+  }
+  .canvas {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+    background: linear-gradient(
+      to bottom,
+      #3a0a14 0%,
+      #6e1418 20%,
+      #a52e1c 38%,
+      #d9692c 54%,
+      #f0a64a 64%,
+      #1c2638 78%,
+      #0a0e16 100%
+    );
+    overflow: hidden;
+  }
+  .sun-glow {
+    position: absolute;
+    left: 50%;
+    top: 52%;
+    width: 760px;
+    height: 760px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,214,140,0.55) 0%, rgba(255,160,80,0.0) 70%);
+  }
+  .landmark-wrap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 480px;
+    overflow: hidden;
+  }
+  .landmark-wrap svg {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1200px;
+    height: 480px;
+  }
+  .reflection-wrap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 160px;
+    overflow: hidden;
+    opacity: 0.26;
+  }
+  .reflection-wrap svg {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleY(-1);
+    width: 1200px;
+    height: 480px;
+  }
+  .water-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 170px;
+    background: linear-gradient(to top, #0a0e16 10%, rgba(10,14,22,0.5) 55%, rgba(10,14,22,0) 100%);
+  }
+  .top-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 180px;
+    background: linear-gradient(to bottom, rgba(20,5,10,0.4) 0%, rgba(20,5,10,0) 100%);
+  }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="sun-glow"></div>
+    <div class="reflection-wrap">{{LANDMARK_SVG}}</div>
+    <div class="landmark-wrap">{{LANDMARK_SVG}}</div>
+    <div class="water-fade"></div>
+    <div class="top-fade"></div>
+  </div>
+</body>
+</html>
