@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   await requireTier("ADMIN");
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "var(--admin-bg, oklch(96% 0.005 250))" }}>
+    <div className="min-h-screen bg-muted/50">
       <AdminSidebar />
 
       <div className="lg:pl-64">
