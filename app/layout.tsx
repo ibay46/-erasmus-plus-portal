@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -43,19 +44,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") ?? "";
+  const isAdmin = pathname.startsWith("/admin");
+
   return (
     <html lang="tr" className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
           <PageViewTracker />
-          <Header />
-          <main className="flex-1 pt-16">{children}</main>
-          <Footer />
+          {isAdmin ? (
+            children
+          ) : (
+            <>
+              <Header />
+              <main className="flex-1 pt-16">{children}</main>
+              <Footer />
+            </>
+          )}
         </ThemeProvider>
       </body>
     </html>
