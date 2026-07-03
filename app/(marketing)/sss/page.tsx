@@ -37,7 +37,7 @@ export default function SssPage() {
       <div className="space-y-10">
         {FAQ_GROUPS.map((group) => (
           <section key={group.category}>
-            <h2 className="text-sm font-mono font-semibold uppercase tracking-widest text-accent-warm mb-4">
+            <h2 className="text-sm font-mono font-semibold uppercase tracking-widest text-accent mb-4">
               {group.category}
             </h2>
             <div className="space-y-3">

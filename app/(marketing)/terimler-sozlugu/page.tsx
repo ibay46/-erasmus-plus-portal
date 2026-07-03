@@ -39,7 +39,7 @@ export default function TerimlerSozluguPage() {
       <div className="space-y-10">
         {GLOSSARY_GROUPS.map((group) => (
           <section key={group.category}>
-            <h2 className="text-sm font-mono font-semibold uppercase tracking-widest text-accent-warm mb-4">
+            <h2 className="text-sm font-mono font-semibold uppercase tracking-widest text-accent mb-4">
               {group.category}
             </h2>
             <div className="grid sm:grid-cols-2 gap-3">

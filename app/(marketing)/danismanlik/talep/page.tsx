@@ -25,7 +25,7 @@ export default function DanismanlikTalepPage() {
   }
 
   return (
-    <Card className="max-w-md md:max-w-2xl lg:max-w-none lg:w-full">
+    <Card className="max-w-md md:max-w-2xl lg:max-w-3xl">
       <h1 className="text-2xl font-semibold mb-6 text-foreground">Danışmanlık Talebi</h1>
       <form action={formAction} className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2">

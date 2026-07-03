@@ -135,7 +135,7 @@ export default function AbHibeleriYonetmeligiPage() {
       <div className="space-y-3 mb-8">
         {MADDELER.map((m) => (
           <Card key={m.harf} className="flex items-start gap-4">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-xs font-semibold text-emerald-600">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/15 text-xs font-semibold text-accent">
               {m.harf}
             </span>
             <p className="text-sm text-foreground leading-relaxed">{m.metin}</p>
