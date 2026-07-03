@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getPublishedPosts } from "@/lib/posts";
 import { POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
+import { getPublishedEtkinlikler } from "@/lib/etkinlikler";
+import { EtkinlikCard } from "@/components/salto/EtkinlikCard";
 
 export const metadata = {
   title: "SALTO Education & Training | Erasmus+ Portal",
@@ -9,7 +11,10 @@ export const metadata = {
 };
 
 export default async function SaltoEgitimPage() {
-  const posts = await getPublishedPosts("SALTO_EDUCATION_TRAINING");
+  const [posts, etkinlikler] = await Promise.all([
+    getPublishedPosts("SALTO_EDUCATION_TRAINING"),
+    getPublishedEtkinlikler(),
+  ]);
 
   return (
     <div>
@@ -18,6 +23,20 @@ export default async function SaltoEgitimPage() {
         SALTO Education and Training kaynak merkezinin okul, mesleki ve yetişkin eğitimi alanına yönelik
         duyuruları ve haberleri.
       </p>
+
+      {etkinlikler.length > 0 && (
+        <section className="mb-10">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">
+            Etkinlikler <span className="text-sm font-normal text-muted-foreground">({etkinlikler.length})</span>
+          </h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {etkinlikler.map((etkinlik) => (
+              <EtkinlikCard key={etkinlik.id} etkinlik={etkinlik} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {posts.length === 0 ? (
         <p className="text-muted-foreground">Henüz yayınlanmış haber yok.</p>
       ) : (

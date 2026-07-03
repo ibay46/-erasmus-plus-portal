@@ -148,6 +148,28 @@ model ProjectLibraryEntry {
   updatedAt     DateTime @updatedAt
 }
 
+enum EtkinlikFormat {
+  PHYSICAL
+  ONLINE
+}
+
+model Etkinlik {
+  id                  String         @id @default(cuid())
+  title               String
+  format              EtkinlikFormat @default(PHYSICAL)
+  startDate           DateTime
+  endDate             DateTime
+  sectors             String         @default("")
+  venue               String
+  priority            String?
+  applicationDeadline DateTime?
+  language            String
+  externalUrl         String
+  published           Boolean        @default(true)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+}
+
 model ToolSubmission {
   id        String   @id @default(cuid())
   toolKey   String
