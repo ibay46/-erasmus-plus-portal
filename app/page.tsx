@@ -9,165 +9,228 @@ import { POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
 import { getRecentProjectResults } from "@/lib/projectResults";
 import { getPublishedGrantProjects } from "@/lib/grantProjects";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { NewsTabs } from "@/components/home/NewsTabs";
+import type { NewsTab } from "@/components/home/NewsTabs";
 
-function RecentCardRow({
-  eyebrow,
-  title,
-  seeAllHref,
-  seeAllLabel,
-  items,
-}: {
-  eyebrow: string;
-  title: ReactNode;
-  seeAllHref: string;
-  seeAllLabel: string;
-  items: { href: string; title: string; date: Date | null; badge: string; coverImage: string | null }[];
-}) {
+// ─── Section icons ────────────────────────────────────────────────────────────
+
+function IconAkademi() {
   return (
-    <div>
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="mb-1 text-xs font-mono font-semibold uppercase tracking-widest text-accent-warm">
-            {eyebrow}
-          </p>
-          <h2 className="text-2xl font-semibold text-foreground">{title}</h2>
-        </div>
-        <Link
-          href={seeAllHref}
-          className="cursor-pointer inline-flex items-center rounded-full border border-border px-4 py-2 text-xs font-semibold uppercase tracking-wide text-foreground transition-colors duration-200 hover:border-accent/50 hover:bg-muted"
-        >
-          {seeAllLabel}
-        </Link>
-      </div>
-      {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Henüz içerik eklenmemiş.</p>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="cursor-pointer group block overflow-hidden rounded-xl border border-border transition-colors duration-200 hover:border-accent/50"
-            >
-              <div className="relative h-40">
-                {item.coverImage ? (
-                  <Image
-                    src={item.coverImage}
-                    alt={item.title}
-                    fill
-                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-muted">
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full bg-accent/30 blur-[60px]"
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute right-0 bottom-0 h-32 w-32 rounded-full bg-accent-warm/25 blur-[60px]"
-                    />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                <span className="absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
-                  {item.badge}
-                </span>
-              </div>
-              <div className="bg-card p-3.5">
-                <p className="line-clamp-2 font-medium text-foreground transition-colors duration-200 group-hover:text-accent">
-                  {item.title}
-                </p>
-                {item.date && (
-                  <p className="mt-1.5 text-xs text-muted-foreground">{item.date.toLocaleDateString("tr-TR")}</p>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+      <path d="M6 12v5c3 3 9 3 12 0v-5" />
+    </svg>
   );
 }
+
+function IconHaberler() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+      <path d="M18 14h-8M15 18h-5M10 6h8v4h-8z" />
+    </svg>
+  );
+}
+
+function IconProjeTurleri() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+    </svg>
+  );
+}
+
+function IconKutuphane() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    </svg>
+  );
+}
+
+function IconSonuclar() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 20V10M12 20V4M6 20v-6" />
+    </svg>
+  );
+}
+
+function IconGlobe() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+    </svg>
+  );
+}
+
+function IconAraclar() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+    </svg>
+  );
+}
+
+function IconLink() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  );
+}
+
+function IconDanismanlik() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+// ─── Sections data ─────────────────────────────────────────────────────────────
 
 const SECTIONS = [
   {
     href: "/akademi",
     title: "Erasmus Akademi",
     description: "Standart ve Premium üyelikle örnek projeler, eğitimler, etki yönetimi araçları ve AI promptlarına erişin.",
+    icon: <IconAkademi />,
+    premium: true,
   },
   {
     href: "/haberler",
     title: "Erasmus+ Haberleri",
     description: "Yeni çağrılar, Ulusal Ajans, Avrupa Komisyonu ve SALTO haberleri.",
+    icon: <IconHaberler />,
   },
   {
     href: "/proje-turleri",
     title: "Proje Türleri",
     description: "KA120'den Jean Monnet ve Erasmus Spor'a kadar tüm eylem türleri için detaylı rehberler.",
+    icon: <IconProjeTurleri />,
   },
   {
     href: "/proje-kutuphanesi",
     title: "Proje Kütüphanesi",
     description: "Tema ve eylem türüne göre filtrelenebilir örnek proje arşivi.",
+    icon: <IconKutuphane />,
   },
   {
     href: "/proje-sonuclari",
     title: "Proje Sonuçları",
     description: "Yıl, ülke, KA eylemi ve sektöre göre desteklenmeye hak kazanan proje sonuçları.",
+    icon: <IconSonuclar />,
   },
   {
     href: "/ab-hibe-projeleri",
     title: "AB Hibe Projeleri",
     description: "Avrupa Birliği hibe destekli projelere ilişkin haberler ve duyurular.",
+    icon: <IconGlobe />,
   },
   {
     href: "/araclar",
     title: "Ücretsiz Araçlar",
     description: "Bütçe hesaplayıcısı, proje zaman çizelgesi ve yolluk bildirimi gibi pratik araçlar.",
+    icon: <IconAraclar />,
   },
   {
     href: "/yararli-linkler",
     title: "Yararlı Linkler",
     description: "Resmi kaynaklar, başvuru sistemleri ve faydalı araçlara hızlı erişim.",
+    icon: <IconLink />,
   },
   {
     href: "/danismanlik",
     title: "Danışmanlık",
     description: "Proje yazımı, bütçe hazırlama, ortak bulma ve yaygınlaştırma planı desteği.",
-    tinted: true,
+    icon: <IconDanismanlik />,
+    highlight: true,
   },
+] as const;
+
+const QUICK_LINKS = [
+  { href: "/proje-sonuclari", label: "Proje Sonuçları" },
+  { href: "/salto-youth", label: "SALTO Youth" },
+  { href: "/salto-egitim", label: "SALTO E&T" },
+  { href: "/esc", label: "ESC" },
+  { href: "/ab-hibe-projeleri", label: "AB Hibe" },
 ];
 
-function PlannerIllustration() {
+// ─── Erasmus+ illustration ────────────────────────────────────────────────────
+
+function ErasmusIllustration() {
+  const starAngles = Array.from({ length: 12 }, (_, i) => (i * 30 - 90) * (Math.PI / 180));
+
   return (
-    <svg viewBox="0 0 360 320" className="w-full max-w-[22.5rem]" aria-hidden="true">
-      <rect x="48" y="40" width="240" height="240" rx="20" className="fill-muted" />
-      <rect x="28" y="64" width="240" height="240" rx="20" className="fill-card stroke-border" strokeWidth="1.5" />
-      <rect x="56" y="96" width="120" height="14" rx="7" className="fill-foreground" opacity="0.85" />
-      <rect x="56" y="124" width="160" height="9" rx="4.5" className="fill-muted-foreground" opacity="0.5" />
+    <svg viewBox="0 0 360 300" className="w-full max-w-[22.5rem]" aria-hidden="true">
+      {/* Depth shadow */}
+      <rect x="60" y="52" width="230" height="195" rx="16" className="fill-muted" />
 
-      <g>
-        <circle cx="66" cy="166" r="9" className="fill-accent" />
-        <path d="M61 166l3.5 3.5L72 162" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <rect x="86" y="160" width="150" height="12" rx="6" className="fill-foreground" opacity="0.7" />
-      </g>
-      <g>
-        <circle cx="66" cy="198" r="9" className="fill-accent-warm" />
-        <path d="M61 198l3.5 3.5L72 194" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <rect x="86" y="192" width="120" height="12" rx="6" className="fill-foreground" opacity="0.7" />
-      </g>
-      <g>
-        <circle cx="66" cy="230" r="9" className="fill-border" />
-        <rect x="86" y="224" width="100" height="12" rx="6" className="fill-muted-foreground" opacity="0.5" />
-      </g>
+      {/* Main card */}
+      <rect x="38" y="36" width="230" height="195" rx="16" className="fill-card stroke-border" strokeWidth="1.5" />
 
-      <circle cx="248" cy="84" r="26" className="fill-accent" />
-      <path d="M238 84l7 7 13-14" stroke="white" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Blue header strip */}
+      <rect x="38" y="36" width="230" height="44" rx="16" className="fill-accent" />
+      <rect x="38" y="62" width="230" height="18" className="fill-accent" />
+
+      {/* Header placeholders */}
+      <rect x="56" y="50" width="90" height="8" rx="4" fill="white" opacity="0.25" />
+      <rect x="56" y="63" width="60" height="6" rx="3" fill="white" opacity="0.15" />
+
+      {/* Title */}
+      <rect x="56" y="100" width="130" height="10" rx="5" className="fill-foreground" opacity="0.8" />
+
+      {/* Description lines */}
+      <rect x="56" y="118" width="160" height="7" rx="3.5" className="fill-muted-foreground" opacity="0.4" />
+      <rect x="56" y="130" width="110" height="7" rx="3.5" className="fill-muted-foreground" opacity="0.25" />
+
+      {/* Progress label */}
+      <rect x="56" y="153" width="55" height="6" rx="3" className="fill-muted-foreground" opacity="0.35" />
+
+      {/* Progress bar track */}
+      <rect x="56" y="165" width="175" height="9" rx="4.5" className="fill-muted" />
+      {/* Progress bar fill */}
+      <rect x="56" y="165" width="118" height="9" rx="4.5" className="fill-accent" opacity="0.8" />
+
+      {/* Partner circles (3 orgs) */}
+      <circle cx="70" cy="205" r="15" className="fill-muted stroke-border" strokeWidth="1.5" />
+      <circle cx="106" cy="205" r="15" className="fill-muted stroke-border" strokeWidth="1.5" />
+      <circle cx="142" cy="205" r="15" className="fill-muted stroke-border" strokeWidth="1.5" />
+
+      {/* Partner label */}
+      <rect x="166" y="199" width="68" height="8" rx="4" className="fill-muted-foreground" opacity="0.28" />
+      <rect x="166" y="212" width="46" height="6" rx="3" className="fill-muted-foreground" opacity="0.18" />
+
+      {/* EU stars badge (overlapping top-right) */}
+      <circle cx="283" cy="64" r="34" className="fill-accent" />
+      {starAngles.map((angle, i) => (
+        <circle
+          key={i}
+          cx={283 + 24 * Math.cos(angle)}
+          cy={64 + 24 * Math.sin(angle)}
+          r="3.2"
+          fill="#FBB040"
+        />
+      ))}
+      {/* Checkmark */}
+      <path d="M271 64l8 8 15-17" stroke="white" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* Floating stat badge (bottom right) */}
+      <rect x="278" y="162" width="74" height="52" rx="12" className="fill-card stroke-border" strokeWidth="1.5" />
+      <rect x="291" y="176" width="48" height="8" rx="4" className="fill-accent-warm" opacity="0.65" />
+      <rect x="291" y="190" width="32" height="6" rx="3" className="fill-muted-foreground" opacity="0.35" />
+      <rect x="291" y="200" width="42" height="6" rx="3" className="fill-muted-foreground" opacity="0.2" />
     </svg>
   );
 }
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function Home() {
   const [postCount, libraryCount, recentPosts, recentResults, recentGrantProjects, recentSaltoYouth, recentSaltoEgitim] =
@@ -185,6 +248,79 @@ export default async function Home() {
     { value: `${PROJECT_TYPES.length}`, label: "Eylem Türü Rehberi" },
     { value: `${libraryCount}+`, label: "Proje Örneği" },
     { value: `${postCount}+`, label: "Haber & Duyuru" },
+  ];
+
+  const newsTabs: NewsTab[] = [
+    {
+      key: "haberler",
+      label: "Haberler",
+      accentClass: "text-accent",
+      seeAllHref: "/haberler",
+      seeAllLabel: "Tüm Haberler",
+      items: recentPosts.map((post) => ({
+        href: `/haberler/${post.slug}`,
+        title: post.title,
+        dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("tr-TR") : null,
+        badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
+        coverImage: post.coverImage,
+      })),
+    },
+    {
+      key: "salto-youth",
+      label: "SALTO Youth",
+      accentClass: "text-accent",
+      seeAllHref: "/salto-youth",
+      seeAllLabel: "Tüm SALTO Youth",
+      items: recentSaltoYouth.map((post) => ({
+        href: `/haberler/${post.slug}`,
+        title: post.title,
+        dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("tr-TR") : null,
+        badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
+        coverImage: post.coverImage,
+      })),
+    },
+    {
+      key: "salto-egitim",
+      label: "SALTO E&T",
+      accentClass: "text-accent-warm",
+      seeAllHref: "/salto-egitim",
+      seeAllLabel: "Tüm SALTO E&T",
+      items: recentSaltoEgitim.map((post) => ({
+        href: `/haberler/${post.slug}`,
+        title: post.title,
+        dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("tr-TR") : null,
+        badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
+        coverImage: post.coverImage,
+      })),
+    },
+    {
+      key: "proje-sonuclari",
+      label: "Proje Sonuçları",
+      accentClass: "text-accent-warm",
+      seeAllHref: "/proje-sonuclari",
+      seeAllLabel: "Tüm Proje Sonuçları",
+      items: recentResults.map((result) => ({
+        href: `/proje-sonuclari/${result.slug}`,
+        title: result.title,
+        dateStr: null,
+        badge: "Proje Sonucu",
+        coverImage: result.coverImage,
+      })),
+    },
+    {
+      key: "ab-hibe",
+      label: "AB Hibe Projeleri",
+      accentClass: "text-accent",
+      seeAllHref: "/ab-hibe-projeleri",
+      seeAllLabel: "Tüm AB Hibe Projeleri",
+      items: recentGrantProjects.map((item) => ({
+        href: `/ab-hibe-projeleri/${item.slug}`,
+        title: item.title,
+        dateStr: item.publishedAt ? item.publishedAt.toLocaleDateString("tr-TR") : null,
+        badge: "AB Hibe Projesi",
+        coverImage: item.coverImage,
+      })),
+    },
   ];
 
   const websiteJsonLd = {
@@ -206,6 +342,8 @@ export default async function Home() {
   return (
     <div>
       <JsonLd data={websiteJsonLd} />
+
+      {/* ── Hero ── */}
       <section className="relative flex min-h-[calc(100vh-4rem)] items-center overflow-hidden border-b border-border bg-background">
         <div
           aria-hidden="true"
@@ -229,10 +367,11 @@ export default async function Home() {
               araçlar ve uzman danışmanlığı bir arada.
             </p>
 
+            {/* Primary CTAs */}
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/araclar"
-                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent transition-colors duration-200 hover:bg-muted"
+                className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
               >
                 Ücretsiz Araçları Keşfet
               </Link>
@@ -242,45 +381,29 @@ export default async function Home() {
               >
                 Danışmanlık Hizmetleri
               </Link>
-              <Link
-                href="/proje-sonuclari"
-                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent-warm transition-colors duration-200 hover:bg-muted"
-              >
-                Proje Sonuçları
-              </Link>
-              <Link
-                href="/salto-youth"
-                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent transition-colors duration-200 hover:bg-muted"
-              >
-                SALTO Youth
-              </Link>
-              <Link
-                href="/salto-egitim"
-                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent-warm transition-colors duration-200 hover:bg-muted"
-              >
-                SALTO Education & Training
-              </Link>
-              <Link
-                href="/esc"
-                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
-              >
-                ESC
-              </Link>
-              <Link
-                href="/ab-hibe-projeleri"
-                className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-accent transition-colors duration-200 hover:bg-muted"
-              >
-                AB Hibe Projeleri
-              </Link>
+            </div>
+
+            {/* Quick links */}
+            <div className="mt-4 flex flex-wrap items-center gap-x-1 gap-y-1.5 text-xs text-muted-foreground">
+              <span>Hızlı erişim:</span>
+              {QUICK_LINKS.map((link, i) => (
+                <span key={link.href} className="flex items-center gap-1">
+                  {i > 0 && <span className="text-border select-none">·</span>}
+                  <Link href={link.href} className="cursor-pointer hover:text-accent transition-colors duration-150">
+                    {link.label}
+                  </Link>
+                </span>
+              ))}
             </div>
           </div>
+
           <div className="justify-self-center md:justify-self-end">
-            <PlannerIllustration />
+            <ErasmusIllustration />
             <div className="mt-6 grid max-w-md grid-cols-3 gap-3">
               {stats.map((stat) => (
                 <div
                   key={stat.label}
-                  className="group relative overflow-hidden rounded-lg border border-border bg-card px-3 py-3 text-center transition-colors duration-200 hover:border-accent/40 hover:bg-muted"
+                  className="group relative overflow-hidden rounded-lg border-l-2 border-l-accent border border-border bg-card px-3 py-3 text-center transition-colors duration-200 hover:border-accent/40 hover:bg-muted"
                 >
                   <div
                     aria-hidden="true"
@@ -295,6 +418,7 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── Neler Var ── */}
       <section className="bg-background py-16">
         <div className="mx-auto max-w-6xl px-6">
           <h2 className="text-2xl font-semibold text-foreground mb-6">
@@ -304,14 +428,32 @@ export default async function Home() {
             {SECTIONS.map((section) => (
               <Link key={section.href} href={section.href} className="cursor-pointer group">
                 <Card
-                  className={`relative h-full overflow-hidden hover:border-accent/50 ${section.tinted ? "bg-background" : ""}`}
+                  className={`relative h-full overflow-hidden transition-colors duration-200 hover:border-accent/50 ${
+                    "highlight" in section && section.highlight
+                      ? "border-accent-warm/40 bg-gradient-to-br from-background to-accent-warm/5"
+                      : ""
+                  }`}
                 >
                   <div
                     aria-hidden="true"
                     className="pointer-events-none absolute -inset-10 rounded-full bg-accent/20 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
                   />
-                  <h3 className="relative font-medium mb-1 text-foreground">{section.title}</h3>
-                  <p className="relative text-sm text-muted-foreground">{section.description}</p>
+                  <div className="relative flex items-start gap-3">
+                    <span className={`mt-0.5 shrink-0 ${"premium" in section && section.premium ? "text-accent" : "highlight" in section && section.highlight ? "text-accent-warm" : "text-muted-foreground"} transition-colors duration-200 group-hover:text-accent`}>
+                      {section.icon}
+                    </span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-foreground">{section.title}</h3>
+                        {"premium" in section && section.premium && (
+                          <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
+                            Premium
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-sm text-muted-foreground">{section.description}</p>
+                    </div>
+                  </div>
                 </Card>
               </Link>
             ))}
@@ -319,113 +461,10 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── Sekmeli haberler ── */}
       <section className="bg-muted py-16">
         <div className="mx-auto max-w-6xl px-6">
-          <RecentCardRow
-            eyebrow="Haberler"
-            title={
-              <>
-                Son <span className="text-accent">Haberler</span>
-              </>
-            }
-            seeAllHref="/haberler"
-            seeAllLabel="Tüm Haberler"
-            items={recentPosts.map((post) => ({
-              href: `/haberler/${post.slug}`,
-              title: post.title,
-              date: post.publishedAt,
-              badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
-              coverImage: post.coverImage,
-            }))}
-          />
-        </div>
-      </section>
-
-      <section className="bg-background py-16">
-        <div className="mx-auto max-w-6xl px-6">
-          <RecentCardRow
-            eyebrow="SALTO Youth"
-            title={
-              <>
-                Son <span className="text-accent">SALTO Youth</span> Haberleri
-              </>
-            }
-            seeAllHref="/salto-youth"
-            seeAllLabel="Tüm SALTO Youth Haberleri"
-            items={recentSaltoYouth.map((post) => ({
-              href: `/haberler/${post.slug}`,
-              title: post.title,
-              date: post.publishedAt,
-              badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
-              coverImage: post.coverImage,
-            }))}
-          />
-        </div>
-      </section>
-
-      <section className="bg-muted py-16">
-        <div className="mx-auto max-w-6xl px-6">
-          <RecentCardRow
-            eyebrow="SALTO Education & Training"
-            title={
-              <>
-                Son <span className="text-accent-warm">SALTO Education &amp; Training</span> Haberleri
-              </>
-            }
-            seeAllHref="/salto-egitim"
-            seeAllLabel="Tüm SALTO Education & Training Haberleri"
-            items={recentSaltoEgitim.map((post) => ({
-              href: `/haberler/${post.slug}`,
-              title: post.title,
-              date: post.publishedAt,
-              badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
-              coverImage: post.coverImage,
-            }))}
-          />
-        </div>
-      </section>
-
-      <section className="bg-background py-16">
-        <div className="mx-auto max-w-6xl px-6">
-          <RecentCardRow
-            eyebrow="Sonuçlar"
-            title={
-              <>
-                Son Proje <span className="text-accent-warm">Sonuçları</span>
-              </>
-            }
-            seeAllHref="/proje-sonuclari"
-            seeAllLabel="Tüm Proje Sonuçları"
-            items={recentResults.map((result) => ({
-              href: `/proje-sonuclari/${result.slug}`,
-              title: result.title,
-              date: null,
-              badge: "Proje Sonucu",
-              coverImage: result.coverImage,
-            }))}
-          />
-        </div>
-      </section>
-
-      <section className="bg-muted py-16">
-        <div className="mx-auto max-w-6xl px-6">
-          <RecentCardRow
-            eyebrow="AB Hibe Projeleri"
-            title={
-              <>
-                Son AB Hibe <span className="text-accent">Projeleri</span>
-              </>
-            }
-            seeAllHref="/ab-hibe-projeleri"
-            seeAllLabel="Tüm AB Hibe Projeleri"
-            items={recentGrantProjects.map((item) => ({
-              href: `/ab-hibe-projeleri/${item.slug}`,
-              title: item.title,
-              date: item.publishedAt,
-              badge: "AB Hibe Projesi",
-              coverImage: item.coverImage,
-            }))}
-          />
+          <NewsTabs tabs={newsTabs} />
         </div>
       </section>
     </div>
