@@ -204,7 +204,7 @@ export function AdminSidebar() {
       </aside>
 
       {/* Mobile top nav */}
-      <div className="sticky top-16 z-30 lg:hidden">
+      <div className="sticky top-14 z-30 lg:hidden">
         <nav className="flex gap-1 overflow-x-auto border-b border-border bg-card px-4 pb-2 pt-2">
           {NAV_GROUPS.flatMap((g) => g.items).map((item) => (
             <Link
