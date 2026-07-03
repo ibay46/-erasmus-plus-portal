@@ -44,11 +44,15 @@ function ElementRow({ element }: { element: Criterion["elements"][number] }) {
         onClick={() => setOpen((o) => !o)}
       >
         <span className="text-sm font-medium text-foreground leading-snug">{element.label}</span>
-        <span
-          className={`text-muted-foreground text-sm shrink-0 mt-0.5 transition-transform ${open ? "rotate-180" : ""}`}
+        <svg
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className={`h-4 w-4 shrink-0 mt-0.5 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         >
-          ▾
-        </span>
+          <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
 
       {open && (
@@ -121,19 +125,29 @@ function CriterionPanel({ criterion }: { criterion: Criterion }) {
           <span className="text-xs text-muted-foreground hidden sm:inline">
             Eşik: {criterion.threshold} puan · {criterion.elements.length} unsur
           </span>
-          <span
-            className={`text-muted-foreground text-sm transition-transform ${open ? "rotate-180" : ""}`}
+          <svg
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`}
           >
-            ▾
-          </span>
+            <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </div>
       </button>
 
       {open && (
         <div className="bg-card border-t border-border px-5 py-4 space-y-3">
           {criterion.criticalNote && (
-            <div className="bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3 text-xs text-red-700 dark:text-red-300 leading-relaxed">
-              🚨 <strong>Kritik:</strong> {criterion.criticalNote}
+            <div className="flex gap-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
+              <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 mt-0.5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 3L2 17h16L10 3z" />
+                <path d="M10 9v4M10 14.5v.5" />
+              </svg>
+              <p className="text-xs text-red-700 dark:text-red-300 leading-relaxed">
+                <strong>Kritik:</strong> {criterion.criticalNote}
+              </p>
             </div>
           )}
           <div className="space-y-2">
