@@ -10,24 +10,24 @@ const CRITERION_STYLES: Record<
   { accent: string; badge: string; header: string }
 > = {
   relevance: {
-    accent: "border-violet-400",
-    badge: "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
-    header: "bg-violet-50 dark:bg-violet-950/60",
+    accent: "border-accent",
+    badge: "bg-accent/15 text-accent",
+    header: "bg-accent/10",
   },
   design: {
-    accent: "border-blue-400",
-    badge: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
-    header: "bg-blue-50 dark:bg-blue-950/60",
+    accent: "border-accent-warm",
+    badge: "bg-accent-warm/15 text-accent-warm",
+    header: "bg-accent-warm/10",
   },
   partnership: {
-    accent: "border-amber-400",
-    badge: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
-    header: "bg-amber-50 dark:bg-amber-950/60",
+    accent: "border-accent",
+    badge: "bg-accent/15 text-accent",
+    header: "bg-accent/10",
   },
   impact: {
-    accent: "border-emerald-400",
-    badge: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300",
-    header: "bg-emerald-50 dark:bg-emerald-950/60",
+    accent: "border-accent-warm",
+    badge: "bg-accent-warm/15 text-accent-warm",
+    header: "bg-accent-warm/10",
   },
 };
 
