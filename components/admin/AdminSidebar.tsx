@@ -138,13 +138,13 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   return (
     <Link
       href={item.href}
-      className={`cursor-pointer flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
+      className={`cursor-pointer relative flex items-center gap-2.5 rounded-lg py-2 text-sm transition-all duration-150 ${
         active
-          ? "bg-accent/12 font-medium text-accent"
-          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          ? "bg-accent/10 pl-[10px] pr-3 font-medium text-accent before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[3px] before:rounded-full before:bg-accent"
+          : "px-3 text-muted-foreground hover:bg-muted/60 hover:text-foreground"
       }`}
     >
-      <span className={active ? "text-accent" : "text-muted-foreground/70"}>{item.icon}</span>
+      <span className={`shrink-0 ${active ? "text-accent" : "text-muted-foreground/60"}`}>{item.icon}</span>
       {item.label}
     </Link>
   );

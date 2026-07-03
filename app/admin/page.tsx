@@ -207,70 +207,94 @@ export default async function AdminDashboardPage() {
   ] as const;
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-6xl space-y-10">
+
+      {/* Page header */}
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-foreground">Panel</h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">Sitenin genel durumuna genel bakış.</p>
+        </div>
+        {pendingLeadCount > 0 && (
+          <Link
+            href="/admin/talepler"
+            className="cursor-pointer inline-flex items-center gap-2 rounded-lg bg-red-500/10 px-3.5 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-500/15"
+          >
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
+            {pendingLeadCount} yanıtsız talep
+          </Link>
+        )}
+      </div>
+
       {/* Top stats */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {topStats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
-            className="cursor-pointer group relative overflow-hidden rounded-xl border border-border bg-card p-5 transition-colors duration-200 hover:border-accent/40"
+            className="cursor-pointer group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/30 hover:shadow-md"
           >
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -inset-8 rounded-full bg-accent/20 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
-            />
-            <div className="relative flex items-start justify-between gap-2">
+            <div className="flex items-start justify-between gap-2">
               <div>
-                <p className={`text-3xl font-semibold tabular-nums ${stat.urgent ? "text-red-500" : "text-foreground"}`}>
+                <p className={`text-4xl font-bold tabular-nums leading-none ${stat.urgent ? "text-red-500" : "text-foreground"}`}>
                   {stat.value}
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">{stat.label}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{stat.label}</p>
               </div>
-              <span className={`rounded-lg p-2 ${stat.urgent ? "bg-red-500/10 text-red-500" : "bg-accent/10 text-accent"}`}>
+              <span className={`shrink-0 rounded-xl p-2.5 ${stat.urgent ? "bg-red-500/10 text-red-500" : "bg-accent/10 text-accent"}`}>
                 {stat.icon}
               </span>
             </div>
-            {stat.urgent && stat.value > 0 && (
-              <span className="relative mt-3 inline-flex items-center gap-1 text-xs font-medium text-red-500">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
-                Yanıt bekliyor
-              </span>
-            )}
+            {/* Bottom accent line on hover */}
+            <div className={`absolute bottom-0 left-0 right-0 h-[2px] rounded-b-2xl transition-opacity duration-200 group-hover:opacity-100 opacity-0 ${stat.urgent ? "bg-red-500/50" : "bg-accent/40"}`} />
           </Link>
         ))}
       </div>
 
       {/* Section grid */}
       <div>
-        <h2 className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          İçerik Modülleri
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            İçerik Modülleri
+          </h2>
+          <span className="text-xs text-muted-foreground">{sections.length} modül</span>
+        </div>
+        <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
           {sections.map((section) => (
             <Link
               key={section.href}
               href={section.href}
-              className="cursor-pointer group flex items-start gap-4 rounded-xl border border-border bg-card p-4 transition-colors duration-200 hover:border-accent/40 hover:bg-muted/40"
+              className="cursor-pointer group flex items-center gap-4 rounded-xl border border-border bg-card px-4 py-3.5 shadow-sm transition-all duration-200 hover:-translate-y-px hover:border-accent/30 hover:shadow-md"
             >
-              <span className="mt-0.5 shrink-0 rounded-lg bg-muted p-2 text-muted-foreground transition-colors duration-200 group-hover:bg-accent/10 group-hover:text-accent">
+              <span className="shrink-0 rounded-lg bg-muted p-2 text-muted-foreground transition-colors duration-200 group-hover:bg-accent/10 group-hover:text-accent">
                 {section.icon}
               </span>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-medium text-foreground">{section.title}</p>
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    {"badge" in section && section.badge != null && (
-                      <span className="rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-semibold text-red-500">
-                        {section.badge} yeni
-                      </span>
-                    )}
-                    <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-                      {section.count}
+                <div className="flex items-center gap-2">
+                  <p className="truncate text-sm font-medium text-foreground">{section.title}</p>
+                  {"badge" in section && section.badge != null && (
+                    <span className="shrink-0 rounded-full bg-red-500/12 px-2 py-0.5 text-[10px] font-semibold text-red-500">
+                      {section.badge} yeni
                     </span>
-                  </div>
+                  )}
                 </div>
-                <p className="mt-0.5 text-sm text-muted-foreground">{section.description}</p>
+                <p className="mt-0.5 truncate text-xs text-muted-foreground">{section.description}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+                  {section.count}
+                </span>
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-3.5 w-3.5 text-muted-foreground/0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-muted-foreground/50"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
               </div>
             </Link>
           ))}
