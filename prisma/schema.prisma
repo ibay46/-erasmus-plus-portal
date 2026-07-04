@@ -18,16 +18,16 @@ enum MembershipTier {
 }
 
 model User {
-  id             String         @id @default(cuid())
-  email          String         @unique
-  passwordHash   String?
-  name           String?
-  membershipTier MembershipTier @default(FREE)
+  id                  String         @id @default(cuid())
+  email               String         @unique
+  passwordHash        String?
+  name                String?
+  membershipTier      MembershipTier @default(FREE)
   membershipExpiresAt DateTime?
-  emailVerified  DateTime?
-  image          String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  emailVerified       DateTime?
+  image               String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
 
   accounts        Account[]
   sessions        Session[]
@@ -100,7 +100,7 @@ model Post {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  // SALTO Education & Training içerikleri etkinlik olabilir; bu alanlar o durumda doldurulur.
+  // SALTO Education & Training ve SALTO Youth içerikleri etkinlik olabilir; bu alanlar o durumda doldurulur.
   eventFormat              EventFormat?
   eventStartDate           DateTime?
   eventEndDate             DateTime?
@@ -110,6 +110,15 @@ model Post {
   eventApplicationDeadline DateTime?
   eventLanguage            String?
   eventSymbols             String       @default("")
+
+  // SALTO Youth'a özgü ek etkinlik alanları
+  eventActivityType           String?
+  eventOrganiser              String?
+  eventApplicationDeadlineEnd DateTime?
+  eventSelectionDate          DateTime?
+  eventTargetFor              String?
+  eventTargetFrom             String?
+  eventRecommendedFor         String?
 }
 
 model GrantProject {
@@ -126,20 +135,20 @@ model GrantProject {
 }
 
 model ProjectResult {
-  id          String           @id @default(cuid())
-  slug        String           @unique
+  id          String   @id @default(cuid())
+  slug        String   @unique
   title       String
   year        Int
   projectType String
   country     String
-  kaActions   String           @default("")
-  sectors     String           @default("")
+  kaActions   String   @default("")
+  sectors     String   @default("")
   summary     String
   body        String
   coverImage  String?
-  published   Boolean          @default(true)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model ProjectLibraryEntry {

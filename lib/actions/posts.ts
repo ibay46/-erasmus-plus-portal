@@ -24,6 +24,13 @@ const postSchema = z.object({
   eventApplicationDeadline: z.coerce.date().nullable(),
   eventLanguage: z.string().nullable(),
   eventSymbols: z.string(),
+  eventActivityType: z.string().nullable(),
+  eventOrganiser: z.string().nullable(),
+  eventApplicationDeadlineEnd: z.coerce.date().nullable(),
+  eventSelectionDate: z.coerce.date().nullable(),
+  eventTargetFor: z.string().nullable(),
+  eventTargetFrom: z.string().nullable(),
+  eventRecommendedFor: z.string().nullable(),
 });
 
 function parsePostForm(formData: FormData) {
@@ -32,6 +39,8 @@ function parsePostForm(formData: FormData) {
   const eventStartDate = formData.get("eventStartDate");
   const eventEndDate = formData.get("eventEndDate");
   const eventApplicationDeadline = formData.get("eventApplicationDeadline");
+  const eventApplicationDeadlineEnd = formData.get("eventApplicationDeadlineEnd");
+  const eventSelectionDate = formData.get("eventSelectionDate");
 
   return postSchema.parse({
     title: formData.get("title"),
@@ -49,6 +58,13 @@ function parsePostForm(formData: FormData) {
     eventPriority: formData.get("eventPriority") || null,
     eventApplicationDeadline: eventApplicationDeadline ? eventApplicationDeadline : null,
     eventLanguage: formData.get("eventLanguage") || null,
+    eventActivityType: formData.get("eventActivityType") || null,
+    eventOrganiser: formData.get("eventOrganiser") || null,
+    eventApplicationDeadlineEnd: eventApplicationDeadlineEnd ? eventApplicationDeadlineEnd : null,
+    eventSelectionDate: eventSelectionDate ? eventSelectionDate : null,
+    eventTargetFor: formData.get("eventTargetFor") || null,
+    eventTargetFrom: formData.get("eventTargetFrom") || null,
+    eventRecommendedFor: formData.get("eventRecommendedFor") || null,
   });
 }
 

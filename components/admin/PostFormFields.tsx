@@ -1,6 +1,11 @@
 import { POST_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
 import { EVENT_SECTOR_LABELS, EVENT_SECTORS } from "@/lib/content/eventSectors";
 import { EVENT_SYMBOL_LABELS, EVENT_SYMBOLS } from "@/lib/content/eventSymbols";
+import {
+  ACTIVITY_TYPE_DESCRIPTIONS,
+  ACTIVITY_TYPE_LABELS,
+  ACTIVITY_TYPES,
+} from "@/lib/content/activityTypes";
 import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
 import { CoverImageInput } from "@/components/admin/CoverImageInput";
 
@@ -33,11 +38,19 @@ export function PostFormFields({
     eventApplicationDeadline?: Date | null;
     eventLanguage?: string | null;
     eventSymbols?: string | null;
+    eventActivityType?: string | null;
+    eventOrganiser?: string | null;
+    eventApplicationDeadlineEnd?: Date | null;
+    eventSelectionDate?: Date | null;
+    eventTargetFor?: string | null;
+    eventTargetFrom?: string | null;
+    eventRecommendedFor?: string | null;
   };
   categoryOptions?: string[];
   lockedCategory?: string;
 }) {
   const isSaltoEducationTraining = lockedCategory === "SALTO_EDUCATION_TRAINING";
+  const isSaltoYouth = lockedCategory === "SALTO_YOUTH";
   const selectedSectors = defaultValues?.eventSectors?.split(",").filter(Boolean) ?? [];
   const selectedSymbols = defaultValues?.eventSymbols?.split(",").filter(Boolean) ?? [];
 
@@ -242,6 +255,177 @@ export function PostFormFields({
                 </label>
               ))}
             </div>
+          </div>
+        </div>
+      )}
+
+      {isSaltoYouth && (
+        <div className="space-y-4 rounded-lg border border-border p-4">
+          <p className="text-sm font-medium text-foreground">
+            Etkinlik Bilgileri <span className="font-normal text-muted-foreground">(opsiyonel)</span>
+          </p>
+
+          <div>
+            <label htmlFor="eventOrganiser" className="block text-sm font-medium mb-1 text-foreground">
+              Activity organised by / Organiser
+            </label>
+            <input
+              id="eventOrganiser"
+              name="eventOrganiser"
+              placeholder="örn. SALTO Training and Cooperation Resource Centre"
+              defaultValue={defaultValues?.eventOrganiser ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <p className="block text-sm font-medium mb-2 text-foreground">Activity type</p>
+            <div className="space-y-3">
+              {ACTIVITY_TYPES.map((code) => (
+                <label key={code} className="flex items-start gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="radio"
+                    name="eventActivityType"
+                    value={code}
+                    defaultChecked={defaultValues?.eventActivityType === code}
+                    className="mt-1 h-4 w-4 border-border accent-accent"
+                  />
+                  <span>
+                    <span className="block text-sm font-medium text-foreground">
+                      {ACTIVITY_TYPE_LABELS[code]}
+                    </span>
+                    <span className="block text-xs text-muted-foreground">
+                      {ACTIVITY_TYPE_DESCRIPTIONS[code]}
+                    </span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="eventStartDate" className="block text-sm font-medium mb-1 text-foreground">
+                Activity date: Başlangıç
+              </label>
+              <input
+                id="eventStartDate"
+                name="eventStartDate"
+                type="date"
+                defaultValue={toDateInputValue(defaultValues?.eventStartDate)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="eventEndDate" className="block text-sm font-medium mb-1 text-foreground">
+                Activity date: Bitiş
+              </label>
+              <input
+                id="eventEndDate"
+                name="eventEndDate"
+                type="date"
+                defaultValue={toDateInputValue(defaultValues?.eventEndDate)}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label
+                htmlFor="eventApplicationDeadline"
+                className="block text-sm font-medium mb-1 text-foreground"
+              >
+                Application deadline: Başlangıç
+              </label>
+              <input
+                id="eventApplicationDeadline"
+                name="eventApplicationDeadline"
+                type="date"
+                defaultValue={toDateInputValue(defaultValues?.eventApplicationDeadline)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="eventApplicationDeadlineEnd"
+                className="block text-sm font-medium mb-1 text-foreground"
+              >
+                Application deadline: Bitiş
+              </label>
+              <input
+                id="eventApplicationDeadlineEnd"
+                name="eventApplicationDeadlineEnd"
+                type="date"
+                defaultValue={toDateInputValue(defaultValues?.eventApplicationDeadlineEnd)}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="eventSelectionDate" className="block text-sm font-medium mb-1 text-foreground">
+              Date of selection
+            </label>
+            <input
+              id="eventSelectionDate"
+              name="eventSelectionDate"
+              type="date"
+              defaultValue={toDateInputValue(defaultValues?.eventSelectionDate)}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="eventTargetFor" className="block text-sm font-medium mb-1 text-foreground">
+              This Training Course is for
+            </label>
+            <input
+              id="eventTargetFor"
+              name="eventTargetFor"
+              placeholder="örn. youth workers, youth leaders"
+              defaultValue={defaultValues?.eventTargetFor ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="eventTargetFrom" className="block text-sm font-medium mb-1 text-foreground">
+              This Training Course is from
+            </label>
+            <input
+              id="eventTargetFrom"
+              name="eventTargetFrom"
+              placeholder="örn. Programme Countries"
+              defaultValue={defaultValues?.eventTargetFrom ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="eventRecommendedFor" className="block text-sm font-medium mb-1 text-foreground">
+              and recommended for
+            </label>
+            <input
+              id="eventRecommendedFor"
+              name="eventRecommendedFor"
+              placeholder="örn. people with little or no experience"
+              defaultValue={defaultValues?.eventRecommendedFor ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="eventVenue" className="block text-sm font-medium mb-1 text-foreground">
+              Place
+            </label>
+            <input
+              id="eventVenue"
+              name="eventVenue"
+              placeholder="örn. Leuven, Belçika veya Online"
+              defaultValue={defaultValues?.eventVenue ?? ""}
+              className={inputClass}
+            />
           </div>
         </div>
       )}

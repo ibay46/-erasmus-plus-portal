@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Post } from "@/app/generated/prisma/client";
 import { EVENT_SYMBOL_LABELS } from "@/lib/content/eventSymbols";
+import { ACTIVITY_TYPE_LABELS } from "@/lib/content/activityTypes";
 
 const SECTOR_COLORS: Record<string, string> = {
   SE: "bg-violet-600",
@@ -38,6 +39,12 @@ function formatDate(date: Date) {
 export function SaltoEventCard({ post }: { post: Post }) {
   const sectors = post.eventSectors.split(",").filter(Boolean);
   const symbols = post.eventSymbols.split(",").filter(Boolean);
+  const isYouth = post.category === "SALTO_YOUTH";
+  const targetSentenceParts = [
+    post.eventTargetFor && `for ${post.eventTargetFor}`,
+    post.eventTargetFrom && `from ${post.eventTargetFrom}`,
+    post.eventRecommendedFor && `recommended for ${post.eventRecommendedFor}`,
+  ].filter(Boolean);
 
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -47,9 +54,25 @@ export function SaltoEventCard({ post }: { post: Post }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2.5 px-5 py-4 text-sm">
+        {post.eventOrganiser && (
+          <p>
+            <span className="font-medium text-foreground">Organiser: </span>
+            <span className="text-muted-foreground">{post.eventOrganiser}</span>
+          </p>
+        )}
+
+        {post.eventActivityType && (
+          <p>
+            <span className="font-medium text-foreground">Activity type: </span>
+            <span className="text-muted-foreground">
+              {ACTIVITY_TYPE_LABELS[post.eventActivityType] ?? post.eventActivityType}
+            </span>
+          </p>
+        )}
+
         {post.eventStartDate && post.eventEndDate && (
           <p>
-            <span className="font-medium text-foreground">Event date: </span>
+            <span className="font-medium text-foreground">{isYouth ? "Activity date: " : "Event date: "}</span>
             <span className="text-muted-foreground">
               {formatDate(post.eventStartDate)} - {formatDate(post.eventEndDate)}
             </span>
@@ -72,7 +95,7 @@ export function SaltoEventCard({ post }: { post: Post }) {
 
         {post.eventVenue && (
           <p>
-            <span className="font-medium text-foreground">Event venue: </span>
+            <span className="font-medium text-foreground">{isYouth ? "Place: " : "Event venue: "}</span>
             <span className="text-muted-foreground">{post.eventVenue}</span>
           </p>
         )}
@@ -87,7 +110,18 @@ export function SaltoEventCard({ post }: { post: Post }) {
         {post.eventApplicationDeadline && (
           <p>
             <span className="font-medium text-foreground">Application deadline: </span>
-            <span className="text-muted-foreground">{formatDate(post.eventApplicationDeadline)}</span>
+            <span className="text-muted-foreground">
+              {post.eventApplicationDeadlineEnd
+                ? `${formatDate(post.eventApplicationDeadline)} - ${formatDate(post.eventApplicationDeadlineEnd)}`
+                : formatDate(post.eventApplicationDeadline)}
+            </span>
+          </p>
+        )}
+
+        {post.eventSelectionDate && (
+          <p>
+            <span className="font-medium text-foreground">Date of selection: </span>
+            <span className="text-muted-foreground">{formatDate(post.eventSelectionDate)}</span>
           </p>
         )}
 
@@ -95,6 +129,12 @@ export function SaltoEventCard({ post }: { post: Post }) {
           <p>
             <span className="font-medium text-foreground">Language: </span>
             <span className="text-muted-foreground">{post.eventLanguage}</span>
+          </p>
+        )}
+
+        {targetSentenceParts.length > 0 && (
+          <p className="text-muted-foreground">
+            This activity is {targetSentenceParts.join(", ")}.
           </p>
         )}
 
