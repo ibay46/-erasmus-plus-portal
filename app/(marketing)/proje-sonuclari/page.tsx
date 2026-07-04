@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getProjectResultsGroupedByYear, getAvailableProjectResultFilterValues } from "@/lib/projectResults";
+import {
+  getProjectResultsGroupedByYear,
+  getAvailableProjectResultFilterValues,
+  getProjectResultCoverageMatrix,
+} from "@/lib/projectResults";
 import { KA_ACTIONS, KA_ACTION_LABELS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 import { FilterBar } from "@/components/proje-sonuclari/FilterBar";
+import { CoverageMatrix } from "@/components/proje-sonuclari/CoverageMatrix";
 
 export const metadata: Metadata = {
   title: "Proje Sonuçları | Erasmus+ Portal",
@@ -33,12 +38,28 @@ interface QueryState {
   ulke?: string;
 }
 
+function ViewTab({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className={`cursor-pointer inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+        active
+          ? "bg-accent text-accent-foreground"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+}
+
 export default async function ProjeSonuclariPage({
   searchParams,
 }: {
-  searchParams: Promise<QueryState>;
+  searchParams: Promise<QueryState & { gorunum?: string }>;
 }) {
-  const { ka, sektor, yil, ulke } = await searchParams;
+  const { ka, sektor, yil, ulke, gorunum } = await searchParams;
+  const isTableView = gorunum === "tablo";
   const { years, countries: availableCountries } = await getAvailableProjectResultFilterValues();
 
   const kaAction = KA_ACTIONS.includes(ka ?? "") ? ka : undefined;
@@ -46,9 +67,32 @@ export default async function ProjeSonuclariPage({
   const year = yil && years.includes(Number(yil)) ? Number(yil) : undefined;
   const country = ulke && availableCountries.includes(ulke) ? ulke : undefined;
 
-  const yearGroups = await getProjectResultsGroupedByYear({ kaAction, sector, year, country });
-
   const current: QueryState = { ka: kaAction, sektor: sector, yil: year ? String(year) : undefined, ulke: country };
+
+  if (isTableView) {
+    const { columns, rows } = await getProjectResultCoverageMatrix();
+    return (
+      <div>
+        <h1 className="text-3xl font-semibold mb-2 text-foreground">Proje Sonuçları</h1>
+        <p className="text-muted-foreground mb-6 max-w-2xl">
+          Ülkelere göre hangi KA eylemi ve sektör kombinasyonunda sonuç açıklandığının genel görünümü.
+        </p>
+
+        <div className="mb-6 inline-flex gap-1 rounded-lg border border-border p-1">
+          <ViewTab href="/proje-sonuclari" active={false}>
+            Liste
+          </ViewTab>
+          <ViewTab href="/proje-sonuclari?gorunum=tablo" active={true}>
+            Tablo
+          </ViewTab>
+        </div>
+
+        <CoverageMatrix columns={columns} rows={rows} />
+      </div>
+    );
+  }
+
+  const yearGroups = await getProjectResultsGroupedByYear({ kaAction, sector, year, country });
 
   return (
     <div>
@@ -56,6 +100,15 @@ export default async function ProjeSonuclariPage({
       <p className="text-muted-foreground mb-6 max-w-2xl">
         Desteklenmeye hak kazanan projeler, en güncel yıldan geçmişe ve ülkeye göre listelenir.
       </p>
+
+      <div className="mb-6 inline-flex gap-1 rounded-lg border border-border p-1">
+        <ViewTab href="/proje-sonuclari" active={true}>
+          Liste
+        </ViewTab>
+        <ViewTab href="/proje-sonuclari?gorunum=tablo" active={false}>
+          Tablo
+        </ViewTab>
+      </div>
 
       <FilterBar
         years={years}
