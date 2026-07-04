@@ -78,11 +78,11 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
 
   return (
     <div className="overflow-x-auto rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-1 shadow-2xl ring-1 ring-white/10">
-      <table className="w-full table-fixed border-collapse text-sm">
+      <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${160 + columns.length * 48}px` }}>
         <colgroup>
-          <col className="w-40" />
+          <col style={{ width: "160px" }} />
           {columns.map(({ kaAction, sector }) => (
-            <col key={`${kaAction}_${sector}`} />
+            <col key={`${kaAction}_${sector}`} style={{ width: "48px" }} />
           ))}
         </colgroup>
         <thead>
@@ -124,7 +124,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
             return (
               <tr key={country} className={rowIndex % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"}>
                 <td
-                  className={`sticky left-0 z-10 bg-slate-950 px-4 py-2.5 font-semibold text-white/90 ${
+                  className={`sticky left-0 z-10 truncate bg-slate-950 px-4 py-2.5 font-semibold text-white/90 ${
                     isLastRow ? "rounded-bl-xl" : ""
                   }`}
                 >
