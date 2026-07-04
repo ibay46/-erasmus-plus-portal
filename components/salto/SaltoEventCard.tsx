@@ -41,7 +41,7 @@ export function SaltoEventCard({ post }: { post: Post }) {
 
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-      <div className="flex items-start justify-between gap-3 bg-blue-900 px-5 py-4">
+      <div className="flex items-start justify-between gap-3 bg-accent px-5 py-4">
         <h3 className="text-base font-semibold leading-snug text-white">{post.title}</h3>
         {post.eventFormat === "ONLINE" ? <OnlineIcon /> : <PersonIcon />}
       </div>
@@ -116,9 +116,9 @@ export function SaltoEventCard({ post }: { post: Post }) {
         <div className="mt-auto flex justify-end pt-3">
           <Link
             href={`/haberler/${post.slug}`}
-            className="cursor-pointer rounded-full border border-blue-900 px-4 py-1.5 text-sm font-medium text-blue-900 transition-colors duration-200 hover:bg-blue-900 hover:text-white dark:border-accent dark:text-accent dark:hover:bg-accent dark:hover:text-accent-foreground"
+            className="cursor-pointer rounded-full border border-accent-warm px-4 py-1.5 text-sm font-medium text-accent-warm transition-colors duration-200 hover:bg-accent-warm hover:text-white"
           >
-            View
+            Görüntüle
           </Link>
         </div>
       </div>
