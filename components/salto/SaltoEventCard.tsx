@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Post } from "@/app/generated/prisma/client";
+import { EVENT_SYMBOL_LABELS } from "@/lib/content/eventSymbols";
 
 const SECTOR_COLORS: Record<string, string> = {
   SE: "bg-violet-600",
@@ -36,6 +37,7 @@ function formatDate(date: Date) {
 
 export function SaltoEventCard({ post }: { post: Post }) {
   const sectors = post.eventSectors.split(",").filter(Boolean);
+  const symbols = post.eventSymbols.split(",").filter(Boolean);
 
   return (
     <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -97,6 +99,19 @@ export function SaltoEventCard({ post }: { post: Post }) {
         )}
 
         {post.excerpt && <p className="text-muted-foreground">{post.excerpt}</p>}
+
+        {symbols.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {symbols.map((code) => (
+              <span
+                key={code}
+                className="rounded-full border border-border px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+              >
+                {EVENT_SYMBOL_LABELS[code] ?? code}
+              </span>
+            ))}
+          </div>
+        )}
 
         <div className="mt-auto flex justify-end pt-3">
           <Link

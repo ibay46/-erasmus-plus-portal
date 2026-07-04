@@ -23,10 +23,12 @@ const postSchema = z.object({
   eventPriority: z.string().nullable(),
   eventApplicationDeadline: z.coerce.date().nullable(),
   eventLanguage: z.string().nullable(),
+  eventSymbols: z.string(),
 });
 
 function parsePostForm(formData: FormData) {
   const eventSectors = (formData.getAll("eventSectors") as string[]).filter(Boolean).join(",");
+  const eventSymbols = (formData.getAll("eventSymbols") as string[]).filter(Boolean).join(",");
   const eventStartDate = formData.get("eventStartDate");
   const eventEndDate = formData.get("eventEndDate");
   const eventApplicationDeadline = formData.get("eventApplicationDeadline");
@@ -42,6 +44,7 @@ function parsePostForm(formData: FormData) {
     eventStartDate: eventStartDate ? eventStartDate : null,
     eventEndDate: eventEndDate ? eventEndDate : null,
     eventSectors,
+    eventSymbols,
     eventVenue: formData.get("eventVenue") || null,
     eventPriority: formData.get("eventPriority") || null,
     eventApplicationDeadline: eventApplicationDeadline ? eventApplicationDeadline : null,

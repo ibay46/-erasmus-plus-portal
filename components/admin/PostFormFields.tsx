@@ -1,5 +1,6 @@
 import { POST_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
 import { EVENT_SECTOR_LABELS, EVENT_SECTORS } from "@/lib/content/eventSectors";
+import { EVENT_SYMBOL_LABELS, EVENT_SYMBOLS } from "@/lib/content/eventSymbols";
 import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
 import { CoverImageInput } from "@/components/admin/CoverImageInput";
 
@@ -31,12 +32,14 @@ export function PostFormFields({
     eventPriority?: string | null;
     eventApplicationDeadline?: Date | null;
     eventLanguage?: string | null;
+    eventSymbols?: string | null;
   };
   categoryOptions?: string[];
   lockedCategory?: string;
 }) {
   const isSaltoEducationTraining = lockedCategory === "SALTO_EDUCATION_TRAINING";
   const selectedSectors = defaultValues?.eventSectors?.split(",").filter(Boolean) ?? [];
+  const selectedSymbols = defaultValues?.eventSymbols?.split(",").filter(Boolean) ?? [];
 
   return (
     <>
@@ -124,7 +127,7 @@ export function PostFormFields({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="eventStartDate" className="block text-sm font-medium mb-1 text-foreground">
-                Event date: Başlangıç
+                Etkinlik Tarihi: Başlangıç
               </label>
               <input
                 id="eventStartDate"
@@ -136,7 +139,7 @@ export function PostFormFields({
             </div>
             <div>
               <label htmlFor="eventEndDate" className="block text-sm font-medium mb-1 text-foreground">
-                Event date: Bitiş
+                Etkinlik Tarihi: Bitiş
               </label>
               <input
                 id="eventEndDate"
@@ -149,7 +152,7 @@ export function PostFormFields({
           </div>
 
           <div>
-            <p className="block text-sm font-medium mb-2 text-foreground">Sector (birden fazla seçilebilir)</p>
+            <p className="block text-sm font-medium mb-2 text-foreground">Sektör (birden fazla seçilebilir)</p>
             <div className="space-y-2">
               {EVENT_SECTORS.map((code) => (
                 <label key={code} className="flex items-center gap-2.5 cursor-pointer select-none">
@@ -170,12 +173,12 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventVenue" className="block text-sm font-medium mb-1 text-foreground">
-              Event venue
+              Etkinlik Yeri
             </label>
             <input
               id="eventVenue"
               name="eventVenue"
-              placeholder="örn. Leuven, Belçika veya Online"
+              placeholder="örn. Leuven, Belçika, Online veya Other"
               defaultValue={defaultValues?.eventVenue ?? ""}
               className={inputClass}
             />
@@ -183,12 +186,12 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventPriority" className="block text-sm font-medium mb-1 text-foreground">
-              Priority
+              Öncelik
             </label>
             <input
               id="eventPriority"
               name="eventPriority"
-              placeholder="örn. Participation in democratic life (2021-27)"
+              placeholder="örn. Increase the quality of programme implementation (2021-27)"
               defaultValue={defaultValues?.eventPriority ?? ""}
               className={inputClass}
             />
@@ -199,7 +202,7 @@ export function PostFormFields({
               htmlFor="eventApplicationDeadline"
               className="block text-sm font-medium mb-1 text-foreground"
             >
-              Application deadline
+              Başvuru Son Tarihi
             </label>
             <input
               id="eventApplicationDeadline"
@@ -212,15 +215,33 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventLanguage" className="block text-sm font-medium mb-1 text-foreground">
-              Language
+              Dil
             </label>
             <input
               id="eventLanguage"
               name="eventLanguage"
-              placeholder="örn. English"
+              placeholder="örn. French"
               defaultValue={defaultValues?.eventLanguage ?? ""}
               className={inputClass}
             />
+          </div>
+
+          <div>
+            <p className="block text-sm font-medium mb-2 text-foreground">Semboller (opsiyonel)</p>
+            <div className="space-y-2">
+              {EVENT_SYMBOLS.map((code) => (
+                <label key={code} className="flex items-center gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    name="eventSymbols"
+                    value={code}
+                    defaultChecked={selectedSymbols.includes(code)}
+                    className="h-4 w-4 rounded border-border accent-accent"
+                  />
+                  <span className="text-sm text-foreground">{EVENT_SYMBOL_LABELS[code]}</span>
+                </label>
+              ))}
+            </div>
           </div>
         </div>
       )}

@@ -109,6 +109,7 @@ model Post {
   eventPriority            String?
   eventApplicationDeadline DateTime?
   eventLanguage            String?
+  eventSymbols             String       @default("")
 }
 
 model GrantProject {
