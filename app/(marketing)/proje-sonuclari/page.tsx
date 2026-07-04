@@ -59,7 +59,7 @@ export default async function ProjeSonuclariPage({
   searchParams: Promise<QueryState & { gorunum?: string }>;
 }) {
   const { ka, sektor, yil, ulke, gorunum } = await searchParams;
-  const isTableView = gorunum === "tablo";
+  const isTableView = gorunum !== "liste";
   const { years, countries: availableCountries } = await getAvailableProjectResultFilterValues();
 
   const kaAction = KA_ACTIONS.includes(ka ?? "") ? ka : undefined;
@@ -79,10 +79,10 @@ export default async function ProjeSonuclariPage({
         </p>
 
         <div className="mb-6 inline-flex gap-1 rounded-lg border border-border p-1">
-          <ViewTab href="/proje-sonuclari" active={false}>
+          <ViewTab href="/proje-sonuclari?gorunum=liste" active={false}>
             Liste
           </ViewTab>
-          <ViewTab href="/proje-sonuclari?gorunum=tablo" active={true}>
+          <ViewTab href="/proje-sonuclari" active={true}>
             Tablo
           </ViewTab>
         </div>
@@ -102,10 +102,10 @@ export default async function ProjeSonuclariPage({
       </p>
 
       <div className="mb-6 inline-flex gap-1 rounded-lg border border-border p-1">
-        <ViewTab href="/proje-sonuclari" active={true}>
+        <ViewTab href="/proje-sonuclari?gorunum=liste" active={true}>
           Liste
         </ViewTab>
-        <ViewTab href="/proje-sonuclari?gorunum=tablo" active={false}>
+        <ViewTab href="/proje-sonuclari" active={false}>
           Tablo
         </ViewTab>
       </div>
