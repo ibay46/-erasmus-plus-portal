@@ -15,9 +15,22 @@ const postSchema = z.object({
   category: z.enum(POST_CATEGORIES as [string, ...string[]]),
   published: z.boolean(),
   coverImage: z.string().nullable(),
+  eventFormat: z.enum(["PHYSICAL", "ONLINE"]).nullable(),
+  eventStartDate: z.coerce.date().nullable(),
+  eventEndDate: z.coerce.date().nullable(),
+  eventSectors: z.string(),
+  eventVenue: z.string().nullable(),
+  eventPriority: z.string().nullable(),
+  eventApplicationDeadline: z.coerce.date().nullable(),
+  eventLanguage: z.string().nullable(),
 });
 
 function parsePostForm(formData: FormData) {
+  const eventSectors = (formData.getAll("eventSectors") as string[]).filter(Boolean).join(",");
+  const eventStartDate = formData.get("eventStartDate");
+  const eventEndDate = formData.get("eventEndDate");
+  const eventApplicationDeadline = formData.get("eventApplicationDeadline");
+
   return postSchema.parse({
     title: formData.get("title"),
     excerpt: formData.get("excerpt") || undefined,
@@ -25,6 +38,14 @@ function parsePostForm(formData: FormData) {
     category: formData.get("category"),
     published: formData.get("published") === "on",
     coverImage: formData.get("coverImage") || null,
+    eventFormat: formData.get("eventFormat") || null,
+    eventStartDate: eventStartDate ? eventStartDate : null,
+    eventEndDate: eventEndDate ? eventEndDate : null,
+    eventSectors,
+    eventVenue: formData.get("eventVenue") || null,
+    eventPriority: formData.get("eventPriority") || null,
+    eventApplicationDeadline: eventApplicationDeadline ? eventApplicationDeadline : null,
+    eventLanguage: formData.get("eventLanguage") || null,
   });
 }
 

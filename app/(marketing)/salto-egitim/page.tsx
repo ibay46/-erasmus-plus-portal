@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { getPublishedPosts } from "@/lib/posts";
 import { POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
-import { getPublishedEtkinlikler } from "@/lib/etkinlikler";
-import { EtkinlikCard } from "@/components/salto/EtkinlikCard";
+import { SaltoEventCard } from "@/components/salto/SaltoEventCard";
 
 export const metadata = {
   title: "SALTO Education & Training | Erasmus+ Portal",
@@ -11,10 +10,9 @@ export const metadata = {
 };
 
 export default async function SaltoEgitimPage() {
-  const [posts, etkinlikler] = await Promise.all([
-    getPublishedPosts("SALTO_EDUCATION_TRAINING"),
-    getPublishedEtkinlikler(),
-  ]);
+  const allPosts = await getPublishedPosts("SALTO_EDUCATION_TRAINING");
+  const events = allPosts.filter((post) => post.eventVenue);
+  const posts = allPosts.filter((post) => !post.eventVenue);
 
   return (
     <div>
@@ -24,14 +22,14 @@ export default async function SaltoEgitimPage() {
         duyuruları ve haberleri.
       </p>
 
-      {etkinlikler.length > 0 && (
+      {events.length > 0 && (
         <section className="mb-10">
           <h2 className="text-lg font-semibold mb-4 text-foreground">
-            Etkinlikler <span className="text-sm font-normal text-muted-foreground">({etkinlikler.length})</span>
+            Etkinlikler <span className="text-sm font-normal text-muted-foreground">({events.length})</span>
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {etkinlikler.map((etkinlik) => (
-              <EtkinlikCard key={etkinlik.id} etkinlik={etkinlik} />
+            {events.map((post) => (
+              <SaltoEventCard key={post.id} post={post} />
             ))}
           </div>
         </section>

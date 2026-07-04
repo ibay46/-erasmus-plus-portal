@@ -1,9 +1,15 @@
-﻿import { POST_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
+import { POST_CATEGORIES, POST_CATEGORY_LABELS } from "@/lib/content/postCategories";
+import { EVENT_SECTOR_LABELS, EVENT_SECTORS } from "@/lib/content/eventSectors";
 import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
 import { CoverImageInput } from "@/components/admin/CoverImageInput";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
+
+function toDateInputValue(date?: Date | null): string {
+  if (!date) return "";
+  return new Date(date).toISOString().slice(0, 10);
+}
 
 export function PostFormFields({
   defaultValues,
@@ -17,10 +23,21 @@ export function PostFormFields({
     category: string;
     published: boolean;
     coverImage?: string | null;
+    eventFormat?: string | null;
+    eventStartDate?: Date | null;
+    eventEndDate?: Date | null;
+    eventSectors?: string | null;
+    eventVenue?: string | null;
+    eventPriority?: string | null;
+    eventApplicationDeadline?: Date | null;
+    eventLanguage?: string | null;
   };
   categoryOptions?: string[];
   lockedCategory?: string;
 }) {
+  const isSaltoEducationTraining = lockedCategory === "SALTO_EDUCATION_TRAINING";
+  const selectedSectors = defaultValues?.eventSectors?.split(",").filter(Boolean) ?? [];
+
   return (
     <>
       <div>
@@ -81,6 +98,133 @@ export function PostFormFields({
           yapıştırabilirsiniz. Eklenen PDF/Word/Excel dosyaları sitede doğrudan önizlenebilir.
         </p>
       </div>
+
+      {isSaltoEducationTraining && (
+        <div className="space-y-4 rounded-lg border border-border p-4">
+          <p className="text-sm font-medium text-foreground">
+            Etkinlik Bilgileri <span className="font-normal text-muted-foreground">(opsiyonel)</span>
+          </p>
+
+          <div>
+            <label htmlFor="eventFormat" className="block text-sm font-medium mb-1 text-foreground">
+              Etkinlik Türü
+            </label>
+            <select
+              id="eventFormat"
+              name="eventFormat"
+              defaultValue={defaultValues?.eventFormat ?? ""}
+              className={inputClass}
+            >
+              <option value="">Seçilmedi</option>
+              <option value="PHYSICAL">Yüz yüze</option>
+              <option value="ONLINE">Online</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="eventStartDate" className="block text-sm font-medium mb-1 text-foreground">
+                Event date: Başlangıç
+              </label>
+              <input
+                id="eventStartDate"
+                name="eventStartDate"
+                type="date"
+                defaultValue={toDateInputValue(defaultValues?.eventStartDate)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="eventEndDate" className="block text-sm font-medium mb-1 text-foreground">
+                Event date: Bitiş
+              </label>
+              <input
+                id="eventEndDate"
+                name="eventEndDate"
+                type="date"
+                defaultValue={toDateInputValue(defaultValues?.eventEndDate)}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          <div>
+            <p className="block text-sm font-medium mb-2 text-foreground">Sector (birden fazla seçilebilir)</p>
+            <div className="space-y-2">
+              {EVENT_SECTORS.map((code) => (
+                <label key={code} className="flex items-center gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    name="eventSectors"
+                    value={code}
+                    defaultChecked={selectedSectors.includes(code)}
+                    className="h-4 w-4 rounded border-border accent-accent"
+                  />
+                  <span className="text-sm text-foreground">
+                    {code} — {EVENT_SECTOR_LABELS[code]}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="eventVenue" className="block text-sm font-medium mb-1 text-foreground">
+              Event venue
+            </label>
+            <input
+              id="eventVenue"
+              name="eventVenue"
+              placeholder="örn. Leuven, Belçika veya Online"
+              defaultValue={defaultValues?.eventVenue ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="eventPriority" className="block text-sm font-medium mb-1 text-foreground">
+              Priority
+            </label>
+            <input
+              id="eventPriority"
+              name="eventPriority"
+              placeholder="örn. Participation in democratic life (2021-27)"
+              defaultValue={defaultValues?.eventPriority ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="eventApplicationDeadline"
+              className="block text-sm font-medium mb-1 text-foreground"
+            >
+              Application deadline
+            </label>
+            <input
+              id="eventApplicationDeadline"
+              name="eventApplicationDeadline"
+              type="date"
+              defaultValue={toDateInputValue(defaultValues?.eventApplicationDeadline)}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="eventLanguage" className="block text-sm font-medium mb-1 text-foreground">
+              Language
+            </label>
+            <input
+              id="eventLanguage"
+              name="eventLanguage"
+              placeholder="örn. English"
+              defaultValue={defaultValues?.eventLanguage ?? ""}
+              className={inputClass}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center gap-2">
         <input
           id="published"

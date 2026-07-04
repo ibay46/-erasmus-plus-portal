@@ -85,12 +85,6 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
     </SvgIcon>
   ),
-  calendar: (
-    <SvgIcon>
-      <rect x="3" y="4" width="18" height="18" rx="2" />
-      <path d="M16 2v4M8 2v4M3 10h18" />
-    </SvgIcon>
-  ),
   phone: (
     <SvgIcon>
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -122,7 +116,6 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/haberler", label: "Haberler", icon: ICONS.newspaper },
       { href: "/admin/salto-youth", label: "SALTO Youth", icon: ICONS.users },
       { href: "/admin/salto-egitim", label: "SALTO E&T", icon: ICONS.graduation },
-      { href: "/admin/etkinlikler", label: "Etkinlikler", icon: ICONS.calendar },
       { href: "/admin/esc", label: "ESC", icon: ICONS.heart },
       { href: "/admin/ab-hibe-projeleri", label: "AB Hibe Projeleri", icon: ICONS.globe },
       { href: "/admin/proje-kutuphanesi", label: "Proje Kütüphanesi", icon: ICONS.book },
