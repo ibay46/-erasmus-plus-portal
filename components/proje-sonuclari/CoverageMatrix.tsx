@@ -100,7 +100,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                 <th
                   key={kaAction}
                   colSpan={cols.length}
-                  className={`${color.header} ${color.text} ${isLastGroup ? "rounded-tr-xl" : ""} px-2 py-3 text-center text-sm font-bold tracking-wide`}
+                  className={`${color.header} ${color.text} ${color.edgeLeft} ${color.edgeRight} ${isLastGroup ? "rounded-tr-xl" : ""} px-2 py-3 text-center text-sm font-bold tracking-wide`}
                 >
                   {kaAction}
                 </th>
