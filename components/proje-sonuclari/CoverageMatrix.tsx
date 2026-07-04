@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { KA_ACTION_LABELS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 import type { CoverageColumn, CoverageRow } from "@/lib/projectResults";
 
 function CheckIcon() {
@@ -33,12 +32,18 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
 
   return (
     <div className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full table-fixed border-collapse text-sm">
+        <colgroup>
+          <col className="w-36" />
+          {columns.map(({ kaAction, sector }) => (
+            <col key={`${kaAction}_${sector}`} />
+          ))}
+        </colgroup>
         <thead>
           <tr>
             <th
               rowSpan={2}
-              className="sticky left-0 z-10 min-w-[9rem] border-b border-r border-border bg-card px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+              className="sticky left-0 z-10 border-b border-r border-border bg-card px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
             >
               Ülke
             </th>
@@ -46,9 +51,9 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
               <th
                 key={kaAction}
                 colSpan={cols.length}
-                className="border-b border-border bg-muted px-3 py-2 text-center text-xs font-semibold uppercase tracking-wide text-foreground"
+                className="border-b border-border bg-muted px-2 py-2 text-center text-xs font-semibold uppercase tracking-wide text-foreground"
               >
-                {KA_ACTION_LABELS[kaAction] ?? kaAction}
+                {kaAction}
               </th>
             ))}
           </tr>
