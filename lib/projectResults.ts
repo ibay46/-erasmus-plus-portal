@@ -114,7 +114,7 @@ export async function getProjectResultCoverageMatrix(): Promise<{
           : { count: matches.length, href: `/proje-sonuclari?ulke=${encodeURIComponent(country)}&ka=${kaAction}&sektor=${sector}` };
     }
     return { country, cells };
-  }).filter((row) => Object.values(row.cells).some((cell) => cell.count > 0));
+  });
 
   return { columns, rows };
 }
