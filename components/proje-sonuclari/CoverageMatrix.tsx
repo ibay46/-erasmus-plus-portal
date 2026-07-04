@@ -122,9 +122,14 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
           {rows.map(({ country, cells }, rowIndex) => {
             const isLastRow = rowIndex === rows.length - 1;
             return (
-              <tr key={country} className={rowIndex % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"}>
+              <tr
+                key={country}
+                className={`group transition-colors duration-150 hover:bg-sky-400/10 ${
+                  rowIndex % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"
+                }`}
+              >
                 <td
-                  className={`sticky left-0 z-10 truncate bg-slate-950 px-4 py-2.5 font-semibold text-white/90 ${
+                  className={`sticky left-0 z-10 truncate bg-slate-950 px-4 py-2.5 font-semibold text-white/90 transition-colors duration-150 group-hover:bg-slate-800 ${
                     isLastRow ? "rounded-bl-xl" : ""
                   }`}
                 >
