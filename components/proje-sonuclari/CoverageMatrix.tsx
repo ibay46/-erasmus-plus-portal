@@ -13,7 +13,7 @@ function groupColor(kaAction: string) {
 
 function CheckIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-6 w-6">
       <path strokeLinecap="round" strokeLinejoin="round" d="M4 10.5l4 4 8-9" />
     </svg>
   );
@@ -21,7 +21,7 @@ function CheckIcon() {
 
 function XIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-6 w-6">
       <path strokeLinecap="round" d="M5 5l10 10M15 5L5 15" />
     </svg>
   );
@@ -103,17 +103,19 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                   const bottomBorder = isLastRow ? `border-b-2 ${groupColor(kaAction).border}` : "";
                   if (!cell || cell.count === 0) {
                     return (
-                      <td key={key} className={edgeClasses(index, `px-2 py-2 text-center text-red-500/70 ${bottomBorder}`)}>
-                        <XIcon />
-                        <span className="sr-only">Henüz açıklanmadı</span>
+                      <td key={key} className={edgeClasses(index, `px-2 py-3 text-red-500/70 ${bottomBorder}`)}>
+                        <span className="flex items-center justify-center">
+                          <XIcon />
+                          <span className="sr-only">Henüz açıklanmadı</span>
+                        </span>
                       </td>
                     );
                   }
                   return (
-                    <td key={key} className={edgeClasses(index, `px-2 py-2 text-center ${bottomBorder}`)}>
+                    <td key={key} className={edgeClasses(index, `px-2 py-3 ${bottomBorder}`)}>
                       <Link
                         href={cell.href!}
-                        className="cursor-pointer inline-flex items-center gap-1 text-emerald-600 transition-colors duration-200 hover:text-accent dark:text-emerald-400"
+                        className="cursor-pointer flex items-center justify-center gap-1 text-emerald-600 transition-colors duration-200 hover:text-accent dark:text-emerald-400"
                         title={
                           cell.count > 1
                             ? `${cell.count} sonuç — görüntülemek için tıklayın`
@@ -121,7 +123,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                         }
                       >
                         <CheckIcon />
-                        {cell.count > 1 && <span className="text-xs font-semibold">{cell.count}</span>}
+                        {cell.count > 1 && <span className="text-sm font-semibold">{cell.count}</span>}
                         <span className="sr-only">Açıklandı</span>
                       </Link>
                     </td>
