@@ -1,4 +1,6 @@
+import { notFound } from "next/navigation";
 import { ProjeSozlesmesi } from "@/components/tools/ProjeSozlesmesi";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = {
   title: "Proje Ortaklık Sözleşmesi | Erasmus+ Portal",
@@ -6,7 +8,9 @@ export const metadata = {
     "Erasmus+ KA2 Stratejik Ortaklık projeleri için Partnership Agreement şablonunu doldurun; kurum, proje ve bütçe bilgilerini girdikçe sözleşme metni otomatik güncellenir.",
 };
 
-export default function ProjeSozlesmesiPage() {
+export default async function ProjeSozlesmesiPage() {
+  if (!(await isToolPublished("/araclar/proje-sozlesmesi"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">

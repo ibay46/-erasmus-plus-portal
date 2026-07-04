@@ -1,4 +1,6 @@
+import { notFound } from "next/navigation";
 import { AvansHarcamaFormu } from "@/components/tools/AvansHarcamaFormu";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = {
   title: "AB Hibe Proje Avans Harcama Formu | Erasmus+ Portal",
@@ -6,7 +8,9 @@ export const metadata = {
     "Proje kapsamında alınan avansın mahsubu için harcama belgelerini girin; toplam harcama, avans artığı ve tutarların yazıyla karşılığı otomatik hesaplanır.",
 };
 
-export default function AvansHarcamaFormuPage() {
+export default async function AvansHarcamaFormuPage() {
+  if (!(await isToolPublished("/araclar/avans-harcama-formu"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">AB Hibe Proje Avans Harcama Formu</h1>

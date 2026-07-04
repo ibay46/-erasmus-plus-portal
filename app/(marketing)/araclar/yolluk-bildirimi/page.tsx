@@ -1,4 +1,6 @@
+import { notFound } from "next/navigation";
 import { YollukBildirimi } from "@/components/tools/YollukBildirimi";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = {
   title: "Geçici Görev Yolluğu Bildirimi | Erasmus+ Portal",
@@ -6,7 +8,9 @@ export const metadata = {
     "Erasmus+ hareketliliği sonrası kurumunuza sunacağınız Yurtiçi / Yurtdışı Geçici Görev Yolluğu Bildirimi formunu doldurun; gündelik ve taşıt tutarları döviz kuruna göre otomatik hesaplanır.",
 };
 
-export default function YollukBildirimiPage() {
+export default async function YollukBildirimiPage() {
+  if (!(await isToolPublished("/araclar/yolluk-bildirimi"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">

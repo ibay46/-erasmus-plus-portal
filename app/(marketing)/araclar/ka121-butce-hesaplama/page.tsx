@@ -1,4 +1,6 @@
+import { notFound } from "next/navigation";
 import { Ka121BudgetCalculator } from "@/components/tools/Ka121BudgetCalculator";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = {
   title: "KA121/KA122 Personel Hareketliliği Bütçe Hesaplayıcı | Erasmus+ Portal",
@@ -6,7 +8,9 @@ export const metadata = {
     "KA121 akredite ve KA122 kısa dönemli projelerde personel hareketliliği bütçenizi hesaplayın: seyahat bandı, bireysel destek, kurs ücreti ve hazırlık ziyareti.",
 };
 
-export default function Ka121BudgetPage() {
+export default async function Ka121BudgetPage() {
+  if (!(await isToolPublished("/araclar/ka121-butce-hesaplama"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">

@@ -1,4 +1,6 @@
+import { notFound } from "next/navigation";
 import KaScoreSimulator from "@/components/tools/KaScoreSimulator";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = {
   title: "KA210 Değerlendirme Kriteri Rehberi | Erasmus+ Portal",
@@ -6,7 +8,9 @@ export const metadata = {
     "Her KA210 form sorusunun hangi değerlendirme kriterine karşılık geldiğini öğrenin. 4 kriter, 18 unsur, gerçek değerlendirici gözünden ipuçları ve form sorusu eşlemesi.",
 };
 
-export default function KalitePuaniPage() {
+export default async function KalitePuaniPage() {
+  if (!(await isToolPublished("/araclar/kalite-puani"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">

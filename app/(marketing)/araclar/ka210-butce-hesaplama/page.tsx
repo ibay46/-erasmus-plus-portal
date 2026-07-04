@@ -1,8 +1,12 @@
+import { notFound } from "next/navigation";
 import { Ka210BudgetCalculator } from "@/components/tools/Ka210BudgetCalculator";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = { title: "KA210 Bütçe Hesaplama | Erasmus+ Portal" };
 
-export default function Ka210ButceHesaplamaPage() {
+export default async function Ka210ButceHesaplamaPage() {
+  if (!(await isToolPublished("/araclar/ka210-butce-hesaplama"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">KA210 Bütçe Hesaplama</h1>

@@ -1,4 +1,6 @@
+import { notFound } from "next/navigation";
 import { PriorityMatcher } from "@/components/tools/PriorityMatcher";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = {
   title: "Öncelik Eşleştirici | Erasmus+ Portal",
@@ -6,7 +8,9 @@ export const metadata = {
     "Proje fikrinizi 2026 Erasmus+ yatay ve sektörel öncelikleriyle eşleştirin; başvuru formunda nasıl gerekçelendireceğinizi görün.",
 };
 
-export default function OncelikEslestiriciPage() {
+export default async function OncelikEslestiriciPage() {
+  if (!(await isToolPublished("/araclar/oncelik-eslestirici"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">

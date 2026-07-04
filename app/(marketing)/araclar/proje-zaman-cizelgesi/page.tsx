@@ -1,5 +1,7 @@
+import { notFound } from "next/navigation";
 import { GanttChartBuilder } from "@/components/tools/GanttChartBuilder";
 import { Card } from "@/components/ui/Card";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = {
   title: "Proje Zaman Çizelgesi (Gantt) | Erasmus+ Portal",
@@ -37,7 +39,9 @@ const STEPS = [
   },
 ];
 
-export default function ProjeZamanCizelgesiPage() {
+export default async function ProjeZamanCizelgesiPage() {
+  if (!(await isToolPublished("/araclar/proje-zaman-cizelgesi"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">Proje Zaman Çizelgesi (Gantt)</h1>

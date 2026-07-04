@@ -1,4 +1,6 @@
+import { notFound } from "next/navigation";
 import { OnMaliKontrolListesi } from "@/components/tools/OnMaliKontrolListesi";
+import { isToolPublished } from "@/lib/toolVisibility";
 
 export const metadata = {
   title: "Ön Malî Kontrol Listesi | Erasmus+ Portal",
@@ -6,7 +8,9 @@ export const metadata = {
     "Erasmus+ yolluk avansı kapatma sürecinde kullanılan ön malî kontrol listesini doldurun, eksik/tamam durumlarını işaretleyin ve dosyanıza ekleyin.",
 };
 
-export default function OnMaliKontrolListesiPage() {
+export default async function OnMaliKontrolListesiPage() {
+  if (!(await isToolPublished("/araclar/on-mali-kontrol-listesi"))) notFound();
+
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground print:hidden">

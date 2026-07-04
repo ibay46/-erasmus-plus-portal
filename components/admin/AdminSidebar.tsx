@@ -90,6 +90,11 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
     </SvgIcon>
   ),
+  wrench: (
+    <SvgIcon>
+      <path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 1 5.4-5.4l-2.6 2.6-2-2z" />
+    </SvgIcon>
+  ),
   arrowLeft: (
     <SvgIcon>
       <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -121,6 +126,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/proje-kutuphanesi", label: "Proje Kütüphanesi", icon: ICONS.book },
       { href: "/admin/proje-sonuclari", label: "Proje Sonuçları", icon: ICONS.trophy },
       { href: "/admin/yararli-linkler", label: "Yararlı Linkler", icon: ICONS.link },
+      { href: "/admin/araclar", label: "Ücretsiz Araçlar", icon: ICONS.wrench },
     ],
   },
   {
