@@ -158,8 +158,10 @@ model OpenCall {
   id        String   @id @default(cuid())
   year      Int
   round     String
-  kaActions String   @default("")
-  sectors   String   @default("")
+  // Virgülle ayrılmış "KA210:SCH" biçiminde geçerli (KA eylemi, sektör) çiftleri.
+  // Ayrı kaActions/sectors listeleri çapraz çarpım gibi yorumlanıp geçersiz
+  // kombinasyonlar (örn. KA210:HED) üretebildiği için tek alanda tutulur.
+  combos    String   @default("")
   country   String
   deadline  DateTime
   published Boolean  @default(true)

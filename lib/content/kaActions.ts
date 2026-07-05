@@ -16,10 +16,12 @@ export const EDUCATION_SECTOR_LABELS: Record<string, string> = {
 
 export const EDUCATION_SECTORS = Object.keys(EDUCATION_SECTOR_LABELS);
 
-// Her KA eyleminin geçerli olduğu sektörler (örn. KA240 sadece okul eğitiminde var).
-// Proje sonuçları kapsam tablosunda hangi (KA eylemi, sektör) sütunlarının gösterileceğini belirler.
+// Her KA eyleminin geçerli olduğu sektörler (örn. KA240 sadece okul eğitiminde var,
+// KA210 yükseköğretimi kapsamaz — bu sadece KA220'de var).
+// Proje sonuçları kapsam tablosunda ve açık çağrılarda hangi (KA eylemi, sektör)
+// kombinasyonlarının geçerli olduğunu belirler.
 export const KA_ACTION_SECTORS: Record<string, string[]> = {
-  KA210: EDUCATION_SECTORS,
+  KA210: ["SCH", "VET", "ADU", "YOU"],
   KA220: EDUCATION_SECTORS,
   KA240: ["SCH"],
 };

@@ -43,6 +43,7 @@ function DeadlineBadge({ deadline }: { deadline: Date }) {
 interface QueryState {
   yil?: string;
   round?: string;
+  acik?: string;
 }
 
 function Pill({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
@@ -65,20 +66,23 @@ export default async function AcikCagrilarPage({
 }: {
   searchParams: Promise<QueryState>;
 }) {
-  const { yil, round: roundParam } = await searchParams;
+  const { yil, round: roundParam, acik } = await searchParams;
   const years = await getAvailableOpenCallYears();
 
   const year = yil && years.includes(Number(yil)) ? Number(yil) : undefined;
   const round = ROUNDS.includes(roundParam ?? "") ? roundParam : undefined;
+  const onlyOpen = acik === "1";
 
-  const groups = await getOpenCallGroups({ year, round });
+  const groups = await getOpenCallGroups({ year, round, onlyOpen });
 
-  function buildHref(next: { yil?: string; round?: string }) {
+  function buildHref(next: { yil?: string; round?: string; acik?: string }) {
     const params = new URLSearchParams();
     const nextYil = next.yil !== undefined ? next.yil : year ? String(year) : undefined;
     const nextRound = next.round !== undefined ? next.round : round;
+    const nextAcik = next.acik !== undefined ? next.acik : onlyOpen ? "1" : undefined;
     if (nextYil) params.set("yil", nextYil);
     if (nextRound) params.set("round", nextRound);
+    if (nextAcik) params.set("acik", nextAcik);
     const qs = params.toString();
     return qs ? `/acik-cagrilar?${qs}` : "/acik-cagrilar";
   }
@@ -112,6 +116,15 @@ export default async function AcikCagrilarPage({
               {ROUND_LABELS[r]}
             </Pill>
           ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">Durum:</span>
+          <Pill href={buildHref({ acik: undefined })} active={!onlyOpen}>
+            Tümü
+          </Pill>
+          <Pill href={buildHref({ acik: "1" })} active={onlyOpen}>
+            Sadece Açık
+          </Pill>
         </div>
       </div>
 

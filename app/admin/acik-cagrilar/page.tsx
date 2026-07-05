@@ -50,11 +50,8 @@ export default async function AdminAcikCagrilarPage() {
               header: "KA / Sektör",
               render: (item) => (
                 <div className="flex flex-wrap items-center gap-1.5">
-                  {item.kaActions.split(",").filter(Boolean).map((a) => (
-                    <Badge key={a}>{a}</Badge>
-                  ))}
-                  {item.sectors.split(",").filter(Boolean).map((s) => (
-                    <Badge key={s}>{s}</Badge>
+                  {item.combos.split(",").filter(Boolean).map((combo) => (
+                    <Badge key={combo}>{combo}</Badge>
                   ))}
                 </div>
               ),

@@ -6,25 +6,27 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireTier } from "@/lib/auth";
 import { ROUNDS } from "@/lib/content/rounds";
+import { KA_ACTION_SECTORS } from "@/lib/content/kaActions";
+
+const VALID_COMBOS = new Set(
+  Object.entries(KA_ACTION_SECTORS).flatMap(([kaAction, sectors]) => sectors.map((sector) => `${kaAction}:${sector}`))
+);
 
 const openCallSchema = z.object({
   year: z.coerce.number().int().min(2007).max(2100),
   round: z.enum(ROUNDS as [string, ...string[]]),
-  kaActions: z.string().min(1),
-  sectors: z.string().min(1),
+  combos: z.string().min(1),
   country: z.string().min(2),
   deadline: z.coerce.date(),
   published: z.boolean(),
 });
 
 function parseOpenCallForm(formData: FormData) {
-  const kaActionsArray = (formData.getAll("kaActions") as string[]).filter(Boolean);
-  const sectorsArray = (formData.getAll("sectors") as string[]).filter(Boolean);
+  const combosArray = (formData.getAll("combos") as string[]).filter((combo) => VALID_COMBOS.has(combo));
   return openCallSchema.parse({
     year: formData.get("year"),
     round: formData.get("round"),
-    kaActions: kaActionsArray.join(","),
-    sectors: sectorsArray.join(","),
+    combos: combosArray.join(","),
     country: formData.get("country"),
     deadline: formData.get("deadline"),
     published: formData.get("published") === "on",
@@ -32,7 +34,7 @@ function parseOpenCallForm(formData: FormData) {
 }
 
 const ERR_MSG = encodeURIComponent(
-  "Lütfen tüm alanları kontrol edin (yıl, round, en az bir KA eylemi, sektör, ülke ve son başvuru tarihi zorunlu)."
+  "Lütfen tüm alanları kontrol edin (yıl, round, en az bir KA eylemi/sektör kombinasyonu, ülke ve son başvuru tarihi zorunlu)."
 );
 
 export async function createOpenCall(formData: FormData) {

@@ -4,6 +4,7 @@ import { KA_ACTION_SECTORS } from "@/lib/content/kaActions";
 export interface OpenCallFilters {
   year?: number;
   round?: string;
+  onlyOpen?: boolean;
 }
 
 export async function getAvailableOpenCallYears() {
@@ -34,6 +35,7 @@ export async function getOpenCallGroups(filters: OpenCallFilters = {}): Promise<
       published: true,
       ...(filters.year ? { year: filters.year } : {}),
       ...(filters.round ? { round: filters.round } : {}),
+      ...(filters.onlyOpen ? { deadline: { gte: new Date() } } : {}),
     },
     orderBy: [{ country: "asc" }],
   });
@@ -44,9 +46,8 @@ export async function getOpenCallGroups(filters: OpenCallFilters = {}): Promise<
 
   const groups: OpenCallGroup[] = [];
   for (const { kaAction, sector } of columns) {
-    const matches = calls.filter(
-      (c) => c.kaActions.split(",").includes(kaAction) && c.sectors.split(",").includes(sector)
-    );
+    const pair = `${kaAction}:${sector}`;
+    const matches = calls.filter((c) => c.combos.split(",").includes(pair));
     if (matches.length === 0) continue;
     groups.push({
       kaAction,
