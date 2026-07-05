@@ -155,29 +155,15 @@ export default async function AcikCagrilarPage({
                         {KA_ACTION_LABELS[kaAction] ?? kaAction} · {EDUCATION_SECTOR_LABELS[sector] ?? sector}
                       </h2>
                     </div>
-                    <span className="text-xs text-muted-foreground">{calls.length} Ulusal Ajans</span>
+                    <span className="text-xs text-muted-foreground">{calls.length} Ülke</span>
                   </div>
                   <div className="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3">
                     {calls.map((call) => (
                       <div key={call.id} className="rounded-lg border border-border bg-card p-4">
                         <p className="font-medium text-foreground">{call.country}</p>
-                        <p className="mt-0.5 text-sm text-muted-foreground">{call.agencyName}</p>
                         <div className="mt-2">
                           <DeadlineBadge deadline={call.deadline} />
                         </div>
-                        {call.externalUrl && (
-                          <a
-                            href={call.externalUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="cursor-pointer mt-3 inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
-                          >
-                            Çağrı detayları
-                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 5l5 5-5 5" />
-                            </svg>
-                          </a>
-                        )}
                       </div>
                     ))}
                   </div>

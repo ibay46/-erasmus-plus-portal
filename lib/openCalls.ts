@@ -21,13 +21,12 @@ export interface OpenCallGroup {
   calls: {
     id: string;
     country: string;
-    agencyName: string;
     deadline: Date | null;
-    externalUrl: string | null;
   }[];
 }
 
 // Yıl + Round'a göre yayınlanmış açık çağrıları KA eylemi × sektöre göre gruplar.
+// Bir çağrı birden fazla KA eylemine ait olabilir; her biri için ayrı grupta gösterilir.
 // Sadece en az bir çağrısı olan (KA eylemi, sektör) kombinasyonları döner.
 export async function getOpenCallGroups(filters: OpenCallFilters = {}): Promise<OpenCallGroup[]> {
   const calls = await prisma.openCall.findMany({
@@ -45,7 +44,7 @@ export async function getOpenCallGroups(filters: OpenCallFilters = {}): Promise<
 
   const groups: OpenCallGroup[] = [];
   for (const { kaAction, sector } of columns) {
-    const matches = calls.filter((c) => c.kaAction === kaAction && c.sector === sector);
+    const matches = calls.filter((c) => c.kaActions.split(",").includes(kaAction) && c.sector === sector);
     if (matches.length === 0) continue;
     groups.push({
       kaAction,
@@ -53,9 +52,7 @@ export async function getOpenCallGroups(filters: OpenCallFilters = {}): Promise<
       calls: matches.map((c) => ({
         id: c.id,
         country: c.country,
-        agencyName: c.agencyName,
         deadline: c.deadline,
-        externalUrl: c.externalUrl,
       })),
     });
   }

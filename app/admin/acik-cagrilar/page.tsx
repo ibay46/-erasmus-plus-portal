@@ -34,13 +34,8 @@ export default async function AdminAcikCagrilarPage() {
           getKey={(item) => item.id}
           columns={[
             {
-              header: "Ülke / Ajans",
-              render: (item) => (
-                <div>
-                  <p className="font-medium text-foreground">{item.country}</p>
-                  <p className="text-xs text-muted-foreground">{item.agencyName}</p>
-                </div>
-              ),
+              header: "Ülke",
+              render: (item) => <p className="font-medium text-foreground">{item.country}</p>,
             },
             {
               header: "Yıl / Round",
@@ -54,8 +49,10 @@ export default async function AdminAcikCagrilarPage() {
             {
               header: "KA / Sektör",
               render: (item) => (
-                <div className="flex items-center gap-1.5">
-                  <Badge>{item.kaAction}</Badge>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {item.kaActions.split(",").filter(Boolean).map((a) => (
+                    <Badge key={a}>{a}</Badge>
+                  ))}
                   <Badge>{item.sector}</Badge>
                 </div>
               ),

@@ -5,39 +5,34 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireTier } from "@/lib/auth";
-import { KA_ACTIONS } from "@/lib/content/kaActions";
 import { ROUNDS } from "@/lib/content/rounds";
 
 const openCallSchema = z.object({
   year: z.coerce.number().int().min(2007).max(2100),
   round: z.enum(ROUNDS as [string, ...string[]]),
-  kaAction: z.enum(KA_ACTIONS as [string, ...string[]]),
+  kaActions: z.string().min(1),
   sector: z.string().min(1),
   country: z.string().min(2),
-  agencyName: z.string().min(2),
   deadline: z.coerce.date().nullable(),
-  externalUrl: z.string().url().nullable(),
   published: z.boolean(),
 });
 
 function parseOpenCallForm(formData: FormData) {
   const deadline = formData.get("deadline");
-  const externalUrl = formData.get("externalUrl");
+  const kaActionsArray = (formData.getAll("kaActions") as string[]).filter(Boolean);
   return openCallSchema.parse({
     year: formData.get("year"),
     round: formData.get("round"),
-    kaAction: formData.get("kaAction"),
+    kaActions: kaActionsArray.join(","),
     sector: formData.get("sector"),
     country: formData.get("country"),
-    agencyName: formData.get("agencyName"),
     deadline: deadline ? deadline : null,
-    externalUrl: externalUrl || null,
     published: formData.get("published") === "on",
   });
 }
 
 const ERR_MSG = encodeURIComponent(
-  "Lütfen tüm alanları kontrol edin (yıl, round, KA eylemi, sektör, ülke ve ulusal ajans adı zorunlu; bağlantı girildiyse geçerli bir adres olmalı)."
+  "Lütfen tüm alanları kontrol edin (yıl, round, en az bir KA eylemi, sektör ve ülke zorunlu)."
 );
 
 export async function createOpenCall(formData: FormData) {

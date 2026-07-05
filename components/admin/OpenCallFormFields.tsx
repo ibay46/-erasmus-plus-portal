@@ -16,15 +16,15 @@ export function OpenCallFormFields({
   defaultValues?: {
     year: number;
     round: string;
-    kaAction: string;
+    kaActions: string;
     sector: string;
     country: string;
-    agencyName: string;
     deadline?: Date | null;
-    externalUrl?: string | null;
     published: boolean;
   };
 }) {
+  const selectedActions = defaultValues?.kaActions?.split(",").filter(Boolean) ?? [];
+
   return (
     <>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -57,43 +57,41 @@ export function OpenCallFormFields({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="kaAction" className="block text-sm font-medium mb-1 text-foreground">
-            KA Eylemi
-          </label>
-          <select
-            id="kaAction"
-            name="kaAction"
-            required
-            defaultValue={defaultValues?.kaAction ?? KA_ACTIONS[0]}
-            className={inputClass}
-          >
-            {KA_ACTIONS.map((action) => (
-              <option key={action} value={action}>
-                {KA_ACTION_LABELS[action]}
-              </option>
-            ))}
-          </select>
+      <div>
+        <p className="block text-sm font-medium mb-2 text-foreground">KA Eylemi (birden fazla seçilebilir)</p>
+        <div className="space-y-2">
+          {KA_ACTIONS.map((action) => (
+            <label key={action} className="flex items-center gap-2.5 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                name="kaActions"
+                value={action}
+                defaultChecked={selectedActions.includes(action)}
+                className="h-4 w-4 rounded border-border accent-accent"
+              />
+              <span className="text-sm text-foreground">{KA_ACTION_LABELS[action]}</span>
+            </label>
+          ))}
         </div>
-        <div>
-          <label htmlFor="sector" className="block text-sm font-medium mb-1 text-foreground">
-            Sektör
-          </label>
-          <select
-            id="sector"
-            name="sector"
-            required
-            defaultValue={defaultValues?.sector ?? EDUCATION_SECTORS[0]}
-            className={inputClass}
-          >
-            {EDUCATION_SECTORS.map((sector) => (
-              <option key={sector} value={sector}>
-                {sector} — {EDUCATION_SECTOR_LABELS[sector]}
-              </option>
-            ))}
-          </select>
-        </div>
+      </div>
+
+      <div>
+        <label htmlFor="sector" className="block text-sm font-medium mb-1 text-foreground">
+          Sektör
+        </label>
+        <select
+          id="sector"
+          name="sector"
+          required
+          defaultValue={defaultValues?.sector ?? EDUCATION_SECTORS[0]}
+          className={inputClass}
+        >
+          {EDUCATION_SECTORS.map((sector) => (
+            <option key={sector} value={sector}>
+              {sector} — {EDUCATION_SECTOR_LABELS[sector]}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>
@@ -113,21 +111,6 @@ export function OpenCallFormFields({
       </div>
 
       <div>
-        <label htmlFor="agencyName" className="block text-sm font-medium mb-1 text-foreground">
-          Ulusal Ajans / Kurum Adı
-        </label>
-        <input
-          id="agencyName"
-          name="agencyName"
-          required
-          minLength={2}
-          placeholder="örn. Türkiye Ulusal Ajansı"
-          defaultValue={defaultValues?.agencyName}
-          className={inputClass}
-        />
-      </div>
-
-      <div>
         <label htmlFor="deadline" className="block text-sm font-medium mb-1 text-foreground">
           Son Başvuru Tarihi (opsiyonel)
         </label>
@@ -136,20 +119,6 @@ export function OpenCallFormFields({
           name="deadline"
           type="date"
           defaultValue={toDateInputValue(defaultValues?.deadline)}
-          className={inputClass}
-        />
-      </div>
-
-      <div>
-        <label htmlFor="externalUrl" className="block text-sm font-medium mb-1 text-foreground">
-          Bağlantı (opsiyonel)
-        </label>
-        <input
-          id="externalUrl"
-          name="externalUrl"
-          type="url"
-          placeholder="https://..."
-          defaultValue={defaultValues?.externalUrl ?? ""}
           className={inputClass}
         />
       </div>
