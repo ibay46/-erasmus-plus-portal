@@ -6,6 +6,12 @@ export interface ToolContent {
 
 export const TOOLS: ToolContent[] = [
   {
+    href: "/araclar/proje-fikri-uretici",
+    title: "AI Destekli Proje Fikri Üretici",
+    description:
+      "Kuruluş tipinizi, sektörünüzü, KA eyleminizi ve temanızı seçin; yapay zeka size bütçe/süre ölçeğine uygun bir proje fikri taslağı üretsin.",
+  },
+  {
     href: "/araclar/kalite-puani",
     title: "KA210 Kalite Puanı Simülatörü",
     description:

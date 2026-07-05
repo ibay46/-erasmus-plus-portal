@@ -194,13 +194,16 @@ enum EventFormat {
 }
 
 model ToolSubmission {
-  id        String   @id @default(cuid())
-  toolKey   String
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-  input     String
-  output    String
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  toolKey     String
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  visitorHash String   @default("")
+  input       String
+  output      String
+  createdAt   DateTime @default(now())
+
+  @@index([toolKey, visitorHash, createdAt])
 }
 
 enum IlanType {

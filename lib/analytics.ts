@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 // Daily salt keeps the hash from being a stable long-term fingerprint while still
 // letting us approximate "unique visitors" within a given day.
-function hashVisitor(ip: string, userAgent: string): string {
+export function hashVisitor(ip: string, userAgent: string): string {
   const daySalt = new Date().toISOString().slice(0, 10);
   return crypto.createHash("sha256").update(`${daySalt}:${ip}:${userAgent}`).digest("hex");
 }
