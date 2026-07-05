@@ -65,6 +65,15 @@ function groupColumns(columns: CoverageColumn[]) {
 export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; rows: CoverageRow[] }) {
   const kaGroups = groupColumns(columns);
 
+  // Tek sektörlü gruplarda (örn. KA240) başlık metni dar sütuna sığmadığından
+  // o sütunlar biraz daha geniş tutulur.
+  function columnWidth(kaAction: string) {
+    const group = kaGroups.find(([action]) => action === kaAction);
+    const groupSize = group ? group[1].length : 1;
+    return groupSize === 1 ? 96 : 48;
+  }
+  const totalWidth = 160 + columns.reduce((sum, { kaAction }) => sum + columnWidth(kaAction), 0);
+
   // Sol/sağ kenarlık: grup sınırındaysa o KA eyleminin rengiyle kalın, değilse ince nötr çizgi.
   // Tablonun en sağındaki son sütunda sağ kenarlık hiç çizilmez (kartın kendi kenarıyla çakışmasın diye).
   function sideBorders(index: number) {
@@ -87,11 +96,11 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
       className="w-full max-w-full overflow-x-auto rounded-2xl bg-gradient-to-br from-slate-100 via-white to-slate-100 p-1 shadow-xl ring-1 ring-slate-900/10 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:shadow-2xl dark:ring-white/10"
       style={{ contain: "layout" }}
     >
-      <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${160 + columns.length * 48}px` }}>
+      <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${totalWidth}px` }}>
         <colgroup>
           <col style={{ width: "160px" }} />
           {columns.map(({ kaAction, sector }) => (
-            <col key={`${kaAction}_${sector}`} style={{ width: "48px" }} />
+            <col key={`${kaAction}_${sector}`} style={{ width: `${columnWidth(kaAction)}px` }} />
           ))}
         </colgroup>
         <thead>
