@@ -81,9 +81,14 @@ export interface CoverageColumn {
   sector: string;
 }
 
+export interface CoverageMatrixFilters {
+  year?: number;
+  round?: string;
+}
+
 // Ülke × (KA eylemi, sektör) kapsam tablosu: her hücre o kombinasyonda yayınlanmış
 // kaç proje sonucu olduğunu ve (tek sonuç varsa) doğrudan sonuca giden linki taşır.
-export async function getProjectResultCoverageMatrix(): Promise<{
+export async function getProjectResultCoverageMatrix(filters: CoverageMatrixFilters = {}): Promise<{
   columns: CoverageColumn[];
   rows: CoverageRow[];
 }> {
@@ -92,7 +97,11 @@ export async function getProjectResultCoverageMatrix(): Promise<{
   );
 
   const results = await prisma.projectResult.findMany({
-    where: { published: true },
+    where: {
+      published: true,
+      ...(filters.year ? { year: filters.year } : {}),
+      ...(filters.round ? { round: filters.round } : {}),
+    },
     select: { slug: true, country: true, kaActions: true, sectors: true },
   });
 
@@ -106,12 +115,14 @@ export async function getProjectResultCoverageMatrix(): Promise<{
           r.sectors.split(",").includes(sector)
       );
       const key = `${kaAction}_${sector}`;
+      const query = new URLSearchParams({ ulke: country, ka: kaAction, sektor: sector });
+      if (filters.year) query.set("yil", String(filters.year));
       cells[key] =
         matches.length === 0
           ? { count: 0 }
           : matches.length === 1
           ? { count: 1, href: `/proje-sonuclari/${matches[0].slug}` }
-          : { count: matches.length, href: `/proje-sonuclari?ulke=${encodeURIComponent(country)}&ka=${kaAction}&sektor=${sector}` };
+          : { count: matches.length, href: `/proje-sonuclari?${query.toString()}` };
     }
     return { country, cells };
   });

@@ -139,6 +139,7 @@ model ProjectResult {
   slug        String   @unique
   title       String
   year        Int
+  round       String?
   projectType String
   country     String
   kaActions   String   @default("")

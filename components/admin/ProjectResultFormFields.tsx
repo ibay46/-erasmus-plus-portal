@@ -2,6 +2,7 @@ import { RichTextEditor } from "@/components/admin/editor/RichTextEditor";
 import { CoverImageInput } from "@/components/admin/CoverImageInput";
 import { ERASMUS_COUNTRIES } from "@/lib/content/countries";
 import { KA_ACTION_LABELS, KA_ACTIONS, EDUCATION_SECTOR_LABELS, EDUCATION_SECTORS } from "@/lib/content/kaActions";
+import { ROUND_LABELS, ROUNDS } from "@/lib/content/rounds";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -44,6 +45,7 @@ export function ProjectResultFormFields({
   defaultValues?: {
     title: string;
     year: number;
+    round?: string | null;
     country: string;
     kaActions: string;
     sectors: string;
@@ -89,6 +91,24 @@ export function ProjectResultFormFields({
           defaultValue={defaultValues?.year ?? new Date().getFullYear()}
           className={inputClass}
         />
+      </div>
+      <div>
+        <label htmlFor="round" className="block text-sm font-medium mb-1 text-foreground">
+          Round (opsiyonel)
+        </label>
+        <select
+          id="round"
+          name="round"
+          defaultValue={defaultValues?.round ?? ""}
+          className={inputClass}
+        >
+          <option value="">Seçilmedi</option>
+          {ROUNDS.map((round) => (
+            <option key={round} value={round}>
+              {ROUND_LABELS[round]}
+            </option>
+          ))}
+        </select>
       </div>
       <div>
         <label htmlFor="country" className="block text-sm font-medium mb-1 text-foreground">

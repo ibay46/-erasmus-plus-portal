@@ -6,6 +6,7 @@ import {
   getProjectResultCoverageMatrix,
 } from "@/lib/projectResults";
 import { KA_ACTIONS, KA_ACTION_LABELS, EDUCATION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
+import { ROUNDS, ROUND_LABELS } from "@/lib/content/rounds";
 import { FilterBar } from "@/components/proje-sonuclari/FilterBar";
 import { CoverageMatrix } from "@/components/proje-sonuclari/CoverageMatrix";
 
@@ -53,12 +54,27 @@ function ViewTab({ href, active, children }: { href: string; active: boolean; ch
   );
 }
 
+function TablePill({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className={`cursor-pointer inline-flex items-center rounded-full border px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors duration-200 ${
+        active
+          ? "border-accent bg-accent text-accent-foreground"
+          : "border-border text-muted-foreground hover:border-accent/50 hover:text-foreground"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+}
+
 export default async function ProjeSonuclariPage({
   searchParams,
 }: {
-  searchParams: Promise<QueryState & { gorunum?: string }>;
+  searchParams: Promise<QueryState & { gorunum?: string; round?: string }>;
 }) {
-  const { ka, sektor, yil, ulke, gorunum } = await searchParams;
+  const { ka, sektor, yil, ulke, gorunum, round: roundParam } = await searchParams;
   const isTableView = gorunum !== "liste";
   const { years, countries: availableCountries } = await getAvailableProjectResultFilterValues();
 
@@ -66,16 +82,29 @@ export default async function ProjeSonuclariPage({
   const sector = EDUCATION_SECTORS.includes(sektor ?? "") ? sektor : undefined;
   const year = yil && years.includes(Number(yil)) ? Number(yil) : undefined;
   const country = ulke && availableCountries.includes(ulke) ? ulke : undefined;
+  const round = ROUNDS.includes(roundParam ?? "") ? roundParam : undefined;
 
   const current: QueryState = { ka: kaAction, sektor: sector, yil: year ? String(year) : undefined, ulke: country };
 
   if (isTableView) {
-    const { columns, rows } = await getProjectResultCoverageMatrix();
+    const { columns, rows } = await getProjectResultCoverageMatrix({ year, round });
+
+    function tableHref(next: { yil?: string; round?: string }) {
+      const params = new URLSearchParams();
+      const nextYil = next.yil !== undefined ? next.yil : year ? String(year) : undefined;
+      const nextRound = next.round !== undefined ? next.round : round;
+      if (nextYil) params.set("yil", nextYil);
+      if (nextRound) params.set("round", nextRound);
+      const qs = params.toString();
+      return qs ? `/proje-sonuclari?${qs}` : "/proje-sonuclari";
+    }
+
     return (
       <div>
         <h1 className="text-3xl font-semibold mb-2 text-foreground">Proje Sonuçları</h1>
         <p className="text-muted-foreground mb-6 max-w-2xl">
-          Ülkelere göre hangi KA eylemi ve sektör kombinasyonunda sonuç açıklandığının genel görünümü.
+          Yıl ve round bazında, ülkelere göre hangi KA eylemi ve sektör kombinasyonunda sonuç
+          açıklandığının genel görünümü.
         </p>
 
         <div className="mb-6 inline-flex gap-1 rounded-lg border border-border p-1">
@@ -85,6 +114,31 @@ export default async function ProjeSonuclariPage({
           <ViewTab href="/proje-sonuclari" active={true}>
             Tablo
           </ViewTab>
+        </div>
+
+        <div className="mb-6 space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">Yıl:</span>
+            <TablePill href={tableHref({ yil: undefined })} active={!year}>
+              Tümü
+            </TablePill>
+            {years.map((y) => (
+              <TablePill key={y} href={tableHref({ yil: String(y) })} active={year === y}>
+                {y}
+              </TablePill>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">Round:</span>
+            <TablePill href={tableHref({ round: undefined })} active={!round}>
+              Tümü
+            </TablePill>
+            {ROUNDS.map((r) => (
+              <TablePill key={r} href={tableHref({ round: r })} active={round === r}>
+                {ROUND_LABELS[r]}
+              </TablePill>
+            ))}
+          </div>
         </div>
 
         <CoverageMatrix columns={columns} rows={rows} />

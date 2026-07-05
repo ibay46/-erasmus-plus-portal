@@ -10,6 +10,7 @@ import { slugify } from "@/lib/slug";
 const projectResultSchema = z.object({
   title: z.string().min(3),
   year: z.coerce.number().int().min(2007).max(2100),
+  round: z.string().nullable(),
   country: z.string().min(2),
   kaActions: z.string().min(1),
   sectors: z.string().min(1),
@@ -25,6 +26,7 @@ function parseProjectResultForm(formData: FormData) {
   return projectResultSchema.parse({
     title: formData.get("title"),
     year: formData.get("year"),
+    round: formData.get("round") || null,
     country: formData.get("country"),
     kaActions: kaActionsArray.join(","),
     sectors: sectorsArray.join(","),
