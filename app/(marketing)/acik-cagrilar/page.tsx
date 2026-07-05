@@ -23,8 +23,13 @@ function groupColor(kaAction: string) {
 }
 
 function DeadlineBadge({ deadline }: { deadline: Date }) {
-  const now = new Date();
-  const diffDays = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  // Gün farkını saatten bağımsız hesaplamak için ikisini de günün başına sabitliyoruz;
+  // yoksa son gün öğleden sonra "Süre doldu" gibi görünebiliyordu.
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const deadlineDay = new Date(deadline);
+  deadlineDay.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((deadlineDay.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24));
   const dateStr = deadline.toLocaleDateString("tr-TR");
 
   if (diffDays < 0) {
@@ -71,7 +76,10 @@ export default async function AcikCagrilarPage({
 
   const year = yil && years.includes(Number(yil)) ? Number(yil) : undefined;
   const round = ROUNDS.includes(roundParam ?? "") ? roundParam : undefined;
-  const onlyOpen = acik === "1";
+  // Varsayılan: süresi geçen çağrılar "açık" olarak görünmesin. "Tümü" seçilirse
+  // (?acik=0) süresi geçenler de "Süre doldu" etiketiyle birlikte gösterilir.
+  const showAll = acik === "0";
+  const onlyOpen = !showAll;
 
   const groups = await getOpenCallGroups({ year, round, onlyOpen });
 
@@ -79,7 +87,7 @@ export default async function AcikCagrilarPage({
     const params = new URLSearchParams();
     const nextYil = next.yil !== undefined ? next.yil : year ? String(year) : undefined;
     const nextRound = next.round !== undefined ? next.round : round;
-    const nextAcik = next.acik !== undefined ? next.acik : onlyOpen ? "1" : undefined;
+    const nextAcik = next.acik !== undefined ? next.acik : showAll ? "0" : undefined;
     if (nextYil) params.set("yil", nextYil);
     if (nextRound) params.set("round", nextRound);
     if (nextAcik) params.set("acik", nextAcik);
@@ -119,11 +127,11 @@ export default async function AcikCagrilarPage({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">Durum:</span>
-          <Pill href={buildHref({ acik: undefined })} active={!onlyOpen}>
-            Tümü
-          </Pill>
-          <Pill href={buildHref({ acik: "1" })} active={onlyOpen}>
+          <Pill href={buildHref({ acik: undefined })} active={!showAll}>
             Sadece Açık
+          </Pill>
+          <Pill href={buildHref({ acik: "0" })} active={showAll}>
+            Tümü (süresi geçenler dahil)
           </Pill>
         </div>
       </div>

@@ -30,12 +30,17 @@ export interface OpenCallGroup {
 // Bir çağrı birden fazla KA eylemine ait olabilir; her biri için ayrı grupta gösterilir.
 // Sadece en az bir çağrısı olan (KA eylemi, sektör) kombinasyonları döner.
 export async function getOpenCallGroups(filters: OpenCallFilters = {}): Promise<OpenCallGroup[]> {
+  // Son başvuru günü, o günün tamamı boyunca "açık" sayılır; bu yüzden
+  // bugünün başlangıcıyla karşılaştırıyoruz, o anki saatle değil.
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
   const calls = await prisma.openCall.findMany({
     where: {
       published: true,
       ...(filters.year ? { year: filters.year } : {}),
       ...(filters.round ? { round: filters.round } : {}),
-      ...(filters.onlyOpen ? { deadline: { gte: new Date() } } : {}),
+      ...(filters.onlyOpen ? { deadline: { gte: startOfToday } } : {}),
     },
     orderBy: [{ country: "asc" }],
   });
