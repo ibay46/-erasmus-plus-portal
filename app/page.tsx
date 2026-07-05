@@ -418,6 +418,13 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ── Sekmeli haberler ── */}
+      <section className="bg-muted py-16">
+        <div className="mx-auto max-w-6xl px-6">
+          <NewsTabs tabs={newsTabs} />
+        </div>
+      </section>
+
       {/* ── Neler Var ── */}
       <section className="bg-background py-16">
         <div className="mx-auto max-w-6xl px-6">
@@ -458,13 +465,6 @@ export default async function Home() {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ── Sekmeli haberler ── */}
-      <section className="bg-muted py-16">
-        <div className="mx-auto max-w-6xl px-6">
-          <NewsTabs tabs={newsTabs} />
         </div>
       </section>
     </div>
