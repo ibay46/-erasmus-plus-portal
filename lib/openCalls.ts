@@ -51,8 +51,7 @@ export async function getOpenCallGroups(filters: OpenCallFilters = {}): Promise<
 
   const groups: OpenCallGroup[] = [];
   for (const { kaAction, sector } of columns) {
-    const pair = `${kaAction}:${sector}`;
-    const matches = calls.filter((c) => c.combos.split(",").includes(pair));
+    const matches = calls.filter((c) => c.kaAction === kaAction && c.sectors.split(",").includes(sector));
     if (matches.length === 0) continue;
     groups.push({
       kaAction,

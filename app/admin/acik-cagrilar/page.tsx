@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deleteOpenCall, toggleOpenCallPublished } from "@/lib/actions/openCalls";
 import { ROUND_LABELS } from "@/lib/content/rounds";
+import { KA_ACTIONS } from "@/lib/content/kaActions";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { PublishToggleButton } from "@/components/admin/PublishToggleButton";
 import { Badge } from "@/components/ui/Badge";
@@ -10,7 +11,7 @@ export const metadata = { title: "Açık Çağrılar | Yönetim Paneli" };
 
 export default async function AdminAcikCagrilarPage() {
   const items = await prisma.openCall.findMany();
-  items.sort((a, b) => a.country.localeCompare(b.country, "tr"));
+  items.sort((a, b) => a.country.localeCompare(b.country, "tr") || KA_ACTIONS.indexOf(a.kaAction) - KA_ACTIONS.indexOf(b.kaAction));
 
   return (
     <div>
@@ -38,16 +39,21 @@ export default async function AdminAcikCagrilarPage() {
               <div className="flex flex-wrap items-center gap-1.5">
                 <Badge variant="info">{item.year}</Badge>
                 <Badge>{ROUND_LABELS[item.round] ?? item.round}</Badge>
+                <Badge>{item.kaAction}</Badge>
               </div>
 
               <div className="flex flex-wrap items-center gap-1.5">
-                {item.combos
+                {item.sectors
                   .split(",")
                   .filter(Boolean)
-                  .map((combo) => (
-                    <Badge key={combo}>{combo}</Badge>
+                  .map((sector) => (
+                    <Badge key={sector}>{sector}</Badge>
                   ))}
               </div>
+
+              <p className="text-xs text-muted-foreground">
+                Son başvuru: {item.deadline.toLocaleDateString("tr-TR")}
+              </p>
 
               <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-border pt-3">
                 <PublishToggleButton action={toggleOpenCallPublished} id={item.id} published={item.published} />

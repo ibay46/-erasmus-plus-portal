@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { ERASMUS_COUNTRIES } from "@/lib/content/countries";
 import { KA_ACTION_LABELS, KA_ACTION_SECTORS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 import { ROUND_LABELS, ROUNDS } from "@/lib/content/rounds";
@@ -16,13 +19,16 @@ export function OpenCallFormFields({
   defaultValues?: {
     year: number;
     round: string;
-    combos: string;
+    kaAction: string;
+    sectors: string;
     country: string;
     deadline: Date;
     published: boolean;
   };
 }) {
-  const selectedCombos = defaultValues?.combos?.split(",").filter(Boolean) ?? [];
+  const [kaAction, setKaAction] = useState(defaultValues?.kaAction ?? Object.keys(KA_ACTION_SECTORS)[0]);
+  const selectedSectors = defaultValues?.sectors?.split(",").filter(Boolean) ?? [];
+  const validSectors = KA_ACTION_SECTORS[kaAction] ?? [];
 
   return (
     <>
@@ -85,38 +91,47 @@ export function OpenCallFormFields({
       </div>
 
       <div>
-        <p className="block text-sm font-medium mb-1 text-foreground">
-          KA Eylemi × Sektör <span className="font-normal text-muted-foreground">(birden fazla seçilebilir)</span>
+        <label htmlFor="kaAction" className="block text-sm font-medium mb-1 text-foreground">
+          KA Eylemi
+        </label>
+        <p className="mb-2 text-xs text-muted-foreground">
+          Son başvuru tarihi KA eylemine göre değişebildiği için her KA eylemi ayrı bir kayıttır — aynı ülke için
+          farklı tarihli birden fazla çağrı ekleyebilirsiniz.
         </p>
-        <p className="mb-3 text-xs text-muted-foreground">
-          Sadece her KA eyleminde gerçekten var olan sektörler listelenir (örn. KA210'da Yükseköğretim yoktur).
+        <select
+          id="kaAction"
+          name="kaAction"
+          required
+          value={kaAction}
+          onChange={(e) => setKaAction(e.target.value)}
+          className={inputClass}
+        >
+          {Object.keys(KA_ACTION_SECTORS).map((action) => (
+            <option key={action} value={action}>
+              {KA_ACTION_LABELS[action]}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <p className="block text-sm font-medium mb-2 text-foreground">
+          Sektör <span className="font-normal text-muted-foreground">(birden fazla seçilebilir)</span>
         </p>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {Object.entries(KA_ACTION_SECTORS).map(([action, sectors]) => (
-            <div key={action} className="rounded-lg border border-border p-3">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground">
-                {KA_ACTION_LABELS[action]}
-              </p>
-              <div className="space-y-2">
-                {sectors.map((sector) => {
-                  const combo = `${action}:${sector}`;
-                  return (
-                    <label key={combo} className="flex items-center gap-2.5 cursor-pointer select-none">
-                      <input
-                        type="checkbox"
-                        name="combos"
-                        value={combo}
-                        defaultChecked={selectedCombos.includes(combo)}
-                        className="h-4 w-4 rounded border-border accent-accent"
-                      />
-                      <span className="text-sm text-foreground">
-                        {sector} — {EDUCATION_SECTOR_LABELS[sector]}
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {validSectors.map((sector) => (
+            <label key={sector} className="flex items-center gap-2.5 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                name="sectors"
+                value={sector}
+                defaultChecked={selectedSectors.includes(sector)}
+                className="h-4 w-4 rounded border-border accent-accent"
+              />
+              <span className="text-sm text-foreground">
+                {sector} — {EDUCATION_SECTOR_LABELS[sector]}
+              </span>
+            </label>
           ))}
         </div>
       </div>

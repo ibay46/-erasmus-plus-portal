@@ -158,10 +158,12 @@ model OpenCall {
   id        String   @id @default(cuid())
   year      Int
   round     String
-  // Virgülle ayrılmış "KA210:SCH" biçiminde geçerli (KA eylemi, sektör) çiftleri.
-  // Ayrı kaActions/sectors listeleri çapraz çarpım gibi yorumlanıp geçersiz
-  // kombinasyonlar (örn. KA210:HED) üretebildiği için tek alanda tutulur.
-  combos    String   @default("")
+  // Tek bir KA eylemi (KA210/KA220/KA240) ve o eylemde geçerli sektörlerin
+  // virgülle ayrılmış listesi. Son başvuru tarihi KA eylemine göre farklılık
+  // gösterebildiği için (örn. KA210 ile KA220 farklı günde kapanabilir) her
+  // KA eylemi kendi son tarihiyle ayrı bir kayıttır.
+  kaAction  String
+  sectors   String   @default("")
   country   String
   deadline  DateTime
   published Boolean  @default(true)
