@@ -26,7 +26,7 @@ export function OpenCallFormFields({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div>
           <label htmlFor="year" className="block text-sm font-medium mb-1 text-foreground">
             Yıl
@@ -53,6 +53,34 @@ export function OpenCallFormFields({
               </option>
             ))}
           </select>
+        </div>
+        <div>
+          <label htmlFor="country" className="block text-sm font-medium mb-1 text-foreground">
+            Ülke
+          </label>
+          <select id="country" name="country" required defaultValue={defaultValues?.country ?? ""} className={inputClass}>
+            <option value="" disabled>
+              Ülke seçin
+            </option>
+            {ERASMUS_COUNTRIES.map((country) => (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="deadline" className="block text-sm font-medium mb-1 text-foreground">
+            Son Başvuru Tarihi
+          </label>
+          <input
+            id="deadline"
+            name="deadline"
+            type="date"
+            required
+            defaultValue={toDateInputValue(defaultValues?.deadline)}
+            className={inputClass}
+          />
         </div>
       </div>
 
@@ -91,36 +119,6 @@ export function OpenCallFormFields({
             </div>
           ))}
         </div>
-      </div>
-
-      <div>
-        <label htmlFor="country" className="block text-sm font-medium mb-1 text-foreground">
-          Ülke
-        </label>
-        <select id="country" name="country" required defaultValue={defaultValues?.country ?? ""} className={inputClass}>
-          <option value="" disabled>
-            Ülke seçin
-          </option>
-          {ERASMUS_COUNTRIES.map((country) => (
-            <option key={country} value={country}>
-              {country}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="deadline" className="block text-sm font-medium mb-1 text-foreground">
-          Son Başvuru Tarihi
-        </label>
-        <input
-          id="deadline"
-          name="deadline"
-          type="date"
-          required
-          defaultValue={toDateInputValue(defaultValues?.deadline)}
-          className={inputClass}
-        />
       </div>
 
       <div className="flex items-center gap-2">

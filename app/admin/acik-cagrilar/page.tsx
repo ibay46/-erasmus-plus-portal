@@ -2,7 +2,6 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deleteOpenCall, toggleOpenCallPublished } from "@/lib/actions/openCalls";
 import { ROUND_LABELS } from "@/lib/content/rounds";
-import { AdminListTable } from "@/components/admin/AdminListTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { PublishToggleButton } from "@/components/admin/PublishToggleButton";
 import { Badge } from "@/components/ui/Badge";
@@ -10,9 +9,8 @@ import { Badge } from "@/components/ui/Badge";
 export const metadata = { title: "Açık Çağrılar | Yönetim Paneli" };
 
 export default async function AdminAcikCagrilarPage() {
-  const items = await prisma.openCall.findMany({
-    orderBy: [{ year: "desc" }, { round: "asc" }, { createdAt: "desc" }],
-  });
+  const items = await prisma.openCall.findMany();
+  items.sort((a, b) => a.country.localeCompare(b.country, "tr"));
 
   return (
     <div>
@@ -29,56 +27,49 @@ export default async function AdminAcikCagrilarPage() {
       {items.length === 0 ? (
         <p className="text-muted-foreground">Henüz açık çağrı eklenmemiş.</p>
       ) : (
-        <AdminListTable
-          items={items}
-          getKey={(item) => item.id}
-          columns={[
-            {
-              header: "Ülke",
-              render: (item) => <p className="font-medium text-foreground">{item.country}</p>,
-            },
-            {
-              header: "Yıl / Round",
-              render: (item) => (
-                <div className="flex items-center gap-1.5">
-                  <Badge variant="info">{item.year}</Badge>
-                  <Badge>{ROUND_LABELS[item.round] ?? item.round}</Badge>
-                </div>
-              ),
-            },
-            {
-              header: "KA / Sektör",
-              render: (item) => (
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {item.combos.split(",").filter(Boolean).map((combo) => (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <div key={item.id} className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+              <div className="flex items-start justify-between gap-2">
+                <p className="font-semibold text-foreground">{item.country}</p>
+                <StatusBadge published={item.published} />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                <Badge variant="info">{item.year}</Badge>
+                <Badge>{ROUND_LABELS[item.round] ?? item.round}</Badge>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                {item.combos
+                  .split(",")
+                  .filter(Boolean)
+                  .map((combo) => (
                     <Badge key={combo}>{combo}</Badge>
                   ))}
-                </div>
-              ),
-            },
-            { header: "Durum", render: (item) => <StatusBadge published={item.published} /> },
-          ]}
-          renderActions={(item) => (
-            <>
-              <PublishToggleButton action={toggleOpenCallPublished} id={item.id} published={item.published} />
-              <Link
-                href={`/admin/acik-cagrilar/${item.id}/duzenle`}
-                className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
-              >
-                Düzenle
-              </Link>
-              <form action={deleteOpenCall}>
-                <input type="hidden" name="id" value={item.id} />
-                <button
-                  type="submit"
-                  className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+              </div>
+
+              <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-border pt-3">
+                <PublishToggleButton action={toggleOpenCallPublished} id={item.id} published={item.published} />
+                <Link
+                  href={`/admin/acik-cagrilar/${item.id}/duzenle`}
+                  className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
                 >
-                  Sil
-                </button>
-              </form>
-            </>
-          )}
-        />
+                  Düzenle
+                </Link>
+                <form action={deleteOpenCall}>
+                  <input type="hidden" name="id" value={item.id} />
+                  <button
+                    type="submit"
+                    className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
+                  >
+                    Sil
+                  </button>
+                </form>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
