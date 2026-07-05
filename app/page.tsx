@@ -129,7 +129,7 @@ const SECTIONS = [
   },
   {
     href: "/ab-hibe-projeleri",
-    title: "AB Hibe Projeleri",
+    title: "Hibe Projeleri",
     description: "Avrupa Birliği hibe destekli projelere ilişkin haberler ve duyurular.",
     icon: <IconGlobe />,
   },
@@ -159,7 +159,7 @@ const QUICK_LINKS = [
   { href: "/salto-youth", label: "SALTO Youth" },
   { href: "/salto-egitim", label: "SALTO E&T" },
   { href: "/esc", label: "ESC" },
-  { href: "/ab-hibe-projeleri", label: "AB Hibe" },
+  { href: "/ab-hibe-projeleri", label: "Hibe" },
 ];
 
 // ─── Erasmus+ illustration ────────────────────────────────────────────────────
@@ -309,15 +309,15 @@ export default async function Home() {
     },
     {
       key: "ab-hibe",
-      label: "AB Hibe Projeleri",
+      label: "Hibe Projeleri",
       accentClass: "text-accent",
       seeAllHref: "/ab-hibe-projeleri",
-      seeAllLabel: "Tüm AB Hibe Projeleri",
+      seeAllLabel: "Tüm Hibe Projeleri",
       items: recentGrantProjects.map((item) => ({
         href: `/ab-hibe-projeleri/${item.slug}`,
         title: item.title,
         dateStr: item.publishedAt ? item.publishedAt.toLocaleDateString("tr-TR") : null,
-        badge: "AB Hibe Projesi",
+        badge: "Hibe Projesi",
         coverImage: item.coverImage,
       })),
     },

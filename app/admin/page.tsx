@@ -150,7 +150,7 @@ export default async function AdminDashboardPage() {
     },
     {
       href: "/admin/ab-hibe-projeleri",
-      title: "AB Hibe Projeleri",
+      title: "Hibe Projeleri",
       description: "AB hibe destekli proje haberlerini yönetin.",
       count: grantCount,
       icon: (

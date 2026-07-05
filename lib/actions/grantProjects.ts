@@ -71,7 +71,7 @@ export async function updateGrantProject(formData: FormData) {
   }
 
   const existing = await prisma.grantProject.findUnique({ where: { id } });
-  if (!existing) throw new Error("AB Hibe Projesi bulunamadı");
+  if (!existing) throw new Error("Hibe Projesi bulunamadı");
 
   await prisma.grantProject.update({
     where: { id },
@@ -91,7 +91,7 @@ export async function toggleGrantProjectPublished(formData: FormData) {
   const id = formData.get("id") as string;
 
   const existing = await prisma.grantProject.findUnique({ where: { id } });
-  if (!existing) throw new Error("AB Hibe Projesi bulunamadı");
+  if (!existing) throw new Error("Hibe Projesi bulunamadı");
 
   const published = !existing.published;
   await prisma.grantProject.update({

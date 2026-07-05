@@ -90,7 +90,7 @@ export async function searchSite(query: string): Promise<SearchResult[]> {
   }
   for (const grant of grantProjects) {
     results.push({
-      type: "AB Hibe Projesi",
+      type: "Hibe Projesi",
       title: grant.title,
       description: grant.excerpt ?? "",
       href: `/ab-hibe-projeleri/${grant.slug}`,

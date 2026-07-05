@@ -122,7 +122,7 @@ export default async function IstatistiklerPage() {
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard label="Haber" value={postCount} icon={<DocumentIcon />} />
-          <StatCard label="AB Hibe Projesi" value={grantCount} icon={<DocumentIcon />} />
+          <StatCard label="Hibe Projesi" value={grantCount} icon={<DocumentIcon />} />
           <StatCard label="Proje Kütüphanesi" value={libraryCount} icon={<DocumentIcon />} />
           <StatCard label="Proje Sonucu" value={resultCount} icon={<DocumentIcon />} />
           <StatCard label="Danışmanlık Talebi" value={leadCount} icon={<DocumentIcon />} />

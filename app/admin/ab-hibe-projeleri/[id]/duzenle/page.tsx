@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { GrantProjectFormFields } from "@/components/admin/GrantProjectFormFields";
 import { ErrorBanner } from "@/components/admin/ErrorBanner";
 
-export const metadata = { title: "AB Hibe Projesini Düzenle | Yönetim Paneli" };
+export const metadata = { title: "Hibe Projesini Düzenle | Yönetim Paneli" };
 
 export default async function AbHibeProjesiDuzenlePage({
   params,
@@ -21,7 +21,7 @@ export default async function AbHibeProjesiDuzenlePage({
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6 text-foreground">AB Hibe Projesini Düzenle</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-foreground">Hibe Projesini Düzenle</h1>
       <ErrorBanner message={hata} />
       <Card>
         <form action={updateGrantProject} className="space-y-4">

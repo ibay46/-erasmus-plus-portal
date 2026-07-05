@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getPublishedGrantProjects } from "@/lib/grantProjects";
 
 export const metadata = {
-  title: "AB Hibe Projeleri | Erasmus+ Portal",
+  title: "Hibe Projeleri | Erasmus+ Portal",
   description: "Avrupa Birliği hibe destekli projelere ilişkin haberler ve duyurular.",
 };
 
@@ -12,7 +12,7 @@ export default async function AbHibeProjeleriPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-semibold mb-2 text-foreground">AB Hibe Projeleri</h1>
+      <h1 className="text-3xl font-semibold mb-2 text-foreground">Hibe Projeleri</h1>
       <p className="text-muted-foreground mb-6 max-w-2xl">
         Avrupa Birliği hibe destekli projelere ilişkin haberler ve duyurular.
       </p>

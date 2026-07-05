@@ -6,7 +6,7 @@ const FOOTER_COLUMNS = [
     heading: "Platform",
     links: [
       { href: "/haberler", label: "Haberler" },
-      { href: "/ab-hibe-projeleri", label: "AB Hibe Projeleri" },
+      { href: "/ab-hibe-projeleri", label: "Hibe Projeleri" },
       { href: "/proje-turleri", label: "Proje Türleri" },
       { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi" },
       { href: "/proje-sonuclari", label: "Proje Sonuçları" },

@@ -13,7 +13,7 @@ const NAV_GROUPS = [
       {
         items: [
           { href: "/haberler", label: "Haberler", desc: "Yeni çağrılar ve duyurular" },
-          { href: "/ab-hibe-projeleri", label: "AB Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
+          { href: "/ab-hibe-projeleri", label: "Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
         ],
       },
     ],

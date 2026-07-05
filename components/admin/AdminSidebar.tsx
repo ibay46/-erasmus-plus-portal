@@ -122,7 +122,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/salto-youth", label: "SALTO Youth", icon: ICONS.users },
       { href: "/admin/salto-egitim", label: "SALTO E&T", icon: ICONS.graduation },
       { href: "/admin/esc", label: "ESC", icon: ICONS.heart },
-      { href: "/admin/ab-hibe-projeleri", label: "AB Hibe Projeleri", icon: ICONS.globe },
+      { href: "/admin/ab-hibe-projeleri", label: "Hibe Projeleri", icon: ICONS.globe },
       { href: "/admin/proje-kutuphanesi", label: "Proje Kütüphanesi", icon: ICONS.book },
       { href: "/admin/proje-sonuclari", label: "Proje Sonuçları", icon: ICONS.trophy },
       { href: "/admin/yararli-linkler", label: "Yararlı Linkler", icon: ICONS.link },

@@ -5,7 +5,7 @@ import { AdminListTable } from "@/components/admin/AdminListTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { PublishToggleButton } from "@/components/admin/PublishToggleButton";
 
-export const metadata = { title: "AB Hibe Projeleri | Yönetim Paneli" };
+export const metadata = { title: "Hibe Projeleri | Yönetim Paneli" };
 
 export default async function AdminAbHibeProjeleriPage() {
   const items = await prisma.grantProject.findMany({ orderBy: { createdAt: "desc" } });
@@ -13,7 +13,7 @@ export default async function AdminAbHibeProjeleriPage() {
   return (
     <div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-foreground">AB Hibe Projeleri</h1>
+        <h1 className="text-2xl font-semibold text-foreground">Hibe Projeleri</h1>
         <Link
           href="/admin/ab-hibe-projeleri/yeni"
           className="cursor-pointer inline-flex w-full items-center justify-center rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground sm:w-auto transition-colors duration-200 hover:bg-accent/90"

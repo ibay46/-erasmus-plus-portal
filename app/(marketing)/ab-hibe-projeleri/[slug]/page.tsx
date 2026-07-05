@@ -8,9 +8,9 @@ import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocume
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const item = await getGrantProjectBySlug(slug);
-  if (!item) return { title: "AB Hibe Projesi" };
+  if (!item) return { title: "Hibe Projesi" };
   return {
-    title: `${item.title} | AB Hibe Projeleri`,
+    title: `${item.title} | Hibe Projeleri`,
     description: item.excerpt ?? undefined,
     openGraph: {
       title: item.title,
@@ -38,7 +38,7 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12.5 15l-5-5 5-5" />
           </svg>
-          AB Hibe Projelerine Dön
+          Hibe Projelerine Dön
         </Link>
         <div className="overflow-hidden rounded-xl border border-border">
           {item.coverImage && (
@@ -64,7 +64,7 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
             />
             <div className="relative z-10 flex flex-col gap-2">
               <span className="inline-flex w-fit items-center rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
-                AB Hibe Projesi
+                Hibe Projesi
               </span>
               <h1 className="text-3xl font-semibold text-foreground md:text-4xl">{item.title}</h1>
               {item.excerpt && <p className="max-w-2xl text-muted-foreground">{item.excerpt}</p>}
@@ -81,7 +81,7 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
 
       <aside>
         <div className="sticky top-24">
-          <p className="mb-3 text-sm font-medium text-foreground">Diğer AB Hibe Projeleri</p>
+          <p className="mb-3 text-sm font-medium text-foreground">Diğer Hibe Projeleri</p>
           {relatedItems.length > 0 ? (
             <ul className="space-y-3 border-l border-border pl-4">
               {relatedItems.map((related) => (
