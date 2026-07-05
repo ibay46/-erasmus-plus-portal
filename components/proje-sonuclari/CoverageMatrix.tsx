@@ -66,13 +66,19 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
   const kaGroups = groupColumns(columns);
 
   // Sol/sağ kenarlık: grup sınırındaysa o KA eyleminin rengiyle kalın, değilse ince nötr çizgi.
+  // Tablonun en sağındaki son sütunda sağ kenarlık hiç çizilmez (kartın kendi kenarıyla çakışmasın diye).
   function sideBorders(index: number) {
     const { kaAction } = columns[index];
     const color = groupColor(kaAction);
+    const isVeryLastColumn = index === columns.length - 1;
     const isFirst = index === 0 || columns[index - 1].kaAction !== kaAction;
-    const isLast = index === columns.length - 1 || columns[index + 1].kaAction !== kaAction;
+    const isLastInGroup = isVeryLastColumn || columns[index + 1].kaAction !== kaAction;
     const left = isFirst ? color.edgeLeft : "border-l border-l-slate-200 dark:border-l-white/10";
-    const right = isLast ? color.edgeRight : "border-r border-r-slate-200 dark:border-r-white/10";
+    const right = isVeryLastColumn
+      ? ""
+      : isLastInGroup
+      ? color.edgeRight
+      : "border-r border-r-slate-200 dark:border-r-white/10";
     return `${left} ${right}`;
   }
 
@@ -103,7 +109,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                 <th
                   key={kaAction}
                   colSpan={cols.length}
-                  className={`${color.header} ${color.text} ${color.edgeLeft} ${color.edgeRight} ${isLastGroup ? "rounded-tr-xl" : ""} px-2 py-3 text-center text-sm font-bold tracking-wide`}
+                  className={`${color.header} ${color.text} ${color.edgeLeft} ${isLastGroup ? "" : color.edgeRight} ${isLastGroup ? "rounded-tr-xl" : ""} px-2 py-3 text-center text-sm font-bold tracking-wide`}
                 >
                   {kaAction}
                 </th>
