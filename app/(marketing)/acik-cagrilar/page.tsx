@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getAvailableOpenCallYears, getOpenCallGroups } from "@/lib/openCalls";
 import { KA_ACTION_LABELS, EDUCATION_SECTOR_LABELS } from "@/lib/content/kaActions";
 import { ROUNDS, ROUND_LABELS } from "@/lib/content/rounds";
+import { DisclaimerFaqSection } from "@/components/shared/DisclaimerFaqSection";
 
 export const metadata: Metadata = {
   title: "Açık Çağrılar | Erasmus+ Portal",
@@ -98,9 +99,17 @@ export default async function AcikCagrilarPage({
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Açık Çağrılar</h1>
-      <p className="text-muted-foreground mb-6 max-w-2xl">
+      <p className="text-muted-foreground mb-2 max-w-2xl">
         Yıl ve round bazında, hâlen başvuru kabul eden KA210 / KA220 / KA240 Ulusal Ajans çağrıları.
       </p>
+      <div className="mb-6">
+        <Link
+          href="/proje-turleri/karsilastir"
+          className="cursor-pointer inline-flex items-center gap-1.5 text-sm font-medium text-accent underline underline-offset-2 hover:no-underline"
+        >
+          Hangi eylem size uygun? KA210 vs KA220 vs KA240 karşılaştırın →
+        </Link>
+      </div>
 
       <div className="mb-8 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -192,6 +201,11 @@ export default async function AcikCagrilarPage({
           </div>
         </>
       )}
+
+      <DisclaimerFaqSection
+        category="Açık Çağrılar"
+        disclaimer="Bu sayfadaki çağrı ve son başvuru tarihleri, Ulusal Ajansların yayınladığı duyurulardan derlenip son güncelleme tarihindeki bilgilere dayanmaktadır ve değişmiş olabilir. Erasmus+ Program Rehberi ve son başvuru tarihleri Avrupa Komisyonu tarafından güncellenebilir; bağlayıcı bilgi için ec.europa.eu ve erasmus.eacea.eu esas alınmalıdır. Bu sayfadaki bilgiler hukuki tavsiye niteliği taşımaz ve resmi başvuru belgesi olarak kullanılamaz."
+      />
     </div>
   );
 }

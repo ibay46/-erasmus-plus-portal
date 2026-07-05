@@ -90,6 +90,26 @@ export const FAQ_GROUPS: FaqGroup[] = [
     ],
   },
   {
+    category: "Açık Çağrılar",
+    items: [
+      {
+        question: "Açık Çağrılar sayfasındaki bilgiler resmi bir kaynak mı?",
+        answer:
+          "Hayır. Bu sayfa, Ulusal Ajansların yayınladığı duyurulardan derlenir ve bilgilendirme amaçlıdır; resmi başvuru belgesi veya hukuki tavsiye niteliği taşımaz. Son başvuru tarihini başvuru yapmadan önce mutlaka ilgili Ulusal Ajans'ın veya Avrupa Komisyonu'nun resmi kaynağından teyit edin.",
+      },
+      {
+        question: "Süresi geçmiş bir çağrı neden hâlâ görünüyor?",
+        answer:
+          "Varsayılan olarak sadece hâlen başvuruya açık çağrılar listelenir. \"Durum\" filtresinden \"Tümü (süresi geçenler dahil)\" seçeneğini işaretlerseniz, süresi dolmuş çağrılar da \"Süre doldu\" etiketiyle birlikte referans amacıyla gösterilir.",
+      },
+      {
+        question: "Son başvuru tarihleri değişebilir mi?",
+        answer:
+          "Evet. Ulusal Ajanslar bazen ilan ettikleri son başvuru tarihini günceller veya bütçe durumuna göre çağrıyı erken kapatabilir. Deadline yaklaşan bir çağrı için başvurunuzu son güne bırakmayın ve düzenli olarak resmi kaynağı kontrol edin.",
+      },
+    ],
+  },
+  {
     category: "Bu Siteyi Kullanma",
     items: [
       {

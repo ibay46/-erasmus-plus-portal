@@ -32,10 +32,18 @@ export default function ProjeTurleriPage() {
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Erasmus+ Proje Türleri</h1>
-      <p className="text-muted-foreground mb-10 max-w-2xl">
+      <p className="text-muted-foreground mb-4 max-w-2xl">
         Her bir eylem türü için amaç, kimler başvurabilir, bütçe mantığı, örnek faaliyetler,
         başvuru stratejileri ve sık yapılan hatalar dahil detaylı rehberler.
       </p>
+      <div className="mb-10">
+        <Link
+          href="/proje-turleri/karsilastir"
+          className="cursor-pointer inline-flex items-center gap-1.5 text-sm font-medium text-accent underline underline-offset-2 hover:no-underline"
+        >
+          KA210 vs KA220 vs KA240 karşılaştırma tablosunu görüntüle →
+        </Link>
+      </div>
 
       <div className="space-y-10">
         {GROUPS.map((group) => {
