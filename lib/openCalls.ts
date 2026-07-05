@@ -21,7 +21,7 @@ export interface OpenCallGroup {
   calls: {
     id: string;
     country: string;
-    deadline: Date | null;
+    deadline: Date;
   }[];
 }
 

@@ -13,12 +13,11 @@ const openCallSchema = z.object({
   kaActions: z.string().min(1),
   sectors: z.string().min(1),
   country: z.string().min(2),
-  deadline: z.coerce.date().nullable(),
+  deadline: z.coerce.date(),
   published: z.boolean(),
 });
 
 function parseOpenCallForm(formData: FormData) {
-  const deadline = formData.get("deadline");
   const kaActionsArray = (formData.getAll("kaActions") as string[]).filter(Boolean);
   const sectorsArray = (formData.getAll("sectors") as string[]).filter(Boolean);
   return openCallSchema.parse({
@@ -27,13 +26,13 @@ function parseOpenCallForm(formData: FormData) {
     kaActions: kaActionsArray.join(","),
     sectors: sectorsArray.join(","),
     country: formData.get("country"),
-    deadline: deadline ? deadline : null,
+    deadline: formData.get("deadline"),
     published: formData.get("published") === "on",
   });
 }
 
 const ERR_MSG = encodeURIComponent(
-  "Lütfen tüm alanları kontrol edin (yıl, round, en az bir KA eylemi, sektör ve ülke zorunlu)."
+  "Lütfen tüm alanları kontrol edin (yıl, round, en az bir KA eylemi, sektör, ülke ve son başvuru tarihi zorunlu)."
 );
 
 export async function createOpenCall(formData: FormData) {

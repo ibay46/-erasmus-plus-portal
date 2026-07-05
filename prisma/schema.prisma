@@ -155,16 +155,16 @@ model ProjectResult {
 // Henüz sonuçlanmamış, açık başvuru dönemindeki Ulusal Ajans çağrıları.
 // Yıl + Round + KA eylemi + sektör kombinasyonuna göre gruplanır (proje-turleri/proje-sonuclari'ndan ayrı).
 model OpenCall {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   year      Int
   round     String
-  kaActions String    @default("")
-  sectors   String    @default("")
+  kaActions String   @default("")
+  sectors   String   @default("")
   country   String
-  deadline  DateTime?
-  published Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  deadline  DateTime
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProjectLibraryEntry {

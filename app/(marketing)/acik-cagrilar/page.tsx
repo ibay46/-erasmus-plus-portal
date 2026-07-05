@@ -22,9 +22,7 @@ function groupColor(kaAction: string) {
   return KA_GROUP_COLORS[kaAction] ?? { text: "text-muted-foreground", bg: "bg-muted", border: "border-border" };
 }
 
-function DeadlineBadge({ deadline }: { deadline: Date | null }) {
-  if (!deadline) return <span className="text-xs text-muted-foreground">Son tarih belirtilmedi</span>;
-
+function DeadlineBadge({ deadline }: { deadline: Date }) {
   const now = new Date();
   const diffDays = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   const dateStr = deadline.toLocaleDateString("tr-TR");

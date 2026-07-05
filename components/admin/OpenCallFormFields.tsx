@@ -19,7 +19,7 @@ export function OpenCallFormFields({
     kaActions: string;
     sectors: string;
     country: string;
-    deadline?: Date | null;
+    deadline: Date;
     published: boolean;
   };
 }) {
@@ -58,41 +58,43 @@ export function OpenCallFormFields({
         </div>
       </div>
 
-      <div>
-        <p className="block text-sm font-medium mb-2 text-foreground">KA Eylemi (birden fazla seçilebilir)</p>
-        <div className="space-y-2">
-          {KA_ACTIONS.map((action) => (
-            <label key={action} className="flex items-center gap-2.5 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                name="kaActions"
-                value={action}
-                defaultChecked={selectedActions.includes(action)}
-                className="h-4 w-4 rounded border-border accent-accent"
-              />
-              <span className="text-sm text-foreground">{KA_ACTION_LABELS[action]}</span>
-            </label>
-          ))}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <p className="block text-sm font-medium mb-2 text-foreground">KA Eylemi (birden fazla seçilebilir)</p>
+          <div className="space-y-2">
+            {KA_ACTIONS.map((action) => (
+              <label key={action} className="flex items-center gap-2.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  name="kaActions"
+                  value={action}
+                  defaultChecked={selectedActions.includes(action)}
+                  className="h-4 w-4 rounded border-border accent-accent"
+                />
+                <span className="text-sm text-foreground">{KA_ACTION_LABELS[action]}</span>
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <p className="block text-sm font-medium mb-2 text-foreground">Sektör (birden fazla seçilebilir)</p>
-        <div className="space-y-2">
-          {EDUCATION_SECTORS.map((sector) => (
-            <label key={sector} className="flex items-center gap-2.5 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                name="sectors"
-                value={sector}
-                defaultChecked={selectedSectors.includes(sector)}
-                className="h-4 w-4 rounded border-border accent-accent"
-              />
-              <span className="text-sm text-foreground">
-                {sector} — {EDUCATION_SECTOR_LABELS[sector]}
-              </span>
-            </label>
-          ))}
+        <div>
+          <p className="block text-sm font-medium mb-2 text-foreground">Sektör (birden fazla seçilebilir)</p>
+          <div className="space-y-2">
+            {EDUCATION_SECTORS.map((sector) => (
+              <label key={sector} className="flex items-center gap-2.5 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  name="sectors"
+                  value={sector}
+                  defaultChecked={selectedSectors.includes(sector)}
+                  className="h-4 w-4 rounded border-border accent-accent"
+                />
+                <span className="text-sm text-foreground">
+                  {sector} — {EDUCATION_SECTOR_LABELS[sector]}
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -114,12 +116,13 @@ export function OpenCallFormFields({
 
       <div>
         <label htmlFor="deadline" className="block text-sm font-medium mb-1 text-foreground">
-          Son Başvuru Tarihi (opsiyonel)
+          Son Başvuru Tarihi
         </label>
         <input
           id="deadline"
           name="deadline"
           type="date"
+          required
           defaultValue={toDateInputValue(defaultValues?.deadline)}
           className={inputClass}
         />
