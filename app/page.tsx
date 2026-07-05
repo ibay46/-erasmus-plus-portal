@@ -155,7 +155,7 @@ const SECTIONS = [
 ] as const;
 
 const QUICK_LINKS = [
-  { href: "/proje-sonuclari", label: "Proje Sonuçları" },
+  { href: "/danismanlik", label: "Danışmanlık Hizmetleri" },
   { href: "/salto-youth", label: "SALTO Youth" },
   { href: "/salto-egitim", label: "SALTO E&T" },
   { href: "/esc", label: "ESC" },
