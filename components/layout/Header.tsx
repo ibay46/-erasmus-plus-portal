@@ -26,6 +26,7 @@ const NAV_GROUPS = [
           { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },
           { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
           { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
+          { href: "/acik-cagrilar", label: "Açık Çağrılar", desc: "Hâlen başvuru kabul eden Ulusal Ajans çağrıları" },
           { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
           {
             href: "/salto-egitim",

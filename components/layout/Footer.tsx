@@ -10,6 +10,7 @@ const FOOTER_COLUMNS = [
       { href: "/proje-turleri", label: "Proje Türleri" },
       { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi" },
       { href: "/proje-sonuclari", label: "Proje Sonuçları" },
+      { href: "/acik-cagrilar", label: "Açık Çağrılar" },
     ],
   },
   {

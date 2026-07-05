@@ -95,6 +95,12 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 1 5.4-5.4l-2.6 2.6-2-2z" />
     </SvgIcon>
   ),
+  calendar: (
+    <SvgIcon>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </SvgIcon>
+  ),
   arrowLeft: (
     <SvgIcon>
       <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -125,6 +131,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/ab-hibe-projeleri", label: "Hibe Projeleri", icon: ICONS.globe },
       { href: "/admin/proje-kutuphanesi", label: "Proje Kütüphanesi", icon: ICONS.book },
       { href: "/admin/proje-sonuclari", label: "Proje Sonuçları", icon: ICONS.trophy },
+      { href: "/admin/acik-cagrilar", label: "Açık Çağrılar", icon: ICONS.calendar },
       { href: "/admin/yararli-linkler", label: "Yararlı Linkler", icon: ICONS.link },
       { href: "/admin/araclar", label: "Ücretsiz Araçlar", icon: ICONS.wrench },
     ],

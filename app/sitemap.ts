@@ -15,6 +15,7 @@ const STATIC_PATHS = [
   "/proje-turleri",
   "/proje-kutuphanesi",
   "/proje-sonuclari",
+  "/acik-cagrilar",
   "/ab-hibe-projeleri",
   "/danismanlik",
   "/danismanlik/talep",
