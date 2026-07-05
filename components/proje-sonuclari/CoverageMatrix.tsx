@@ -77,7 +77,10 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl bg-gradient-to-br from-slate-100 via-white to-slate-100 p-1 shadow-xl ring-1 ring-slate-900/10 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:shadow-2xl dark:ring-white/10">
+    <div
+      className="w-full max-w-full overflow-x-auto rounded-2xl bg-gradient-to-br from-slate-100 via-white to-slate-100 p-1 shadow-xl ring-1 ring-slate-900/10 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:shadow-2xl dark:ring-white/10"
+      style={{ contain: "layout" }}
+    >
       <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${160 + columns.length * 48}px` }}>
         <colgroup>
           <col style={{ width: "160px" }} />

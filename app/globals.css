@@ -56,8 +56,11 @@ h3 {
 html,
 body {
   /* Genişlik zorlayan içerikler (örn. yatay kaydırılan tablolar) sayfayı
-     büyütüp sabit header'daki sağdaki ikonları görünmez kılmasın diye. */
+     büyütüp sabit header'daki sağdaki ikonları görünmez kılmasın diye.
+     overflow-x tek başına bazı mobil tarayıcılarda layout viewport'un
+     genişlemesini engellemiyor; max-width ile de sıkı sıkıya sabitliyoruz. */
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body {
