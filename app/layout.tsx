@@ -4,6 +4,8 @@ import { headers } from "next/headers";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { AnnouncementBanner } from "@/components/layout/AnnouncementBanner";
+import { HeaderHeightSync } from "@/components/layout/HeaderHeightSync";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { PageViewTracker } from "@/components/layout/PageViewTracker";
 
@@ -62,8 +64,14 @@ export default async function RootLayout({
             children
           ) : (
             <>
-              <Header />
-              <main className="min-w-0 flex-1 pt-16">{children}</main>
+              <div id="site-header" className="fixed inset-x-0 top-0 z-50">
+                <AnnouncementBanner />
+                <Header />
+              </div>
+              <HeaderHeightSync />
+              <main className="min-w-0 flex-1" style={{ paddingTop: "var(--header-h, 6.5rem)" }}>
+                {children}
+              </main>
               <Footer />
             </>
           )}
