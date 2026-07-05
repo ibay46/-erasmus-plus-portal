@@ -11,7 +11,7 @@ const openCallSchema = z.object({
   year: z.coerce.number().int().min(2007).max(2100),
   round: z.enum(ROUNDS as [string, ...string[]]),
   kaActions: z.string().min(1),
-  sector: z.string().min(1),
+  sectors: z.string().min(1),
   country: z.string().min(2),
   deadline: z.coerce.date().nullable(),
   published: z.boolean(),
@@ -20,11 +20,12 @@ const openCallSchema = z.object({
 function parseOpenCallForm(formData: FormData) {
   const deadline = formData.get("deadline");
   const kaActionsArray = (formData.getAll("kaActions") as string[]).filter(Boolean);
+  const sectorsArray = (formData.getAll("sectors") as string[]).filter(Boolean);
   return openCallSchema.parse({
     year: formData.get("year"),
     round: formData.get("round"),
     kaActions: kaActionsArray.join(","),
-    sector: formData.get("sector"),
+    sectors: sectorsArray.join(","),
     country: formData.get("country"),
     deadline: deadline ? deadline : null,
     published: formData.get("published") === "on",

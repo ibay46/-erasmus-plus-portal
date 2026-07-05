@@ -17,13 +17,14 @@ export function OpenCallFormFields({
     year: number;
     round: string;
     kaActions: string;
-    sector: string;
+    sectors: string;
     country: string;
     deadline?: Date | null;
     published: boolean;
   };
 }) {
   const selectedActions = defaultValues?.kaActions?.split(",").filter(Boolean) ?? [];
+  const selectedSectors = defaultValues?.sectors?.split(",").filter(Boolean) ?? [];
 
   return (
     <>
@@ -76,22 +77,23 @@ export function OpenCallFormFields({
       </div>
 
       <div>
-        <label htmlFor="sector" className="block text-sm font-medium mb-1 text-foreground">
-          Sektör
-        </label>
-        <select
-          id="sector"
-          name="sector"
-          required
-          defaultValue={defaultValues?.sector ?? EDUCATION_SECTORS[0]}
-          className={inputClass}
-        >
+        <p className="block text-sm font-medium mb-2 text-foreground">Sektör (birden fazla seçilebilir)</p>
+        <div className="space-y-2">
           {EDUCATION_SECTORS.map((sector) => (
-            <option key={sector} value={sector}>
-              {sector} — {EDUCATION_SECTOR_LABELS[sector]}
-            </option>
+            <label key={sector} className="flex items-center gap-2.5 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                name="sectors"
+                value={sector}
+                defaultChecked={selectedSectors.includes(sector)}
+                className="h-4 w-4 rounded border-border accent-accent"
+              />
+              <span className="text-sm text-foreground">
+                {sector} — {EDUCATION_SECTOR_LABELS[sector]}
+              </span>
+            </label>
           ))}
-        </select>
+        </div>
       </div>
 
       <div>

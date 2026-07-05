@@ -53,7 +53,9 @@ export default async function AdminAcikCagrilarPage() {
                   {item.kaActions.split(",").filter(Boolean).map((a) => (
                     <Badge key={a}>{a}</Badge>
                   ))}
-                  <Badge>{item.sector}</Badge>
+                  {item.sectors.split(",").filter(Boolean).map((s) => (
+                    <Badge key={s}>{s}</Badge>
+                  ))}
                 </div>
               ),
             },

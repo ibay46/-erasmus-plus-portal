@@ -159,7 +159,7 @@ model OpenCall {
   year      Int
   round     String
   kaActions String    @default("")
-  sector    String
+  sectors   String    @default("")
   country   String
   deadline  DateTime?
   published Boolean   @default(true)
