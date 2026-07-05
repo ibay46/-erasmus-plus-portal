@@ -376,10 +376,10 @@ export default async function Home() {
                 Ücretsiz Araçları Keşfet
               </Link>
               <Link
-                href="/danismanlik"
+                href="/proje-sonuclari"
                 className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
               >
-                Danışmanlık Hizmetleri
+                Proje Sonuçları
               </Link>
             </div>
 
