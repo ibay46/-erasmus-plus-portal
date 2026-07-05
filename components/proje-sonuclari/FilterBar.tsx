@@ -23,12 +23,14 @@ interface FilterBarProps {
 function buildHref(current: QueryState, next: Partial<QueryState>): string {
   const merged = { ...current, ...next };
   const params = new URLSearchParams();
+  // FilterBar sadece Liste görünümünde kullanılır; aksi halde /proje-sonuclari
+  // varsayılan olarak Tablo görünümüne düştüğü için bunu her zaman korumalıyız.
+  params.set("gorunum", "liste");
   if (merged.ka) params.set("ka", merged.ka);
   if (merged.sektor) params.set("sektor", merged.sektor);
   if (merged.yil) params.set("yil", merged.yil);
   if (merged.ulke) params.set("ulke", merged.ulke);
-  const qs = params.toString();
-  return qs ? `/proje-sonuclari?${qs}` : "/proje-sonuclari";
+  return `/proje-sonuclari?${params.toString()}`;
 }
 
 function FilterPill({
