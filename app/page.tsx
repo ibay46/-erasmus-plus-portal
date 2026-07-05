@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Card } from "@/components/ui/Card";
 import { prisma } from "@/lib/prisma";
 import { PROJECT_TYPES } from "@/lib/content/projectTypes";
 import { getPublishedPosts } from "@/lib/posts";
@@ -11,6 +10,8 @@ import { getPublishedGrantProjects } from "@/lib/grantProjects";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { NewsTabs } from "@/components/home/NewsTabs";
 import type { NewsTab } from "@/components/home/NewsTabs";
+import { LevelFilteredSections } from "@/components/home/LevelFilteredSections";
+import type { HomeSection } from "@/components/home/LevelFilteredSections";
 
 // ─── Section icons ────────────────────────────────────────────────────────────
 
@@ -95,55 +96,63 @@ function IconDanismanlik() {
 
 // ─── Sections data ─────────────────────────────────────────────────────────────
 
-const SECTIONS = [
+const SECTIONS: HomeSection[] = [
   {
     href: "/akademi",
     title: "Erasmus Akademi",
     description: "Standart ve Premium üyelikle örnek projeler, eğitimler, etki yönetimi araçları ve AI promptlarına erişin.",
     icon: <IconAkademi />,
     premium: true,
+    levels: ["orta", "uzman"],
   },
   {
     href: "/haberler",
     title: "Erasmus+ Haberleri",
     description: "Yeni çağrılar, Ulusal Ajans, Avrupa Komisyonu ve SALTO haberleri.",
     icon: <IconHaberler />,
+    levels: ["baslangic", "orta", "uzman"],
   },
   {
     href: "/proje-turleri",
     title: "Proje Türleri",
     description: "KA120'den Jean Monnet ve Erasmus Spor'a kadar tüm eylem türleri için detaylı rehberler.",
     icon: <IconProjeTurleri />,
+    levels: ["baslangic"],
   },
   {
     href: "/proje-kutuphanesi",
     title: "Proje Kütüphanesi",
     description: "Tema ve eylem türüne göre filtrelenebilir örnek proje arşivi.",
     icon: <IconKutuphane />,
+    levels: ["orta"],
   },
   {
     href: "/proje-sonuclari",
     title: "Proje Sonuçları",
     description: "Yıl, ülke, KA eylemi ve sektöre göre desteklenmeye hak kazanan proje sonuçları.",
     icon: <IconSonuclar />,
+    levels: ["orta", "uzman"],
   },
   {
     href: "/ab-hibe-projeleri",
     title: "Hibe Projeleri",
     description: "Avrupa Birliği hibe destekli projelere ilişkin haberler ve duyurular.",
     icon: <IconGlobe />,
+    levels: ["baslangic", "orta"],
   },
   {
     href: "/araclar",
     title: "Ücretsiz Araçlar",
     description: "Bütçe hesaplayıcısı, proje zaman çizelgesi ve yolluk bildirimi gibi pratik araçlar.",
     icon: <IconAraclar />,
+    levels: ["orta", "uzman"],
   },
   {
     href: "/yararli-linkler",
     title: "Yararlı Linkler",
     description: "Resmi kaynaklar, başvuru sistemleri ve faydalı araçlara hızlı erişim.",
     icon: <IconLink />,
+    levels: ["baslangic"],
   },
   {
     href: "/danismanlik",
@@ -151,8 +160,9 @@ const SECTIONS = [
     description: "Proje yazımı, bütçe hazırlama, ortak bulma ve yaygınlaştırma planı desteği.",
     icon: <IconDanismanlik />,
     highlight: true,
+    levels: ["uzman"],
   },
-] as const;
+];
 
 const QUICK_LINKS = [
   { href: "/danismanlik", label: "Danışmanlık Hizmetleri" },
@@ -428,43 +438,13 @@ export default async function Home() {
       {/* ── Neler Var ── */}
       <section className="bg-background py-16">
         <div className="mx-auto max-w-6xl px-6">
-          <h2 className="text-2xl font-semibold text-foreground mb-6">
+          <h2 className="text-2xl font-semibold text-foreground mb-1">
             Platformda <span className="text-accent">Neler</span> <span className="text-accent-warm">Var?</span>
           </h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {SECTIONS.map((section) => (
-              <Link key={section.href} href={section.href} className="cursor-pointer group">
-                <Card
-                  className={`relative h-full overflow-hidden transition-colors duration-200 hover:border-accent/50 ${
-                    "highlight" in section && section.highlight
-                      ? "border-accent-warm/40 bg-gradient-to-br from-background to-accent-warm/5"
-                      : ""
-                  }`}
-                >
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -inset-10 rounded-full bg-accent/20 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100"
-                  />
-                  <div className="relative flex items-start gap-3">
-                    <span className={`mt-0.5 shrink-0 ${"premium" in section && section.premium ? "text-accent" : "highlight" in section && section.highlight ? "text-accent-warm" : "text-muted-foreground"} transition-colors duration-200 group-hover:text-accent`}>
-                      {section.icon}
-                    </span>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-foreground">{section.title}</h3>
-                        {"premium" in section && section.premium && (
-                          <span className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent">
-                            Premium
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-1 text-sm text-muted-foreground">{section.description}</p>
-                    </div>
-                  </div>
-                </Card>
-              </Link>
-            ))}
-          </div>
+          <p className="mb-6 text-sm text-muted-foreground">
+            Nerede olduğunuzu seçin, size en uygun bölümleri görün.
+          </p>
+          <LevelFilteredSections sections={SECTIONS} />
         </div>
       </section>
     </div>
