@@ -6,30 +6,30 @@ const KA_GROUP_COLORS: Record<
   { text: string; header: string; edgeLeft: string; edgeRight: string }
 > = {
   KA210: {
-    text: "text-blue-300",
-    header: "bg-blue-500/25",
-    edgeLeft: "border-l-2 border-l-blue-400/70",
-    edgeRight: "border-r-2 border-r-blue-400/70",
+    text: "text-blue-700 dark:text-blue-300",
+    header: "bg-blue-100 dark:bg-blue-500/25",
+    edgeLeft: "border-l-2 border-l-blue-500 dark:border-l-blue-400/70",
+    edgeRight: "border-r-2 border-r-blue-500 dark:border-r-blue-400/70",
   },
   KA220: {
-    text: "text-violet-300",
-    header: "bg-violet-500/25",
-    edgeLeft: "border-l-2 border-l-violet-400/70",
-    edgeRight: "border-r-2 border-r-violet-400/70",
+    text: "text-violet-700 dark:text-violet-300",
+    header: "bg-violet-100 dark:bg-violet-500/25",
+    edgeLeft: "border-l-2 border-l-violet-500 dark:border-l-violet-400/70",
+    edgeRight: "border-r-2 border-r-violet-500 dark:border-r-violet-400/70",
   },
   KA240: {
-    text: "text-orange-300",
-    header: "bg-orange-500/25",
-    edgeLeft: "border-l-2 border-l-orange-400/70",
-    edgeRight: "border-r-2 border-r-orange-400/70",
+    text: "text-orange-700 dark:text-orange-300",
+    header: "bg-orange-100 dark:bg-orange-500/25",
+    edgeLeft: "border-l-2 border-l-orange-500 dark:border-l-orange-400/70",
+    edgeRight: "border-r-2 border-r-orange-500 dark:border-r-orange-400/70",
   },
 };
 
 const DEFAULT_GROUP_COLOR = {
-  text: "text-slate-300",
-  header: "bg-white/5",
-  edgeLeft: "border-l border-l-white/10",
-  edgeRight: "border-r border-r-white/10",
+  text: "text-slate-600 dark:text-slate-300",
+  header: "bg-slate-100 dark:bg-white/5",
+  edgeLeft: "border-l border-l-slate-300 dark:border-l-white/10",
+  edgeRight: "border-r border-r-slate-300 dark:border-r-white/10",
 };
 
 function groupColor(kaAction: string) {
@@ -71,13 +71,13 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
     const color = groupColor(kaAction);
     const isFirst = index === 0 || columns[index - 1].kaAction !== kaAction;
     const isLast = index === columns.length - 1 || columns[index + 1].kaAction !== kaAction;
-    const left = isFirst ? color.edgeLeft : "border-l border-l-white/10";
-    const right = isLast ? color.edgeRight : "border-r border-r-white/10";
+    const left = isFirst ? color.edgeLeft : "border-l border-l-slate-200 dark:border-l-white/10";
+    const right = isLast ? color.edgeRight : "border-r border-r-slate-200 dark:border-r-white/10";
     return `${left} ${right}`;
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-1 shadow-2xl ring-1 ring-white/10">
+    <div className="overflow-x-auto rounded-2xl bg-gradient-to-br from-slate-100 via-white to-slate-100 p-1 shadow-xl ring-1 ring-slate-900/10 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:shadow-2xl dark:ring-white/10">
       <table className="w-full table-fixed border-collapse text-sm" style={{ minWidth: `${160 + columns.length * 48}px` }}>
         <colgroup>
           <col style={{ width: "160px" }} />
@@ -89,7 +89,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
           <tr>
             <th
               rowSpan={2}
-              className="sticky left-0 z-10 rounded-tl-xl border-b border-y-white/10 bg-slate-950 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-widest text-white/50"
+              className="sticky left-0 z-10 rounded-tl-xl border-b border-y-slate-200 bg-white px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:border-y-white/10 dark:bg-slate-950 dark:text-white/50"
             >
               Ülke
             </th>
@@ -111,7 +111,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
             {columns.map(({ kaAction, sector }, index) => (
               <th
                 key={`${kaAction}_${sector}`}
-                className={`${sideBorders(index)} border-b border-y-white/10 bg-white/5 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-white/60`}
+                className={`${sideBorders(index)} border-b border-y-slate-200 bg-slate-50 px-2 py-2 text-center text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:border-y-white/10 dark:bg-white/5 dark:text-white/60`}
               >
                 {sector}
               </th>
@@ -124,12 +124,12 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
             return (
               <tr
                 key={country}
-                className={`group transition-colors duration-150 hover:bg-sky-400/10 ${
-                  rowIndex % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"
+                className={`group transition-colors duration-150 hover:bg-sky-100 dark:hover:bg-sky-400/10 ${
+                  rowIndex % 2 === 0 ? "bg-slate-50 dark:bg-white/[0.03]" : "bg-white dark:bg-transparent"
                 }`}
               >
                 <td
-                  className={`sticky left-0 z-10 truncate bg-slate-950 px-4 py-2.5 font-semibold text-white/90 transition-colors duration-150 group-hover:bg-slate-800 ${
+                  className={`sticky left-0 z-10 truncate bg-white px-4 py-2.5 font-semibold text-slate-900 transition-colors duration-150 group-hover:bg-slate-100 dark:bg-slate-950 dark:text-white/90 dark:group-hover:bg-slate-800 ${
                     isLastRow ? "rounded-bl-xl" : ""
                   }`}
                 >
@@ -145,7 +145,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                     return (
                       <td key={key} className={cellClasses}>
                         <span className="flex items-center justify-center">
-                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white/25">
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-slate-400 dark:bg-white/10 dark:text-white/25">
                             <XIcon />
                           </span>
                           <span className="sr-only">Henüz açıklanmadı</span>
@@ -164,11 +164,11 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                             : "Sonucu görüntülemek için tıklayın"
                         }
                       >
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm shadow-black/30 transition-transform duration-200 group-hover:scale-110">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm shadow-blue-600/30 transition-transform duration-200 group-hover:scale-110 dark:bg-white dark:text-blue-600 dark:shadow-black/30">
                           <CheckIcon />
                         </span>
                         {cell.count > 1 && (
-                          <span className="text-xs font-semibold text-white/70">{cell.count}</span>
+                          <span className="text-xs font-semibold text-slate-500 dark:text-white/70">{cell.count}</span>
                         )}
                         <span className="sr-only">Açıklandı</span>
                       </Link>
