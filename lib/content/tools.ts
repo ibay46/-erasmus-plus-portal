@@ -61,22 +61,22 @@ export const TOOLS: ToolContent[] = [
     category: "proje-oncesi",
   },
   {
+    href: "/araclar/proje-zaman-cizelgesi",
+    title: "Proje Zaman Çizelgesi (Gantt)",
+    description: "Ortak kuruluş ve aya göre tıklayarak işaretleyebileceğiniz resmi formata uygun zaman çizelgesi.",
+    category: "proje-oncesi",
+  },
+  {
     href: "/araclar/proje-sozlesmesi",
     title: "Proje Ortaklık Sözleşmesi",
     description: "KA2 Stratejik Ortaklık projeleri için Partnership Agreement şablonunu kurum ve bütçe bilgilerinizle doldurun.",
     category: "proje-asamasi",
   },
   {
-    href: "/araclar/proje-zaman-cizelgesi",
-    title: "Proje Zaman Çizelgesi (Gantt)",
-    description: "Ortak kuruluş ve aya göre tıklayarak işaretleyebileceğiniz resmi formata uygun zaman çizelgesi.",
-    category: "proje-asamasi",
-  },
-  {
     href: "/araclar/yolluk-bildirimi",
     title: "Geçici Görev Yolluğu Bildirimi",
     description: "Hareketlilik sonrası kurumunuza sunacağınız yolluk bildirimini (M.Y.H.B.Y. Örnek No: 27) doldurun, tutarlar otomatik hesaplansın.",
-    category: "proje-asamasi",
+    category: "proje-sonrasi",
   },
   {
     href: "/araclar/on-mali-kontrol-listesi",
