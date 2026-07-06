@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { headers } from "next/headers";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -86,6 +87,7 @@ export default async function RootLayout({
           )}
         </ThemeProvider>
       </body>
+      <GoogleAnalytics gaId="G-Q39H2MC6Q9" />
     </html>
   );
 }
