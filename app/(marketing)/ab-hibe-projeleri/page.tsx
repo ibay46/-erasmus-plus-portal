@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getPublishedGrantProjects } from "@/lib/grantProjects";
+import { GrantDeadlineBadge } from "@/components/marketing/GrantDeadlineBadge";
 
 export const metadata = {
   title: "Hibe Projeleri | Erasmus+ Portal",
@@ -8,7 +10,6 @@ export const metadata = {
 
 export default async function AbHibeProjeleriPage() {
   const items = await getPublishedGrantProjects();
-  const [featured, ...rest] = items;
 
   return (
     <div>
@@ -19,49 +20,52 @@ export default async function AbHibeProjeleriPage() {
       {items.length === 0 ? (
         <p className="text-muted-foreground">Henüz yayınlanmış AB hibe projesi yok.</p>
       ) : (
-        <div className="grid lg:grid-cols-3 gap-8 mt-2">
-          <div className="lg:col-span-2">
-            <Link href={`/ab-hibe-projeleri/${featured.slug}`} className="cursor-pointer block">
-              <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                Son eklenen
-              </span>
-              <h2 className="mt-3 text-2xl font-medium text-foreground hover:text-accent">
-                {featured.title}
-              </h2>
-              {featured.excerpt && (
-                <p className="mt-2 max-w-xl text-muted-foreground">{featured.excerpt}</p>
-              )}
-              {featured.publishedAt && (
-                <p className="mt-3 text-xs text-muted-foreground">
-                  {new Date(featured.publishedAt).toLocaleDateString("tr-TR")}
-                </p>
-              )}
-            </Link>
-
-            {rest.length > 0 && (
-              <div className="mt-10 divide-y divide-border border-t border-border">
-                {rest.map((item) => (
-                  <Link
-                    key={item.slug}
-                    href={`/ab-hibe-projeleri/${item.slug}`}
-                    className="cursor-pointer flex items-start justify-between gap-4 py-4 hover:text-accent"
-                  >
-                    <div>
-                      <p className="font-medium text-foreground">{item.title}</p>
-                      {item.excerpt && (
-                        <p className="text-sm text-muted-foreground mt-0.5">{item.excerpt}</p>
-                      )}
-                    </div>
-                    {item.publishedAt && (
-                      <span className="shrink-0 text-xs text-muted-foreground whitespace-nowrap">
-                        {new Date(item.publishedAt).toLocaleDateString("tr-TR")}
-                      </span>
-                    )}
-                  </Link>
-                ))}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-2">
+          {items.map((item) => (
+            <Link
+              key={item.slug}
+              href={`/ab-hibe-projeleri/${item.slug}`}
+              className="cursor-pointer group block overflow-hidden rounded-xl border border-border transition-colors duration-200 hover:border-accent/50"
+            >
+              <div className="relative aspect-[19/9]">
+                {item.coverImage ? (
+                  <Image
+                    src={item.coverImage}
+                    alt={item.title}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-muted">
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 rounded-full bg-accent/30 blur-[60px]"
+                    />
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute right-0 bottom-0 h-32 w-32 rounded-full bg-accent-warm/25 blur-[60px]"
+                    />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
+                <GrantDeadlineBadge deadline={item.applicationDeadline} />
               </div>
-            )}
-          </div>
+              <div className="bg-card p-4">
+                <p className="font-medium text-foreground transition-colors duration-200 group-hover:text-accent">
+                  {item.title}
+                </p>
+                {item.excerpt && (
+                  <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">{item.excerpt}</p>
+                )}
+                {item.publishedAt && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {new Date(item.publishedAt).toLocaleDateString("tr-TR")}
+                  </p>
+                )}
+              </div>
+            </Link>
+          ))}
         </div>
       )}
     </div>

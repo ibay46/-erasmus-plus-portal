@@ -38,6 +38,14 @@ export default async function AdminAbHibeProjeleriPage() {
                 </div>
               ),
             },
+            {
+              header: "Son Başvuru",
+              render: (item) => (
+                <span className="text-sm text-foreground">
+                  {item.applicationDeadline.toLocaleDateString("tr-TR")}
+                </span>
+              ),
+            },
             { header: "Durum", render: (item) => <StatusBadge published={item.published} /> },
           ]}
           renderActions={(item) => (

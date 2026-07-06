@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getGrantProjectBySlug, getRecentGrantProjects } from "@/lib/grantProjects";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocumentPreview";
+import { GrantDeadlineBadge } from "@/components/marketing/GrantDeadlineBadge";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -51,6 +52,7 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
                 className="object-cover"
                 priority
               />
+              <GrantDeadlineBadge deadline={item.applicationDeadline} />
             </div>
           )}
           <div className="relative overflow-hidden border-b border-border bg-background p-6 md:p-8">
@@ -68,9 +70,16 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
               </span>
               <h1 className="text-3xl font-semibold text-foreground md:text-4xl">{item.title}</h1>
               {item.excerpt && <p className="max-w-2xl text-muted-foreground">{item.excerpt}</p>}
-              {item.publishedAt && (
-                <p className="text-sm text-muted-foreground">{new Date(item.publishedAt).toLocaleDateString("tr-TR")}</p>
-              )}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                {item.publishedAt && (
+                  <p className="text-sm text-muted-foreground">{new Date(item.publishedAt).toLocaleDateString("tr-TR")}</p>
+                )}
+                {!item.coverImage && (
+                  <p className="text-sm font-medium text-foreground">
+                    Son Başvuru Tarihi: {new Date(item.applicationDeadline).toLocaleDateString("tr-TR")}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           <article className="bg-card p-6 md:p-8">

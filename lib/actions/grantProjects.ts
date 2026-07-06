@@ -13,6 +13,7 @@ const grantProjectSchema = z.object({
   body: z.string().min(10),
   published: z.boolean(),
   coverImage: z.string().nullable(),
+  applicationDeadline: z.coerce.date(),
 });
 
 function parseGrantProjectForm(formData: FormData) {
@@ -22,6 +23,7 @@ function parseGrantProjectForm(formData: FormData) {
     body: formData.get("body"),
     published: formData.get("published") === "on",
     coverImage: formData.get("coverImage") || null,
+    applicationDeadline: formData.get("applicationDeadline"),
   });
 }
 
@@ -33,7 +35,9 @@ export async function createGrantProject(formData: FormData) {
   } catch {
     redirect(
       "/admin/ab-hibe-projeleri/yeni?hata=" +
-        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, içerik en az 10 karakter olmalı).")
+        encodeURIComponent(
+          "Lütfen tüm alanları kontrol edin (başlık en az 3, içerik en az 10 karakter olmalı, son başvuru tarihi zorunlu)."
+        )
     );
   }
 
@@ -66,7 +70,9 @@ export async function updateGrantProject(formData: FormData) {
   } catch {
     redirect(
       `/admin/ab-hibe-projeleri/${id}/duzenle?hata=` +
-        encodeURIComponent("Lütfen tüm alanları kontrol edin (başlık en az 3, içerik en az 10 karakter olmalı).")
+        encodeURIComponent(
+          "Lütfen tüm alanları kontrol edin (başlık en az 3, içerik en az 10 karakter olmalı, son başvuru tarihi zorunlu)."
+        )
     );
   }
 

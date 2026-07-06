@@ -4,6 +4,11 @@ import { CoverImageInput } from "@/components/admin/CoverImageInput";
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
 
+function toDateInputValue(date?: Date | null): string {
+  if (!date) return "";
+  return new Date(date).toISOString().slice(0, 10);
+}
+
 export function GrantProjectFormFields({
   defaultValues,
 }: {
@@ -13,6 +18,7 @@ export function GrantProjectFormFields({
     body: string;
     published: boolean;
     coverImage?: string | null;
+    applicationDeadline?: Date | null;
   };
 }) {
   return (
@@ -31,6 +37,19 @@ export function GrantProjectFormFields({
           required
           minLength={3}
           defaultValue={defaultValues?.title}
+          className={inputClass}
+        />
+      </div>
+      <div>
+        <label htmlFor="applicationDeadline" className="block text-sm font-medium mb-1 text-foreground">
+          Son Başvuru Tarihi
+        </label>
+        <input
+          id="applicationDeadline"
+          name="applicationDeadline"
+          type="date"
+          required
+          defaultValue={toDateInputValue(defaultValues?.applicationDeadline)}
           className={inputClass}
         />
       </div>
