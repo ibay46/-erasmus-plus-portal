@@ -286,7 +286,7 @@ export default async function Home() {
         title: post.title,
         dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("tr-TR") : null,
         coverImage: post.coverImage,
-        deadline: post.eventApplicationDeadline,
+        deadline: post.eventApplicationDeadlineEnd ?? post.eventApplicationDeadline,
       })),
     },
     {
