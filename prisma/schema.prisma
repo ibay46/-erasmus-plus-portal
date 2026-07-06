@@ -277,6 +277,17 @@ model PageView {
   @@index([path])
 }
 
+// Site genelinde başlığın üstünde gösterilen kapatılabilir duyuru şeridi.
+// Tek satırlık ayar (singleton); id her zaman "singleton" olarak sabitlenir.
+model Announcement {
+  id        String   @id @default("singleton")
+  enabled   Boolean  @default(false)
+  message   String   @default("")
+  linkHref  String?
+  linkLabel String?
+  updatedAt DateTime @updatedAt
+}
+
 model ConsultingLead {
   id          String     @id @default(cuid())
   service     String

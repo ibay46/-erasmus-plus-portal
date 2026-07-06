@@ -8,6 +8,7 @@ import { AnnouncementBanner } from "@/components/layout/AnnouncementBanner";
 import { HeaderHeightSync } from "@/components/layout/HeaderHeightSync";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { PageViewTracker } from "@/components/layout/PageViewTracker";
+import { getAnnouncement } from "@/lib/announcement";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -54,6 +55,7 @@ export default async function RootLayout({
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") ?? "";
   const isAdmin = pathname.startsWith("/admin");
+  const announcement = isAdmin ? null : await getAnnouncement();
 
   return (
     <html lang="tr" className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`} suppressHydrationWarning>
@@ -65,7 +67,14 @@ export default async function RootLayout({
           ) : (
             <>
               <div id="site-header" className="fixed inset-x-0 top-0 z-50">
-                <AnnouncementBanner />
+                {announcement?.enabled && (
+                  <AnnouncementBanner
+                    message={announcement.message}
+                    linkHref={announcement.linkHref}
+                    linkLabel={announcement.linkLabel}
+                    version={announcement.updatedAt.toISOString()}
+                  />
+                )}
                 <Header />
               </div>
               <HeaderHeightSync />

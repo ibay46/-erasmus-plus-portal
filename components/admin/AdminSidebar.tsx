@@ -106,6 +106,12 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M19 12H5M12 19l-7-7 7-7" />
     </SvgIcon>
   ),
+  megaphone: (
+    <SvgIcon>
+      <path d="M3 11v2a1 1 0 0 0 1 1h2l4 4V6l-4 4H4a1 1 0 0 0-1 1z" />
+      <path d="M15 8a3 3 0 0 1 0 8M18 4a8 8 0 0 1 0 16" />
+    </SvgIcon>
+  ),
 };
 
 // ─── Nav data ─────────────────────────────────────────────────────────────────
@@ -119,6 +125,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin", label: "Panel", icon: ICONS.panel },
       { href: "/admin/istatistikler", label: "İstatistikler", icon: ICONS.stats },
+      { href: "/admin/duyuru", label: "Duyuru Şeridi", icon: ICONS.megaphone },
     ],
   },
   {

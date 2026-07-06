@@ -3,32 +3,40 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-// Bu id'yi değiştirin — daha önce kapatmış kullanıcılara da yeni duyuru gösterilir.
-const ANNOUNCEMENT_ID = "acik-cagrilar-sadece-acik-filtresi";
-const STORAGE_KEY = `announcement-dismissed:${ANNOUNCEMENT_ID}`;
+interface Props {
+  message: string;
+  linkHref: string | null;
+  linkLabel: string | null;
+  version: string;
+}
 
-export function AnnouncementBanner() {
+export function AnnouncementBanner({ message, linkHref, linkLabel, version }: Props) {
+  const storageKey = `announcement-dismissed:${version}`;
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY) === "1") setVisible(false);
-  }, []);
+    if (localStorage.getItem(storageKey) === "1") setVisible(false);
+  }, [storageKey]);
 
   if (!visible) return null;
 
   return (
     <div className="flex items-center justify-center gap-3 bg-accent px-4 py-2 text-center text-sm font-medium text-accent-foreground">
       <span>
-        Yeni:{" "}
-        <Link href="/acik-cagrilar" className="underline underline-offset-2 hover:no-underline">
-          Açık Çağrılar
-        </Link>{" "}
-        sayfasında artık &quot;Sadece Açık&quot; filtresiyle güncel çağrıları tek tıkla görebilirsiniz.
+        {message}
+        {linkHref && linkLabel && (
+          <>
+            {" "}
+            <Link href={linkHref} className="underline underline-offset-2 hover:no-underline">
+              {linkLabel}
+            </Link>
+          </>
+        )}
       </span>
       <button
         type="button"
         onClick={() => {
-          localStorage.setItem(STORAGE_KEY, "1");
+          localStorage.setItem(storageKey, "1");
           setVisible(false);
         }}
         aria-label="Duyuruyu kapat"
