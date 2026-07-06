@@ -329,6 +329,7 @@ export default async function Home() {
         dateStr: item.publishedAt ? item.publishedAt.toLocaleDateString("tr-TR") : null,
         badge: "Hibe Projesi",
         coverImage: item.coverImage,
+        deadline: item.applicationDeadline,
       })),
     },
   ];

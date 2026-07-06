@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { GrantDeadlineBadge } from "@/components/marketing/GrantDeadlineBadge";
 
 export type NewsItem = {
   href: string;
@@ -10,6 +11,7 @@ export type NewsItem = {
   dateStr: string | null;
   badge: string;
   coverImage: string | null;
+  deadline?: Date | null;
 };
 
 export type NewsTab = {
@@ -93,6 +95,7 @@ export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
                   <span className="absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
                     {item.badge}
                   </span>
+                  {item.deadline && <GrantDeadlineBadge deadline={item.deadline} />}
                 </div>
                 <div className="bg-card p-3.5">
                   <p className="line-clamp-2 font-medium text-foreground transition-colors duration-200 group-hover:text-accent">
