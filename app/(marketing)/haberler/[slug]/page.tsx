@@ -76,7 +76,7 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
       </Link>
       <div className="overflow-hidden rounded-xl border border-border">
         {post.coverImage && (
-          <div className="relative h-56 md:h-72">
+          <div className="relative aspect-[19/9]">
             <Image
               src={post.coverImage}
               alt={post.title}

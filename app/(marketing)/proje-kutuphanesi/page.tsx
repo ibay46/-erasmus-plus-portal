@@ -84,7 +84,7 @@ export default async function ProjeKutuphanesiPage({
           >
             <Card className="h-full overflow-hidden hover:border-accent/50 bg-muted p-0">
               {entries[0].coverImage && (
-                <div className="relative h-40 w-full">
+                <div className="relative aspect-[19/9] w-full">
                   <Image
                     src={entries[0].coverImage}
                     alt={entries[0].title}
@@ -110,7 +110,7 @@ export default async function ProjeKutuphanesiPage({
             <Link key={entry.slug} href={`/proje-kutuphanesi/${entry.slug}`} className="cursor-pointer">
               <Card className="h-full overflow-hidden hover:border-accent/50 p-0">
                 {entry.coverImage && (
-                  <div className="relative h-28 w-full">
+                  <div className="relative aspect-[19/9] w-full">
                     <Image
                       src={entry.coverImage}
                       alt={entry.title}

@@ -42,7 +42,7 @@ export default async function AbHibeProjesiDetayPage({ params }: { params: Promi
         </Link>
         <div className="overflow-hidden rounded-xl border border-border">
           {item.coverImage && (
-            <div className="relative h-56 md:h-72">
+            <div className="relative aspect-[19/9]">
               <Image
                 src={item.coverImage}
                 alt={item.title}

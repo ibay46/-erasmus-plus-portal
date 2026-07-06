@@ -31,7 +31,7 @@ export function CoverImageInput({ defaultValue }: { defaultValue?: string | null
       {url ? (
         <div className="relative mb-3 overflow-hidden rounded-lg border border-border">
           {}
-          <img src={url} alt="Kapak görseli önizleme" className="h-40 w-full object-cover" />
+          <img src={url} alt="Kapak görseli önizleme" className="aspect-[19/9] w-full object-cover" />
           <button
             type="button"
             onClick={() => setUrl("")}

@@ -68,7 +68,7 @@ export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
                 href={item.href}
                 className="cursor-pointer group block overflow-hidden rounded-xl border border-border transition-colors duration-200 hover:border-accent/50"
               >
-                <div className="relative h-40">
+                <div className="relative aspect-[19/9]">
                   {item.coverImage ? (
                     <Image
                       src={item.coverImage}
