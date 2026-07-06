@@ -267,7 +267,7 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventOrganiser" className="block text-sm font-medium mb-1 text-foreground">
-              Activity organised by / Organiser
+              Etkinliği Düzenleyen
             </label>
             <input
               id="eventOrganiser"
@@ -279,7 +279,7 @@ export function PostFormFields({
           </div>
 
           <div>
-            <p className="block text-sm font-medium mb-2 text-foreground">Activity type</p>
+            <p className="block text-sm font-medium mb-2 text-foreground">Etkinlik Türü</p>
             <div className="space-y-3">
               {ACTIVITY_TYPES.map((code) => (
                 <label key={code} className="flex items-start gap-2.5 cursor-pointer select-none">
@@ -306,7 +306,7 @@ export function PostFormFields({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="eventStartDate" className="block text-sm font-medium mb-1 text-foreground">
-                Activity date: Başlangıç
+                Etkinlik Tarihi: Başlangıç
               </label>
               <input
                 id="eventStartDate"
@@ -318,7 +318,7 @@ export function PostFormFields({
             </div>
             <div>
               <label htmlFor="eventEndDate" className="block text-sm font-medium mb-1 text-foreground">
-                Activity date: Bitiş
+                Etkinlik Tarihi: Bitiş
               </label>
               <input
                 id="eventEndDate"
@@ -336,7 +336,7 @@ export function PostFormFields({
                 htmlFor="eventApplicationDeadline"
                 className="block text-sm font-medium mb-1 text-foreground"
               >
-                Application deadline: Başlangıç
+                Başvuru Son Tarihi: Başlangıç
               </label>
               <input
                 id="eventApplicationDeadline"
@@ -351,7 +351,7 @@ export function PostFormFields({
                 htmlFor="eventApplicationDeadlineEnd"
                 className="block text-sm font-medium mb-1 text-foreground"
               >
-                Application deadline: Bitiş
+                Başvuru Son Tarihi: Bitiş
               </label>
               <input
                 id="eventApplicationDeadlineEnd"
@@ -365,7 +365,7 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventSelectionDate" className="block text-sm font-medium mb-1 text-foreground">
-              Date of selection
+              Seçim Tarihi
             </label>
             <input
               id="eventSelectionDate"
@@ -378,7 +378,7 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventTargetFor" className="block text-sm font-medium mb-1 text-foreground">
-              This Training Course is for
+              Bu Eğitim Kimler İçin
             </label>
             <input
               id="eventTargetFor"
@@ -391,7 +391,7 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventTargetFrom" className="block text-sm font-medium mb-1 text-foreground">
-              This Training Course is from
+              Katılımcıların Geldiği Ülke Grubu
             </label>
             <input
               id="eventTargetFrom"
@@ -404,7 +404,7 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventRecommendedFor" className="block text-sm font-medium mb-1 text-foreground">
-              and recommended for
+              Özellikle Şunlar İçin Önerilir
             </label>
             <input
               id="eventRecommendedFor"
@@ -417,7 +417,7 @@ export function PostFormFields({
 
           <div>
             <label htmlFor="eventVenue" className="block text-sm font-medium mb-1 text-foreground">
-              Place
+              Etkinlik Yeri
             </label>
             <input
               id="eventVenue"
