@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { uploadFile } from "@/lib/blobUpload";
 
 export function CoverImageInput({ defaultValue }: { defaultValue?: string | null }) {
   const inputId = useId();
@@ -12,12 +13,8 @@ export function CoverImageInput({ defaultValue }: { defaultValue?: string | null
     setUploading(true);
     setError("");
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Yükleme başarısız");
-      setUrl(data.url);
+      const { url: uploadedUrl } = await uploadFile(file);
+      setUrl(uploadedUrl);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Yükleme başarısız");
     } finally {

@@ -11,6 +11,7 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { useRef, useState } from "react";
 import { VideoExtension } from "@/components/admin/editor/VideoExtension";
+import { uploadFile } from "@/lib/blobUpload";
 
 const buttonClass =
   "cursor-pointer rounded-md px-2.5 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted";
@@ -52,15 +53,7 @@ function Toolbar({ editor }: { editor: Editor }) {
     setUploading(true);
     setUploadError(null);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-
-      if (!res.ok) {
-        setUploadError(data.error ?? "Yükleme başarısız oldu.");
-        return;
-      }
+      const data = await uploadFile(file);
 
       if (data.type.startsWith("image/")) {
         editor.chain().focus().setImage({ src: data.url }).run();
@@ -96,8 +89,8 @@ function Toolbar({ editor }: { editor: Editor }) {
       // Inserted media leaves a NodeSelection on the atom; collapse it to a
       // text cursor at the end so the next insertion doesn't replace it.
       editor.commands.setTextSelection(editor.state.doc.content.size);
-    } catch {
-      setUploadError("Yükleme sırasında bir hata oluştu.");
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Yükleme sırasında bir hata oluştu.");
     } finally {
       setUploading(false);
     }
