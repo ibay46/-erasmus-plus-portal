@@ -285,8 +285,8 @@ export default async function Home() {
         href: `/haberler/${post.slug}`,
         title: post.title,
         dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("tr-TR") : null,
-        badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
         coverImage: post.coverImage,
+        deadline: post.eventApplicationDeadline,
       })),
     },
     {
@@ -299,8 +299,8 @@ export default async function Home() {
         href: `/haberler/${post.slug}`,
         title: post.title,
         dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("tr-TR") : null,
-        badge: POST_CATEGORY_LABELS[post.category] ?? post.category,
         coverImage: post.coverImage,
+        deadline: post.eventApplicationDeadline,
       })),
     },
     {

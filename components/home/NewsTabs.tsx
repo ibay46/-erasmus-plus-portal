@@ -9,7 +9,7 @@ export type NewsItem = {
   href: string;
   title: string;
   dateStr: string | null;
-  badge: string;
+  badge?: string;
   coverImage: string | null;
   deadline?: Date | null;
 };
@@ -92,9 +92,11 @@ export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                  <span className="absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
-                    {item.badge}
-                  </span>
+                  {item.badge && (
+                    <span className="absolute left-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+                      {item.badge}
+                    </span>
+                  )}
                   {item.deadline && <GrantDeadlineBadge deadline={item.deadline} />}
                 </div>
                 <div className="bg-card p-3.5">
