@@ -782,8 +782,9 @@ export function Ka220BudgetCalculator() {
         <Card>
           <h4 className="mb-1 font-medium text-foreground">Kalite Puanı / Ödeme Simülatörü</h4>
           <p className="mb-3 text-xs text-muted-foreground">
-            Rapor aşamasında her iş paketine verilecek kalite puanını (0-100) girin; ağırlıklı proje puanı ve
-            ödenecek tutar otomatik hesaplansın.
+            Rapor aşamasında her iş paketine (Proje Yönetimi hariç) verilecek kalite puanını (0-100) girin;
+            ağırlıklı proje puanı ve ödenecek tutar otomatik hesaplansın. Proje Yönetimi ayrıca puanlanmaz;
+            genel proje puanına göre tam veya genel orandan ödeme alır.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
@@ -804,16 +805,20 @@ export function Ka220BudgetCalculator() {
                     </td>
                     <td className="border border-border p-2 text-right">{formatEur(row.budget)}</td>
                     <td className="border border-border p-2 text-right">
-                      <input
-                        type="number"
-                        min={0}
-                        max={100}
-                        value={row.score}
-                        onChange={(e) =>
-                          updateWorkPackage(row.id, { qualityScore: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })
-                        }
-                        className={`${inputClass} w-20 text-right`}
-                      />
+                      {row.id === "WP1" ? (
+                        <span className="text-xs text-muted-foreground">Puanlanmaz</span>
+                      ) : (
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={row.score}
+                          onChange={(e) =>
+                            updateWorkPackage(row.id, { qualityScore: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })
+                          }
+                          className={`${inputClass} w-20 text-right`}
+                        />
+                      )}
                     </td>
                     <td className="border border-border p-2 text-right">%{row.paymentPercentage}</td>
                     <td className="border border-border p-2 text-right">{formatEur(row.paymentAmount)}</td>

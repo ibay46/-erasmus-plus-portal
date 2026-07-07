@@ -208,7 +208,7 @@ export function generateKa220BudgetPdf(data: Ka220BudgetPdfData) {
     body: data.paymentSimulation.perWorkPackage.map((row) => [
       `${row.id}: ${row.title || (row.id === "WP1" ? "Proje Yönetimi" : "—")}`,
       formatEur(row.budget),
-      String(row.score),
+      row.score < 0 ? "Puanlanmaz" : String(row.score),
       `%${row.paymentPercentage}`,
       formatEur(row.paymentAmount),
     ]),

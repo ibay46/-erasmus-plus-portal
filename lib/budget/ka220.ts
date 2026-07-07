@@ -7,12 +7,14 @@ export type Ka220LumpSum = (typeof KA220_LUMP_SUM_OPTIONS)[number];
 // Proje Yönetimi (WP1) iş paketi, toplam lump sum'ın en fazla %20'sini kapsayabilir.
 export const KA220_PM_MAX_SHARE = 0.2;
 
-// Cooperation Partnerships kalite değerlendirme / hibe ödeme ölçeği (Handbook on the lump sum funding model).
+// Cooperation Partnerships kalite değerlendirme / hibe ödeme ölçeği
+// (Handbook on the lump sum funding model, Call 2026 - Aralık 2025).
 export const KA220_PAYMENT_SCALE = [
   { minScore: 70, percentage: 100 },
   { minScore: 55, percentage: 90 },
   { minScore: 40, percentage: 60 },
-  { minScore: 0, percentage: 30 },
+  { minScore: 10, percentage: 30 },
+  { minScore: 0, percentage: 0 },
 ];
 
 export function getKa220PaymentPercentage(score: number): number {
@@ -138,28 +140,37 @@ export interface PaymentSimulationResult {
   totalPaid: number;
 }
 
-// Cooperation Partnerships kural: proje puanı >=70 ise indirim sadece 70'in altındaki iş paketlerine
-// uygulanır; proje puanı <70 ise indirim tüm hibeye (iş paketi bazında değil) uygulanır.
+// Cooperation Partnerships kural (Handbook, Call 2026):
+// - Proje Yönetimi (WP1) hiç puanlanmaz ve genel proje puanına dahil edilmez; sadece genel proje
+//   puanının eşiği geçip geçmediğine göre tam ya da genel orandan ödeme alır.
+// - Genel proje puanı, WP1 hariç diğer iş paketlerinin bütçe ağırlıklı ortalamasıdır.
+// - Genel puan >=70 ise indirim sadece 70'in altında kalan (WP1 hariç) iş paketlerine uygulanır;
+//   genel puan <70 ise indirim tüm hibeye (iş paketi bazında değil) uygulanır.
 export function simulateKa220Payment(
   workPackages: Ka220WorkPackage[],
   lumpSum: number
 ): PaymentSimulationResult {
-  const totalBudget = getTotalBudget(workPackages) || 1;
+  const scoredWorkPackages = workPackages.filter((wp) => !wp.isProjectManagement);
+  const scoredBudget = getTotalBudget(scoredWorkPackages) || 1;
   const overallScore = Math.round(
-    workPackages.reduce((sum, wp) => sum + wp.qualityScore * (wp.budget || 0), 0) / totalBudget
+    scoredWorkPackages.reduce((sum, wp) => sum + wp.qualityScore * (wp.budget || 0), 0) / scoredBudget
   );
   const overallScoreSufficient = overallScore >= 70;
   const overallPaymentPercentage = getKa220PaymentPercentage(overallScore);
 
   const perWorkPackage = workPackages.map((wp) => {
-    const paymentPercentage = overallScoreSufficient
-      ? getKa220PaymentPercentage(wp.qualityScore)
-      : overallPaymentPercentage;
+    const paymentPercentage = wp.isProjectManagement
+      ? overallScoreSufficient
+        ? 100
+        : overallPaymentPercentage
+      : overallScoreSufficient
+        ? getKa220PaymentPercentage(wp.qualityScore)
+        : overallPaymentPercentage;
     return {
       id: wp.id,
       title: wp.title,
       budget: wp.budget || 0,
-      score: wp.qualityScore,
+      score: wp.isProjectManagement ? -1 : wp.qualityScore,
       paymentPercentage,
       paymentAmount: ((wp.budget || 0) * paymentPercentage) / 100,
     };
