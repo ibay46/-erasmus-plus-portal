@@ -281,6 +281,7 @@ export default async function Home() {
       accentClass: "text-accent",
       seeAllHref: "/salto-youth",
       seeAllLabel: "Tüm SALTO Youth",
+      fallbackCover: { light: "/covers/salto-youth-light.jpg", dark: "/covers/salto-youth-dark.jpg" },
       items: recentSaltoYouth.map((post) => ({
         href: `/haberler/${post.slug}`,
         title: post.title,
