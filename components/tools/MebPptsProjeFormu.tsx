@@ -23,18 +23,14 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-xs font-medium text-muted-foreground print:hidden">{label}</span>
+      <span className="mb-1 block text-xs font-medium text-muted-foreground">{label}</span>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`${inputClass} print:hidden`}
+        className={inputClass}
       />
-      <span className="hidden print:block print:text-sm print:text-foreground">
-        <span className="font-medium">{label}: </span>
-        {value || "—"}
-      </span>
     </label>
   );
 }
@@ -73,67 +69,79 @@ export function MebPptsProjeFormu() {
     setTemalar((prev) => (prev.includes(tema) ? prev.filter((t) => t !== tema) : [...prev, tema]));
   }
 
-  const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString("tr-TR") : "—");
+  const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString("tr-TR") : "");
+
+  async function handleDownloadPdf() {
+    const { generatePptsFormuPdf } = await import("@/lib/pdf/generatePptsFormuPdf");
+    generatePptsFormuPdf({
+      projeDurumu,
+      katilimDurumu,
+      projeninAdi,
+      fonKaynagi,
+      fonSekli,
+      fonSaglayici,
+      digerFonSaglayici,
+      temalarLabel: temalar.join(", "),
+      digerTemalar,
+      baslamaTarihiLabel: fmtDate(baslamaTarihi),
+      bitisTarihiLabel: fmtDate(bitisTarihi),
+      projeTuru,
+      projeTuruDiger,
+      projeNumarasi,
+      konu,
+      toplamButceLabel: toplamButce,
+      harcananButceLabel: harcananButce,
+      paraBirimi,
+      bakanlikBirimleri,
+      digerOrtakPaydaslar,
+      irtibatAd,
+      irtibatSoyad,
+      irtibatTelefon,
+      irtibatEposta,
+    });
+  }
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between print:hidden">
+      <div className="mb-6 flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
           Formu doldurup PDF olarak indirin; PPTS (ppts.meb.gov.tr) üzerinden proje girişi yaparken elinizin
           altında bulunsun.
         </p>
         <button
           type="button"
-          onClick={() => window.print()}
+          onClick={handleDownloadPdf}
           className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
         >
           PDF Olarak İndir
         </button>
       </div>
 
-      <div className="print-isolate space-y-6 print:space-y-4">
-        <Card className="print:border-none print:p-0 print:shadow-none print:bg-transparent">
-          <h3 className="text-center font-semibold text-foreground">MEB PROJE VE PROTOKOL TAKİP SİSTEMİ (PPTS)</h3>
-          <h3 className="mb-2 text-center font-semibold text-foreground">PROJE BİLGİ FORMU</h3>
-        </Card>
-
-        <Card className="print:border-none print:p-0 print:shadow-none print:bg-transparent">
-          <h4 className="mb-3 font-medium text-foreground print:hidden">Proje Bilgileri</h4>
-          <p className="mb-3 hidden font-semibold text-foreground print:block">Proje Bilgileri</p>
+      <div className="space-y-6">
+        <Card>
+          <h4 className="mb-3 font-medium text-foreground">Proje Bilgileri</h4>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-1 block text-xs font-medium text-muted-foreground print:hidden">
-                Proje Durumu
-              </span>
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">Proje Durumu</span>
               <select
                 value={projeDurumu}
                 onChange={(e) => setProjeDurumu(e.target.value)}
-                className={`${inputClass} print:hidden`}
+                className={inputClass}
               >
                 <option>Devam Eden Proje</option>
                 <option>Tamamlanan Proje</option>
               </select>
-              <span className="hidden print:block print:text-sm print:text-foreground">
-                <span className="font-medium">Proje Durumu: </span>
-                {projeDurumu}
-              </span>
             </label>
             <label className="block">
-              <span className="mb-1 block text-xs font-medium text-muted-foreground print:hidden">
-                Katılım Durumu
-              </span>
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">Katılım Durumu</span>
               <select
                 value={katilimDurumu}
                 onChange={(e) => setKatilimDurumu(e.target.value)}
-                className={`${inputClass} print:hidden`}
+                className={inputClass}
               >
                 <option>Koordinatör</option>
                 <option>Ortak</option>
               </select>
-              <span className="hidden print:block print:text-sm print:text-foreground">
-                <span className="font-medium">Katılım Durumu: </span>
-                {katilimDurumu}
-              </span>
             </label>
           </div>
 
@@ -154,8 +162,8 @@ export function MebPptsProjeFormu() {
           </div>
 
           <div className="mt-4">
-            <p className="mb-2 text-xs font-medium text-muted-foreground print:hidden">Tema</p>
-            <div className="flex flex-wrap gap-x-5 gap-y-2 print:hidden">
+            <p className="mb-2 text-xs font-medium text-muted-foreground">Tema</p>
+            <div className="flex flex-wrap gap-x-5 gap-y-2">
               {TEMALAR.map((tema) => (
                 <label key={tema} className="flex cursor-pointer select-none items-center gap-2">
                   <input
@@ -168,10 +176,6 @@ export function MebPptsProjeFormu() {
                 </label>
               ))}
             </div>
-            <p className="hidden text-sm text-foreground print:block">
-              <span className="font-medium">Tema: </span>
-              {temalar.length > 0 ? temalar.join(", ") : "—"}
-            </p>
           </div>
 
           <div className="mt-3">
@@ -179,42 +183,13 @@ export function MebPptsProjeFormu() {
           </div>
 
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-1 block text-xs font-medium text-muted-foreground print:hidden">
-                Başlama Tarihi
-              </span>
-              <input
-                type="date"
-                value={baslamaTarihi}
-                onChange={(e) => setBaslamaTarihi(e.target.value)}
-                className={`${inputClass} print:hidden`}
-              />
-              <span className="hidden print:block print:text-sm print:text-foreground">
-                <span className="font-medium">Başlama Tarihi: </span>
-                {fmtDate(baslamaTarihi)}
-              </span>
-            </label>
-            <label className="block">
-              <span className="mb-1 block text-xs font-medium text-muted-foreground print:hidden">
-                Bitiş Tarihi
-              </span>
-              <input
-                type="date"
-                value={bitisTarihi}
-                onChange={(e) => setBitisTarihi(e.target.value)}
-                className={`${inputClass} print:hidden`}
-              />
-              <span className="hidden print:block print:text-sm print:text-foreground">
-                <span className="font-medium">Bitiş Tarihi: </span>
-                {fmtDate(bitisTarihi)}
-              </span>
-            </label>
+            <Field label="Başlama Tarihi" value={baslamaTarihi} onChange={setBaslamaTarihi} type="date" />
+            <Field label="Bitiş Tarihi" value={bitisTarihi} onChange={setBitisTarihi} type="date" />
           </div>
         </Card>
 
-        <Card className="print:break-inside-avoid print:border-none print:p-0 print:shadow-none print:bg-transparent">
-          <h4 className="mb-3 font-medium text-foreground print:hidden">Proje Künyesi</h4>
-          <p className="mb-3 hidden font-semibold text-foreground print:block">Proje Künyesi</p>
+        <Card>
+          <h4 className="mb-3 font-medium text-foreground">Proje Künyesi</h4>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Proje Türü" value={projeTuru} onChange={setProjeTuru} placeholder="örn. KA2" />
             <Field label="Proje Türü (Diğer)" value={projeTuruDiger} onChange={setProjeTuruDiger} />
@@ -228,9 +203,8 @@ export function MebPptsProjeFormu() {
           </div>
         </Card>
 
-        <Card className="print:break-inside-avoid print:border-none print:p-0 print:shadow-none print:bg-transparent">
-          <h4 className="mb-3 font-medium text-foreground print:hidden">Bütçe</h4>
-          <p className="mb-3 hidden font-semibold text-foreground print:block">Bütçe</p>
+        <Card>
+          <h4 className="mb-3 font-medium text-foreground">Bütçe</h4>
           <div className="grid gap-3 sm:grid-cols-3">
             <Field
               label="Projenin Toplam Bütçesi"
@@ -250,9 +224,8 @@ export function MebPptsProjeFormu() {
           </div>
         </Card>
 
-        <Card className="print:break-inside-avoid print:border-none print:p-0 print:shadow-none print:bg-transparent">
-          <h4 className="mb-3 font-medium text-foreground print:hidden">Proje Ortakları / Paydaşları</h4>
-          <p className="mb-3 hidden font-semibold text-foreground print:block">Proje Ortakları / Paydaşları</p>
+        <Card>
+          <h4 className="mb-3 font-medium text-foreground">Proje Ortakları / Paydaşları</h4>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field
               label="Bakanlık Birimleri"
@@ -264,9 +237,8 @@ export function MebPptsProjeFormu() {
           </div>
         </Card>
 
-        <Card className="print:break-inside-avoid print:border-none print:p-0 print:shadow-none print:bg-transparent">
-          <h4 className="mb-3 font-medium text-foreground print:hidden">Proje İrtibat Kişisi</h4>
-          <p className="mb-3 hidden font-semibold text-foreground print:block">Proje İrtibat Kişisi</p>
+        <Card>
+          <h4 className="mb-3 font-medium text-foreground">Proje İrtibat Kişisi</h4>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Ad" value={irtibatAd} onChange={setIrtibatAd} />
             <Field label="Soyad" value={irtibatSoyad} onChange={setIrtibatSoyad} />
