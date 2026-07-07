@@ -64,7 +64,7 @@ export const TOOLS: ToolContent[] = [
     href: "/araclar/ka220-butce-planlama",
     title: "KA220 Bütçe ve İş Paketi Planlama Aracı",
     description:
-      "KA220 İşbirliği Ortaklıkları sabit lump sum (120.000/250.000/400.000 €) ile finanse edilir; seçtiğiniz tutarı iş paketlerine ve ortaklara dağıtın, görev dağılımını planlayın ve kalite puanına göre ödeme simülasyonu yapın.",
+      "KA220 İşbirliği Ortaklıkları sabit lump sum (120.000/250.000/400.000 €) ile finanse edilir; seçtiğiniz tutarı iş paketlerine ve ortaklara dağıtın, görev dağılımını planlayın.",
     category: "proje-oncesi",
   },
   {

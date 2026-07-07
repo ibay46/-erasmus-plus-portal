@@ -7,21 +7,6 @@ export type Ka220LumpSum = (typeof KA220_LUMP_SUM_OPTIONS)[number];
 // Proje Yönetimi (WP1) iş paketi, toplam lump sum'ın en fazla %20'sini kapsayabilir.
 export const KA220_PM_MAX_SHARE = 0.2;
 
-// Cooperation Partnerships kalite değerlendirme / hibe ödeme ölçeği
-// (Handbook on the lump sum funding model, Call 2026 - Aralık 2025).
-export const KA220_PAYMENT_SCALE = [
-  { minScore: 70, percentage: 100 },
-  { minScore: 55, percentage: 90 },
-  { minScore: 40, percentage: 60 },
-  { minScore: 10, percentage: 30 },
-  { minScore: 0, percentage: 0 },
-];
-
-export function getKa220PaymentPercentage(score: number): number {
-  const tier = KA220_PAYMENT_SCALE.find((t) => score >= t.minScore);
-  return tier ? tier.percentage : 0;
-}
-
 export interface Ka220Organisation {
   id: string;
   role: "coordinator" | "partner";
@@ -57,7 +42,6 @@ export interface Ka220WorkPackage {
   budgetJustification: string;
   activities: Ka220Activity[];
   orgAllocations: Record<string, number>;
-  qualityScore: number;
 }
 
 export function getWpActivitiesTotal(wp: Ka220WorkPackage): number {
@@ -121,74 +105,4 @@ export function getTaskDistribution(
     }
     return { orgId: org.id, leadCount, participantCount };
   });
-}
-
-export interface PaymentSimulationResult {
-  overallScore: number;
-  overallScoreSufficient: boolean;
-  overallPaymentPercentage: number;
-  overallPaymentAmount: number;
-  effectivePaymentPercentage: number;
-  perWorkPackage: {
-    id: string;
-    title: string;
-    budget: number;
-    score: number;
-    paymentPercentage: number;
-    paymentAmount: number;
-  }[];
-  totalPaid: number;
-}
-
-// Cooperation Partnerships kural (Handbook, Call 2026):
-// - Proje Yönetimi (WP1) hiç puanlanmaz ve genel proje puanına dahil edilmez; sadece genel proje
-//   puanının eşiği geçip geçmediğine göre tam ya da genel orandan ödeme alır.
-// - Genel proje puanı, WP1 hariç diğer iş paketlerinin bütçe ağırlıklı ortalamasıdır.
-// - Genel puan >=70 ise indirim sadece 70'in altında kalan (WP1 hariç) iş paketlerine uygulanır;
-//   genel puan <70 ise indirim tüm hibeye (iş paketi bazında değil) uygulanır.
-export function simulateKa220Payment(
-  workPackages: Ka220WorkPackage[],
-  lumpSum: number
-): PaymentSimulationResult {
-  const scoredWorkPackages = workPackages.filter((wp) => !wp.isProjectManagement);
-  const scoredBudget = getTotalBudget(scoredWorkPackages) || 1;
-  const overallScore = Math.round(
-    scoredWorkPackages.reduce((sum, wp) => sum + wp.qualityScore * (wp.budget || 0), 0) / scoredBudget
-  );
-  const overallScoreSufficient = overallScore >= 70;
-  const overallPaymentPercentage = getKa220PaymentPercentage(overallScore);
-
-  const perWorkPackage = workPackages.map((wp) => {
-    const paymentPercentage = wp.isProjectManagement
-      ? overallScoreSufficient
-        ? 100
-        : overallPaymentPercentage
-      : overallScoreSufficient
-        ? getKa220PaymentPercentage(wp.qualityScore)
-        : overallPaymentPercentage;
-    return {
-      id: wp.id,
-      title: wp.title,
-      budget: wp.budget || 0,
-      score: wp.isProjectManagement ? -1 : wp.qualityScore,
-      paymentPercentage,
-      paymentAmount: ((wp.budget || 0) * paymentPercentage) / 100,
-    };
-  });
-
-  const totalPaid = overallScoreSufficient
-    ? perWorkPackage.reduce((sum, wp) => sum + wp.paymentAmount, 0)
-    : (lumpSum * overallPaymentPercentage) / 100;
-
-  const effectivePaymentPercentage = lumpSum ? Math.round((totalPaid / lumpSum) * 1000) / 10 : 0;
-
-  return {
-    overallScore,
-    overallScoreSufficient,
-    overallPaymentPercentage,
-    overallPaymentAmount: (lumpSum * overallPaymentPercentage) / 100,
-    effectivePaymentPercentage,
-    perWorkPackage,
-    totalPaid,
-  };
 }

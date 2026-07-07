@@ -9,7 +9,6 @@ import {
   getWpOrgAllocationTotal,
   getOrganisationTotals,
   getTaskDistribution,
-  simulateKa220Payment,
   type Ka220Organisation,
   type Ka220WorkPackage,
   type Ka220Activity,
@@ -105,7 +104,6 @@ export function Ka220BudgetCalculator() {
       budgetJustification: "",
       activities: [],
       orgAllocations: {},
-      qualityScore: 100,
     },
     {
       id: "WP2",
@@ -120,7 +118,6 @@ export function Ka220BudgetCalculator() {
       budgetJustification: "",
       activities: [],
       orgAllocations: {},
-      qualityScore: 100,
     },
   ]);
 
@@ -179,7 +176,6 @@ export function Ka220BudgetCalculator() {
         budgetJustification: "",
         activities: [],
         orgAllocations: {},
-        qualityScore: 100,
       },
     ]);
   }
@@ -268,7 +264,6 @@ export function Ka220BudgetCalculator() {
   const budgetMatchesLumpSum = totalBudget === lumpSum;
   const orgTotals = getOrganisationTotals(organisations, workPackages);
   const taskDistribution = getTaskDistribution(organisations, workPackages);
-  const paymentSimulation = simulateKa220Payment(workPackages, lumpSum);
 
   const orgName = (id: string) => organisations.find((o) => o.id === id)?.name || "İsimsiz kuruluş";
 
@@ -282,7 +277,6 @@ export function Ka220BudgetCalculator() {
       workPackages,
       orgTotals,
       taskDistribution,
-      paymentSimulation,
     });
   }
 
@@ -775,76 +769,6 @@ export function Ka220BudgetCalculator() {
           <p className="mt-2 text-xs text-muted-foreground">
             Değerlendiriciler &quot;ortaklık ve iş birliği düzenlemeleri&quot; kriterinde tüm kuruluşların aktif
             katkısını arar; bu tablo görev dağılımının dengeli olup olmadığını görmenize yardımcı olur.
-          </p>
-        </Card>
-
-        {/* Kalite Puanı / Ödeme Simülatörü */}
-        <Card>
-          <h4 className="mb-1 font-medium text-foreground">Kalite Puanı / Ödeme Simülatörü</h4>
-          <p className="mb-3 text-xs text-muted-foreground">
-            Rapor aşamasında her iş paketine (Proje Yönetimi hariç) verilecek kalite puanını (0-100) girin;
-            ağırlıklı proje puanı ve ödenecek tutar otomatik hesaplansın. Proje Yönetimi ayrıca puanlanmaz;
-            genel proje puanına göre tam veya genel orandan ödeme alır.
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr>
-                  <th className="border border-border bg-muted p-2 text-left">İş Paketi</th>
-                  <th className="border border-border bg-muted p-2 text-right">Bütçe</th>
-                  <th className="border border-border bg-muted p-2 text-right">Kalite Puanı (0-100)</th>
-                  <th className="border border-border bg-muted p-2 text-right">Ödeme %</th>
-                  <th className="border border-border bg-muted p-2 text-right">Ödenecek Tutar</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paymentSimulation.perWorkPackage.map((row) => (
-                  <tr key={row.id}>
-                    <td className="border border-border p-2">
-                      {row.id}: {row.title || (row.id === "WP1" ? "Proje Yönetimi" : "—")}
-                    </td>
-                    <td className="border border-border p-2 text-right">{formatEur(row.budget)}</td>
-                    <td className="border border-border p-2 text-right">
-                      {row.id === "WP1" ? (
-                        <span className="text-xs text-muted-foreground">Puanlanmaz</span>
-                      ) : (
-                        <input
-                          type="number"
-                          min={0}
-                          max={100}
-                          value={row.score}
-                          onChange={(e) =>
-                            updateWorkPackage(row.id, { qualityScore: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })
-                          }
-                          className={`${inputClass} w-20 text-right`}
-                        />
-                      )}
-                    </td>
-                    <td className="border border-border p-2 text-right">%{row.paymentPercentage}</td>
-                    <td className="border border-border p-2 text-right">{formatEur(row.paymentAmount)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-lg border border-border p-3 text-center">
-              <p className="text-xs text-muted-foreground">Ağırlıklı Proje Puanı</p>
-              <p className="text-lg font-semibold text-foreground">{paymentSimulation.overallScore}</p>
-            </div>
-            <div className="rounded-lg border border-border p-3 text-center">
-              <p className="text-xs text-muted-foreground">Toplam Hibenin Ödenecek Oranı</p>
-              <p className="text-lg font-semibold text-foreground">%{paymentSimulation.effectivePaymentPercentage}</p>
-            </div>
-            <div className="rounded-lg border border-border p-3 text-center">
-              <p className="text-xs text-muted-foreground">Ödenecek Toplam Tutar</p>
-              <p className="text-lg font-semibold text-foreground">{formatEur(paymentSimulation.totalPaid)}</p>
-            </div>
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            {paymentSimulation.overallScoreSufficient
-              ? "Proje puanı ≥70 olduğu için indirim yalnızca 70'in altında kalan iş paketlerine uygulanır."
-              : "Proje puanı 70'in altında olduğu için indirim tüm hibeye (iş paketi bazında değil) uygulanır."}
           </p>
         </Card>
       </div>

@@ -1,13 +1,7 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { workSansRegularBase64, workSansBoldBase64 } from "./workSansFont";
-import type {
-  Ka220Organisation,
-  Ka220WorkPackage,
-  OrgTotals,
-  TaskDistributionRow,
-  PaymentSimulationResult,
-} from "@/lib/budget/ka220";
+import type { Ka220Organisation, Ka220WorkPackage, OrgTotals, TaskDistributionRow } from "@/lib/budget/ka220";
 
 const PAGE_WIDTH = 210;
 const PAGE_HEIGHT = 297;
@@ -22,7 +16,6 @@ export interface Ka220BudgetPdfData {
   workPackages: Ka220WorkPackage[];
   orgTotals: OrgTotals[];
   taskDistribution: TaskDistributionRow[];
-  paymentSimulation: PaymentSimulationResult;
 }
 
 function registerFont(doc: jsPDF) {
@@ -199,22 +192,6 @@ export function generateKa220BudgetPdf(data: Ka220BudgetPdfData) {
       afterTable();
     }
   }
-
-  sectionHeading("Kalite Puanı / Ödeme Simülasyonu");
-  autoTable(doc, {
-    ...tableDefaults,
-    startY: cursorY,
-    head: [["İş Paketi", "Bütçe", "Kalite Puanı", "Ödeme %", "Ödenecek Tutar"]],
-    body: data.paymentSimulation.perWorkPackage.map((row) => [
-      `${row.id}: ${row.title || (row.id === "WP1" ? "Proje Yönetimi" : "—")}`,
-      formatEur(row.budget),
-      row.score < 0 ? "Puanlanmaz" : String(row.score),
-      `%${row.paymentPercentage}`,
-      formatEur(row.paymentAmount),
-    ]),
-    foot: [["Ağırlıklı Proje Puanı", "", String(data.paymentSimulation.overallScore), `%${data.paymentSimulation.effectivePaymentPercentage}`, formatEur(data.paymentSimulation.totalPaid)]],
-    footStyles: { fontStyle: "bold", textColor: 20, fillColor: [248, 249, 251] },
-  });
 
   doc.save("ka220-butce-plani.pdf");
 }
