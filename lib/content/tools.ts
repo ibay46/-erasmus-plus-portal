@@ -76,7 +76,7 @@ export const TOOLS: ToolContent[] = [
     href: "/araclar/meb-ppts-proje-formu",
     title: "MEB Proje ve Protokol Takip Sistemi (PPTS) Formu",
     description:
-      "ppts.meb.gov.tr üzerinden proje kaydı girerken ihtiyacınız olan tüm bilgileri (proje bilgileri, künye, bütçe, ortaklar, irtibat kişisi) tek formda toplayın ve PDF çıktısını yanınızda bulundurun.",
+      "PPTS'ye veri girişi il/ilçe millî eğitim müdürlüklerinin yetkisinde olduğu için, okulunuzun projesine ait bilgileri (proje bilgileri, künye, bütçe, ortaklar, irtibat kişisi) tek formda toplayıp PDF çıktısını il/ilçe MEB'inize iletin.",
     category: "proje-asamasi",
   },
   {

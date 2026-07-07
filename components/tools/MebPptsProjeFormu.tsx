@@ -105,8 +105,8 @@ export function MebPptsProjeFormu() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          Formu doldurup PDF olarak indirin; PPTS (ppts.meb.gov.tr) üzerinden proje girişi yaparken elinizin
-          altında bulunsun.
+          Formu doldurup PDF olarak indirin ve PPTS&apos;ye veri girişini yapacak il/ilçe millî
+          eğitim müdürlüğünüze iletin.
         </p>
         <button
           type="button"

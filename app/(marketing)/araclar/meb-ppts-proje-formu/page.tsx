@@ -5,7 +5,7 @@ import { isToolPublished } from "@/lib/toolVisibility";
 export const metadata = {
   title: "MEB Proje ve Protokol Takip Sistemi (PPTS) Formu | Erasmus+ Portal",
   description:
-    "ppts.meb.gov.tr üzerinden proje kaydı girerken ihtiyacınız olan proje bilgileri, künye, bütçe, ortaklar ve irtibat kişisi bilgilerini tek formda toplayın; PDF çıktısını alın.",
+    "PPTS'ye veri girişi il/ilçe millî eğitim müdürlüklerinin yetkisinde olduğu için, okulunuzun proje bilgileri, künye, bütçe, ortaklar ve irtibat kişisi bilgilerini tek formda toplayıp PDF çıktısını il/ilçe MEB'inize iletmek üzere hazırlayın.",
 };
 
 export default async function MebPptsProjeFormuPage() {
@@ -17,9 +17,10 @@ export default async function MebPptsProjeFormuPage() {
         MEB Proje ve Protokol Takip Sistemi (PPTS) Formu
       </h1>
       <p className="text-muted-foreground mb-4 max-w-2xl">
-        PPTS (ppts.meb.gov.tr) üzerinden Erasmus+ projenizin kaydını girerken sorulan bilgileri
-        (proje bilgileri, künye, bütçe, ortaklar/paydaşlar, irtibat kişisi) önceden bu formda
-        toplayın.
+        PPTS&apos;ye (ppts.meb.gov.tr) veri girişi il/ilçe millî eğitim müdürlüklerinin yetkisinde
+        olduğu için okullar sisteme doğrudan giriş yapamaz. Erasmus+ projenizle ilgili PPTS&apos;de
+        istenen bilgileri (proje bilgileri, künye, bütçe, ortaklar/paydaşlar, irtibat kişisi) bu
+        formda toplayıp il/ilçe MEB&apos;inize iletin; girişi onlar sizin adınıza yapacaktır.
       </p>
       <p className="text-xs text-muted-foreground mb-8 max-w-2xl">
         Hazır olduğunda &quot;PDF Olarak İndir&quot; ile gerçek bir PDF dosyası oluşur (koyu/açık
