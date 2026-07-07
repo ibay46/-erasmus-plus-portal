@@ -4,9 +4,16 @@ import { notFound } from "next/navigation";
 import { getPostBySlug, getRecentPostsInCategory } from "@/lib/posts";
 import { POST_CATEGORY_LABELS, getCategoryListRoute } from "@/lib/content/postCategories";
 import { ACTIVITY_TYPE_LABELS } from "@/lib/content/activityTypes";
+import { EVENT_SECTOR_LABELS } from "@/lib/content/eventSectors";
+import { EVENT_SYMBOL_LABELS } from "@/lib/content/eventSymbols";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocumentPreview";
 import { JsonLd } from "@/components/seo/JsonLd";
+
+const EVENT_FORMAT_LABELS: Record<string, string> = {
+  PHYSICAL: "Yüz yüze",
+  ONLINE: "Online",
+};
 
 function formatDate(date: Date) {
   return new Date(date).toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -36,6 +43,8 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
 
   const relatedPosts = await getRecentPostsInCategory(post.category, post.id);
   const backRoute = getCategoryListRoute(post.category);
+  const eventSectors = post.eventSectors.split(",").filter(Boolean);
+  const eventSymbols = post.eventSymbols.split(",").filter(Boolean);
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -188,6 +197,70 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
               <div>
                 <dt className="text-xs text-muted-foreground">Etkinlik Yeri</dt>
                 <dd className="text-foreground">{post.eventVenue}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      ) : post.category === "SALTO_EDUCATION_TRAINING" ? (
+        <div className="sticky top-24 space-y-4 rounded-xl border border-border bg-card p-5">
+          <p className="text-sm font-medium text-foreground">Etkinlik Bilgileri</p>
+          <dl className="space-y-3 text-sm">
+            {post.eventFormat && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinlik Türü</dt>
+                <dd className="text-foreground">{EVENT_FORMAT_LABELS[post.eventFormat] ?? post.eventFormat}</dd>
+              </div>
+            )}
+            {post.eventStartDate && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinlik Tarihi: Başlangıç</dt>
+                <dd className="text-foreground">{formatDate(post.eventStartDate)}</dd>
+              </div>
+            )}
+            {post.eventEndDate && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinlik Tarihi: Bitiş</dt>
+                <dd className="text-foreground">{formatDate(post.eventEndDate)}</dd>
+              </div>
+            )}
+            {post.eventApplicationDeadline && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Başvuru Son Tarihi</dt>
+                <dd className="text-foreground">{formatDate(post.eventApplicationDeadline)}</dd>
+              </div>
+            )}
+            {eventSectors.length > 0 && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Sektör (birden fazla seçilebilir)</dt>
+                <dd className="text-foreground">
+                  {eventSectors.map((code) => EVENT_SECTOR_LABELS[code] ?? code).join(", ")}
+                </dd>
+              </div>
+            )}
+            {post.eventVenue && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinlik Yeri</dt>
+                <dd className="text-foreground">{post.eventVenue}</dd>
+              </div>
+            )}
+            {post.eventPriority && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Öncelik</dt>
+                <dd className="text-foreground">{post.eventPriority}</dd>
+              </div>
+            )}
+            {post.eventLanguage && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Dil</dt>
+                <dd className="text-foreground">{post.eventLanguage}</dd>
+              </div>
+            )}
+            {eventSymbols.length > 0 && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Semboller (opsiyonel)</dt>
+                <dd className="text-foreground">
+                  {eventSymbols.map((code) => EVENT_SYMBOL_LABELS[code] ?? code).join(", ")}
+                </dd>
               </div>
             )}
           </dl>
