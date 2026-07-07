@@ -303,7 +303,7 @@ export function PostFormFields({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div>
               <label htmlFor="eventStartDate" className="block text-sm font-medium mb-1 text-foreground">
                 Etkinlik Tarihi: Başlangıç
@@ -328,9 +328,6 @@ export function PostFormFields({
                 className={inputClass}
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label
                 htmlFor="eventApplicationDeadline"
@@ -361,19 +358,18 @@ export function PostFormFields({
                 className={inputClass}
               />
             </div>
-          </div>
-
-          <div>
-            <label htmlFor="eventSelectionDate" className="block text-sm font-medium mb-1 text-foreground">
-              Seçim Tarihi
-            </label>
-            <input
-              id="eventSelectionDate"
-              name="eventSelectionDate"
-              type="date"
-              defaultValue={toDateInputValue(defaultValues?.eventSelectionDate)}
-              className={inputClass}
-            />
+            <div>
+              <label htmlFor="eventSelectionDate" className="block text-sm font-medium mb-1 text-foreground">
+                Seçim Tarihi
+              </label>
+              <input
+                id="eventSelectionDate"
+                name="eventSelectionDate"
+                type="date"
+                defaultValue={toDateInputValue(defaultValues?.eventSelectionDate)}
+                className={inputClass}
+              />
+            </div>
           </div>
 
           <div>
