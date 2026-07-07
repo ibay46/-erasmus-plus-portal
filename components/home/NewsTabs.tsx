@@ -21,7 +21,7 @@ export type NewsTab = {
   seeAllHref: string;
   seeAllLabel: string;
   items: NewsItem[];
-  fallbackCover?: { light: string; dark: string };
+  fallbackCover?: { light: string; dark?: string };
 };
 
 export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
@@ -87,15 +87,17 @@ export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
                         alt={item.title}
                         fill
                         sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                        className="object-cover dark:hidden"
+                        className={`object-cover ${active.fallbackCover.dark ? "dark:hidden" : ""}`}
                       />
-                      <Image
-                        src={active.fallbackCover.dark}
-                        alt={item.title}
-                        fill
-                        sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                        className="hidden object-cover dark:block"
-                      />
+                      {active.fallbackCover.dark && (
+                        <Image
+                          src={active.fallbackCover.dark}
+                          alt={item.title}
+                          fill
+                          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                          className="hidden object-cover dark:block"
+                        />
+                      )}
                     </>
                   ) : (
                     <div className="absolute inset-0 bg-muted">

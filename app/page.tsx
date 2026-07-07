@@ -296,6 +296,7 @@ export default async function Home() {
       accentClass: "text-accent-warm",
       seeAllHref: "/salto-egitim",
       seeAllLabel: "Tüm SALTO E&T",
+      fallbackCover: { light: "/covers/salto-egitim.jpg" },
       items: recentSaltoEgitim.map((post) => ({
         href: `/haberler/${post.slug}`,
         title: post.title,
