@@ -73,6 +73,13 @@ export const TOOLS: ToolContent[] = [
     category: "proje-asamasi",
   },
   {
+    href: "/araclar/proje-dosyasi-acilmasi",
+    title: "Proje Dosyası Açılması Dilekçesi",
+    description:
+      "Hibe onayı sonrası kurumunuzda proje dosyasının açılması için gereken dilekçeyi ve proje bilgi tablosunu kendi proje bilgilerinizle doldurup PDF olarak indirin.",
+    category: "proje-asamasi",
+  },
+  {
     href: "/araclar/meb-ppts-proje-formu",
     title: "MEB Proje ve Protokol Takip Sistemi (PPTS) Formu",
     description:
