@@ -7,6 +7,8 @@ const MARGIN_X = 15;
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN_X * 2;
 
 export interface PptsFormuPdfData {
+  kurumAdi: string;
+  kurumKodu: string;
   projeDurumu: string;
   katilimDurumu: string;
   projeninAdi: string;
@@ -101,6 +103,15 @@ export function generatePptsFormuPdf(data: PptsFormuPdfData) {
     doc.text(title, MARGIN_X, cursorY);
     cursorY += 5;
   }
+
+  sectionHeading("Kurum Bilgileri");
+  autoTable(doc, {
+    ...tableDefaults,
+    startY: cursorY,
+    body: [row2("Kurum Adı", data.kurumAdi, "Kurum Kodu", data.kurumKodu)],
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cursorY = (doc as any).lastAutoTable.finalY + 8;
 
   sectionHeading("Proje Bilgileri");
   autoTable(doc, {

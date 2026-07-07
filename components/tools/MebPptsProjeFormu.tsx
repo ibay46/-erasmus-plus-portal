@@ -36,6 +36,9 @@ function Field({
 }
 
 export function MebPptsProjeFormu() {
+  const [kurumAdi, setKurumAdi] = useState("");
+  const [kurumKodu, setKurumKodu] = useState("");
+
   const [projeDurumu, setProjeDurumu] = useState("Devam Eden Proje");
   const [katilimDurumu, setKatilimDurumu] = useState("Koordinatör");
   const [projeninAdi, setProjeninAdi] = useState("");
@@ -74,6 +77,8 @@ export function MebPptsProjeFormu() {
   async function handleDownloadPdf() {
     const { generatePptsFormuPdf } = await import("@/lib/pdf/generatePptsFormuPdf");
     generatePptsFormuPdf({
+      kurumAdi,
+      kurumKodu,
       projeDurumu,
       katilimDurumu,
       projeninAdi,
@@ -118,6 +123,14 @@ export function MebPptsProjeFormu() {
       </div>
 
       <div className="space-y-6">
+        <Card>
+          <h4 className="mb-3 font-medium text-foreground">Kurum Bilgileri</h4>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Kurum Adı" value={kurumAdi} onChange={setKurumAdi} placeholder="örn. Atatürk Ortaokulu" />
+            <Field label="Kurum Kodu" value={kurumKodu} onChange={setKurumKodu} placeholder="örn. 123456" />
+          </div>
+        </Card>
+
         <Card>
           <h4 className="mb-3 font-medium text-foreground">Proje Bilgileri</h4>
           <div className="grid gap-3 sm:grid-cols-2">
