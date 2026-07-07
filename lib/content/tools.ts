@@ -73,6 +73,13 @@ export const TOOLS: ToolContent[] = [
     category: "proje-asamasi",
   },
   {
+    href: "/araclar/meb-ppts-proje-formu",
+    title: "MEB Proje ve Protokol Takip Sistemi (PPTS) Formu",
+    description:
+      "ppts.meb.gov.tr üzerinden proje kaydı girerken ihtiyacınız olan tüm bilgileri (proje bilgileri, künye, bütçe, ortaklar, irtibat kişisi) tek formda toplayın ve PDF çıktısını yanınızda bulundurun.",
+    category: "proje-asamasi",
+  },
+  {
     href: "/araclar/yolluk-bildirimi",
     title: "Geçici Görev Yolluğu Bildirimi",
     description: "Hareketlilik sonrası kurumunuza sunacağınız yolluk bildirimini (M.Y.H.B.Y. Örnek No: 27) doldurun, tutarlar otomatik hesaplansın.",
