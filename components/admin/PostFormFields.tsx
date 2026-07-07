@@ -137,7 +137,7 @@ export function PostFormFields({
             </select>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div>
               <label htmlFor="eventStartDate" className="block text-sm font-medium mb-1 text-foreground">
                 Etkinlik Tarihi: Başlangıç
@@ -159,6 +159,21 @@ export function PostFormFields({
                 name="eventEndDate"
                 type="date"
                 defaultValue={toDateInputValue(defaultValues?.eventEndDate)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="eventApplicationDeadline"
+                className="block text-sm font-medium mb-1 text-foreground"
+              >
+                Başvuru Son Tarihi
+              </label>
+              <input
+                id="eventApplicationDeadline"
+                name="eventApplicationDeadline"
+                type="date"
+                defaultValue={toDateInputValue(defaultValues?.eventApplicationDeadline)}
                 className={inputClass}
               />
             </div>
@@ -206,22 +221,6 @@ export function PostFormFields({
               name="eventPriority"
               placeholder="örn. Increase the quality of programme implementation (2021-27)"
               defaultValue={defaultValues?.eventPriority ?? ""}
-              className={inputClass}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="eventApplicationDeadline"
-              className="block text-sm font-medium mb-1 text-foreground"
-            >
-              Başvuru Son Tarihi
-            </label>
-            <input
-              id="eventApplicationDeadline"
-              name="eventApplicationDeadline"
-              type="date"
-              defaultValue={toDateInputValue(defaultValues?.eventApplicationDeadline)}
               className={inputClass}
             />
           </div>
