@@ -3,9 +3,14 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getPostBySlug, getRecentPostsInCategory } from "@/lib/posts";
 import { POST_CATEGORY_LABELS, getCategoryListRoute } from "@/lib/content/postCategories";
+import { ACTIVITY_TYPE_LABELS } from "@/lib/content/activityTypes";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProseWithDocumentPreview } from "@/components/marketing/ProseWithDocumentPreview";
 import { JsonLd } from "@/components/seo/JsonLd";
+
+function formatDate(date: Date) {
+  return new Date(date).toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -114,27 +119,101 @@ export default async function HaberDetayPage({ params }: { params: Promise<{ slu
     </div>
 
     <aside>
-      <div className="sticky top-24">
-        <p className="mb-3 text-sm font-medium text-foreground">
-          {POST_CATEGORY_LABELS[post.category] ?? post.category} &mdash; Son Haberler
-        </p>
-        {relatedPosts.length > 0 ? (
-          <ul className="space-y-3 border-l border-border pl-4">
-            {relatedPosts.map((related) => (
-              <li key={related.id}>
-                <Link
-                  href={`/haberler/${related.slug}`}
-                  className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
-                >
-                  {related.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground">Bu kategoride başka haber yok.</p>
-        )}
-      </div>
+      {post.category === "SALTO_YOUTH" ? (
+        <div className="sticky top-24 space-y-4 rounded-xl border border-border bg-card p-5">
+          <p className="text-sm font-medium text-foreground">Etkinlik Bilgileri</p>
+          <dl className="space-y-3 text-sm">
+            {post.eventOrganiser && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinliği Düzenleyen</dt>
+                <dd className="text-foreground">{post.eventOrganiser}</dd>
+              </div>
+            )}
+            {post.eventActivityType && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinlik Türü</dt>
+                <dd className="text-foreground">
+                  {ACTIVITY_TYPE_LABELS[post.eventActivityType] ?? post.eventActivityType}
+                </dd>
+              </div>
+            )}
+            {post.eventStartDate && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinlik Tarihi: Başlangıç</dt>
+                <dd className="text-foreground">{formatDate(post.eventStartDate)}</dd>
+              </div>
+            )}
+            {post.eventEndDate && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinlik Tarihi: Bitiş</dt>
+                <dd className="text-foreground">{formatDate(post.eventEndDate)}</dd>
+              </div>
+            )}
+            {post.eventApplicationDeadline && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Başvuru Son Tarihi</dt>
+                <dd className="text-foreground">
+                  {post.eventApplicationDeadlineEnd
+                    ? `${formatDate(post.eventApplicationDeadline)} - ${formatDate(post.eventApplicationDeadlineEnd)}`
+                    : formatDate(post.eventApplicationDeadline)}
+                </dd>
+              </div>
+            )}
+            {post.eventSelectionDate && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Seçim Tarihi</dt>
+                <dd className="text-foreground">{formatDate(post.eventSelectionDate)}</dd>
+              </div>
+            )}
+            {post.eventTargetFor && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Bu Eğitim Kimler İçin</dt>
+                <dd className="text-foreground">{post.eventTargetFor}</dd>
+              </div>
+            )}
+            {post.eventTargetFrom && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Katılımcıların Geldiği Ülke Grubu</dt>
+                <dd className="text-foreground">{post.eventTargetFrom}</dd>
+              </div>
+            )}
+            {post.eventRecommendedFor && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Özellikle Şunlar İçin Önerilir</dt>
+                <dd className="text-foreground">{post.eventRecommendedFor}</dd>
+              </div>
+            )}
+            {post.eventVenue && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Etkinlik Yeri</dt>
+                <dd className="text-foreground">{post.eventVenue}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      ) : (
+        <div className="sticky top-24">
+          <p className="mb-3 text-sm font-medium text-foreground">
+            {POST_CATEGORY_LABELS[post.category] ?? post.category} &mdash; Son Haberler
+          </p>
+          {relatedPosts.length > 0 ? (
+            <ul className="space-y-3 border-l border-border pl-4">
+              {relatedPosts.map((related) => (
+                <li key={related.id}>
+                  <Link
+                    href={`/haberler/${related.slug}`}
+                    className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
+                  >
+                    {related.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">Bu kategoride başka haber yok.</p>
+          )}
+        </div>
+      )}
     </aside>
   </div>
   );
