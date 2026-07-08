@@ -338,7 +338,7 @@ export function Ka220PersonelZamanCizelgesi() {
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 print:flex print:flex-col print:gap-6 print:space-y-0">
         <Card className="print:hidden">
           <h2 className="font-medium mb-4 text-foreground">Proje ve Personel Bilgileri</h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -529,23 +529,87 @@ export function Ka220PersonelZamanCizelgesi() {
           </div>
         </Card>
 
-        <Card className="print:break-before-page">
-          <h2 className="font-medium mb-4 text-foreground">Özet</h2>
-          <div className="grid sm:grid-cols-3 gap-4 text-sm">
-            <div>
-              <p className="text-muted-foreground">Toplam Planlanan Gün</p>
-              <p className="text-lg font-semibold text-foreground">{totalPlannedDays}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Toplam Gerçekleşen Gün</p>
-              <p className="text-lg font-semibold text-foreground">{totalWorkedDays}</p>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Toplam Hak Edilen Tutar</p>
-              <p className="text-lg font-semibold text-foreground">{formatEur(totalAmount)}</p>
-            </div>
+        <Card className="print:order-first">
+          <div className="hidden print:block mb-4">
+            <h2 className="text-lg font-semibold text-foreground">KA220-SCH Personel Zaman Çizelgesi (Timesheet)</h2>
+            <p className="text-sm italic text-muted-foreground">Proje Sonuçları Hibe Kalemi Destekleyici Belgesi</p>
           </div>
-          <div className="grid sm:grid-cols-2 gap-6 mt-6 text-sm">
+
+          <h2 className="font-medium mb-4 text-foreground">Özet</h2>
+
+          <div className="space-y-1.5 text-sm mb-6">
+            <p>
+              <span className="font-medium text-foreground">Proje No: </span>
+              <span className="text-muted-foreground">{projectNo || "—"}</span>
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Proje Adı / Akronim: </span>
+              <span className="text-muted-foreground">{projectTitle || "—"}</span>
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Yararlanıcı Kurum: </span>
+              <span className="text-muted-foreground">{institution || "—"}</span>
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Personel Adı Soyadı: </span>
+              <span className="text-muted-foreground">{staffName || "—"}</span>
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Personel Kategorisi *: </span>
+              <span className="text-muted-foreground">{staffCategory}</span>
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Günlük Birim Maliyet (€) **: </span>
+              <span className="text-muted-foreground">{formatEur(dailyRate)}</span>
+            </p>
+          </div>
+
+          <h3 className="font-medium mb-2 text-foreground">Çıktı Bazında Planlanan Gün Sayısı</h3>
+          <div className="overflow-x-auto mb-6">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr>
+                  <th className="border border-border bg-accent p-2 text-left text-accent-foreground">
+                    Çıktı / İş Paketi
+                  </th>
+                  <th className="border border-border bg-accent p-2 text-right text-accent-foreground w-40">
+                    Planlanan Gün
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {plannedOutputs.map((o) => (
+                  <tr key={o.id}>
+                    <td className="border border-border p-2 text-foreground">{o.title || "—"}</td>
+                    <td className="border border-border p-2 text-right text-foreground">{o.plannedDays}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td className="border border-border p-2 text-right font-medium text-foreground">
+                    Toplam Planlanan Gün:
+                  </td>
+                  <td className="border border-border p-2 text-right font-medium text-foreground">
+                    {totalPlannedDays}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div className="space-y-1.5 text-sm mb-6">
+            <p>
+              <span className="font-medium text-foreground">Toplam Gerçekleşen Gün: </span>
+              <span className="text-muted-foreground">{totalWorkedDays}</span>
+            </p>
+            <p>
+              <span className="font-medium text-foreground">Toplam Hak Edilen Tutar (€): </span>
+              <span className="text-muted-foreground">{formatEur(totalAmount)}</span>
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-6 mb-6 text-sm">
             <div>
               <p className="text-muted-foreground mb-8">Personel İmzası</p>
               <p className="border-t border-border pt-1 text-foreground">{staffName || " "}</p>
@@ -554,6 +618,17 @@ export function Ka220PersonelZamanCizelgesi() {
               <p className="text-muted-foreground mb-8">Proje Koordinatörü İmzası</p>
               <p className="border-t border-border pt-1 text-foreground">&nbsp;</p>
             </div>
+          </div>
+
+          <div className="space-y-1 text-xs italic text-muted-foreground">
+            <p>
+              * Personel Kategorisi seçenekleri: Manager; Teacher, trainer, educator or youth worker; Technician;
+              Administrative staff — kişinin unvanına değil, projedeki işlevine göre seçilir.
+            </p>
+            <p>
+              ** Bu tutar kurum tarafından belirlenmez; hibe sözleşmenizin Ek IV (Geçerli Oranlar) bölümünden veya
+              ilgili çağrı yılının Erasmus+ Program Rehberi Annex III tablosundan alınmalıdır.
+            </p>
           </div>
         </Card>
       </div>
