@@ -94,6 +94,13 @@ export const TOOLS: ToolContent[] = [
     category: "proje-asamasi",
   },
   {
+    href: "/araclar/ka220-personel-zaman-cizelgesi",
+    title: "KA220 Personel Zaman Çizelgesi (Timesheet)",
+    description:
+      "KA220-SCH 'Proje Sonuçları' hibe kaleminde istenen personel zaman çizelgesini (kimin hangi gün, hangi çıktı için çalıştığını) aylık tablolar halinde doldurun; toplam gün ve hak edilen tutar otomatik hesaplansın.",
+    category: "proje-sonrasi",
+  },
+  {
     href: "/araclar/yolluk-bildirimi",
     title: "Geçici Görev Yolluğu Bildirimi",
     description: "Hareketlilik sonrası kurumunuza sunacağınız yolluk bildirimini (M.Y.H.B.Y. Örnek No: 27) doldurun, tutarlar otomatik hesaplansın.",
