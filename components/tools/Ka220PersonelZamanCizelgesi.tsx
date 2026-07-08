@@ -425,111 +425,109 @@ export function Ka220PersonelZamanCizelgesi() {
           </p>
         </Card>
 
-        <Card>
-          <div className="flex items-center justify-between mb-4 print:hidden">
+        <Card className="print:hidden">
+          <div className="flex items-center justify-between">
             <h2 className="font-medium text-foreground">Aylık Zaman Çizelgeleri</h2>
             <button type="button" onClick={addMonth} className={secondaryButtonClass}>
               + Ay Ekle
             </button>
           </div>
-
-          <div className="space-y-8">
-            {months.map((block) => (
-              <div key={block.id} className="border-t border-border pt-4 first:border-t-0 first:pt-0 print:break-before-page print:border-t-0 print:pt-0">
-                <div className="flex items-center gap-3 mb-3 print:hidden">
-                  <select
-                    value={block.month}
-                    onChange={(e) => updateMonthMeta(block.id, { month: e.target.value })}
-                    className={`${inputClass} max-w-[160px]`}
-                  >
-                    {MONTH_NAMES_TR.map((m) => (
-                      <option key={m} value={m}>
-                        {m}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="number"
-                    value={block.year}
-                    onChange={(e) => updateMonthMeta(block.id, { year: Number(e.target.value) || block.year })}
-                    className={`${inputClass} max-w-[100px]`}
-                  />
-                  {months.length > 1 && (
-                    <button type="button" onClick={() => removeMonth(block.id)} className={`${dangerLinkClass} ml-auto`}>
-                      Bu Ayı Sil
-                    </button>
-                  )}
-                </div>
-                <h3 className="font-medium text-foreground mb-2">
-                  {block.month} {block.year}
-                </h3>
-                <div className="overflow-x-auto">
-                  <table className="border-collapse text-xs w-full">
-                    <thead>
-                      <tr>
-                        <th className="border border-border p-1 bg-muted w-10">Gün</th>
-                        <th className="border border-border p-1 bg-muted min-w-[120px]">Çıktı</th>
-                        <th className="border border-border p-1 bg-muted min-w-[140px]">Faaliyet</th>
-                        <th className="border border-border p-1 bg-muted min-w-[200px]">Yapılan Görev</th>
-                        <th className="border border-border p-1 bg-muted w-20">Gün Sayısı</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {block.days.map((d, i) => (
-                        <tr key={i}>
-                          <td className="border border-border p-1 text-center text-foreground">{i + 1}</td>
-                          <td className="border border-border p-1">
-                            <input
-                              value={d.output}
-                              onChange={(e) => updateDayEntry(block.id, i, { output: e.target.value })}
-                              className={cellInputClass}
-                            />
-                          </td>
-                          <td className="border border-border p-1">
-                            <input
-                              value={d.activity}
-                              onChange={(e) => updateDayEntry(block.id, i, { activity: e.target.value })}
-                              className={cellInputClass}
-                            />
-                          </td>
-                          <td className="border border-border p-1">
-                            <input
-                              value={d.task}
-                              onChange={(e) => updateDayEntry(block.id, i, { task: e.target.value })}
-                              className={cellInputClass}
-                            />
-                          </td>
-                          <td className="border border-border p-1">
-                            <input
-                              type="number"
-                              min={0}
-                              step={0.5}
-                              value={d.days || ""}
-                              onChange={(e) => updateDayEntry(block.id, i, { days: Number(e.target.value) || 0 })}
-                              className={`${cellInputClass} text-center`}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td colSpan={4} className="border border-border p-1 text-right font-medium text-foreground">
-                          Toplam Gün:
-                        </td>
-                        <td className="border border-border p-1 text-center font-medium text-foreground">
-                          {monthTotal(block)}
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
-            ))}
-          </div>
         </Card>
 
-        <Card className="print:order-first">
+        {months.map((block) => (
+          <Card key={block.id} className="print:break-before-page print:p-[2cm]">
+            <div className="flex items-center gap-3 mb-3 print:hidden">
+              <select
+                value={block.month}
+                onChange={(e) => updateMonthMeta(block.id, { month: e.target.value })}
+                className={`${inputClass} max-w-[160px]`}
+              >
+                {MONTH_NAMES_TR.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                value={block.year}
+                onChange={(e) => updateMonthMeta(block.id, { year: Number(e.target.value) || block.year })}
+                className={`${inputClass} max-w-[100px]`}
+              />
+              {months.length > 1 && (
+                <button type="button" onClick={() => removeMonth(block.id)} className={`${dangerLinkClass} ml-auto`}>
+                  Bu Ayı Sil
+                </button>
+              )}
+            </div>
+            <h3 className="font-medium text-foreground mb-2 print:mb-1">
+              {block.month} {block.year}
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="border-collapse text-xs w-full print:text-[10px]">
+                <thead>
+                  <tr>
+                    <th className="border border-border p-1 print:py-0 bg-muted w-10">Gün</th>
+                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[120px]">Çıktı</th>
+                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[140px]">Faaliyet</th>
+                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[200px]">Yapılan Görev</th>
+                    <th className="border border-border p-1 print:py-0 bg-muted w-20">Gün Sayısı</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {block.days.map((d, i) => (
+                    <tr key={i}>
+                      <td className="border border-border p-1 print:py-0 text-center text-foreground">{i + 1}</td>
+                      <td className="border border-border p-1 print:py-0">
+                        <input
+                          value={d.output}
+                          onChange={(e) => updateDayEntry(block.id, i, { output: e.target.value })}
+                          className={cellInputClass}
+                        />
+                      </td>
+                      <td className="border border-border p-1 print:py-0">
+                        <input
+                          value={d.activity}
+                          onChange={(e) => updateDayEntry(block.id, i, { activity: e.target.value })}
+                          className={cellInputClass}
+                        />
+                      </td>
+                      <td className="border border-border p-1 print:py-0">
+                        <input
+                          value={d.task}
+                          onChange={(e) => updateDayEntry(block.id, i, { task: e.target.value })}
+                          className={cellInputClass}
+                        />
+                      </td>
+                      <td className="border border-border p-1 print:py-0">
+                        <input
+                          type="number"
+                          min={0}
+                          step={0.5}
+                          value={d.days || ""}
+                          onChange={(e) => updateDayEntry(block.id, i, { days: Number(e.target.value) || 0 })}
+                          className={`${cellInputClass} text-center`}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colSpan={4} className="border border-border p-1 print:py-0 text-right font-medium text-foreground">
+                      Toplam Gün:
+                    </td>
+                    <td className="border border-border p-1 print:py-0 text-center font-medium text-foreground">
+                      {monthTotal(block)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </Card>
+        ))}
+
+        <Card className="print:order-first print:p-[2cm]">
           <div className="hidden print:block mb-4">
             <h2 className="text-lg font-semibold text-foreground">KA220-SCH Personel Zaman Çizelgesi (Timesheet)</h2>
             <p className="text-sm italic text-muted-foreground">Proje Sonuçları Hibe Kalemi Destekleyici Belgesi</p>

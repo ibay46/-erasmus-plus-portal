@@ -13,6 +13,11 @@ export default async function Ka220PersonelZamanCizelgesiPage() {
 
   return (
     <div>
+      {/* Scoped to this route only: @page margin 0 stops Chrome injecting its own
+          date/title/URL header+footer into the margin band. Every printable
+          section below (Özet card, each month card) supplies its own 2cm
+          print padding instead, since that margin has to repeat per page. */}
+      <style dangerouslySetInnerHTML={{ __html: "@media print { @page { margin: 0; } }" }} />
       <div className="print:hidden">
         <h1 className="text-3xl font-semibold mb-2 text-foreground">KA220 Personel Zaman Çizelgesi (Timesheet)</h1>
         <p className="text-muted-foreground mb-4 max-w-2xl">
