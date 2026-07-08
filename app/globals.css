@@ -166,16 +166,25 @@ body {
 }
 
 @media print {
-  /* A real @page margin applies on every printed page (not just the first),
-     unlike padding on a single absolutely-positioned box. The trade-off: some
-     browsers only omit their own injected date/title/URL header+footer when
-     the page margin is exactly 0 — with a non-zero margin here, that text can
-     reappear inside the margin band unless "Headers and footers" is unchecked
-     in the print dialog's "More settings". */
+  /* Chrome only omits its own injected date/title/URL header+footer when the
+     @page margin is exactly 0 (checking "Headers and footers" off in the
+     print dialog is then unnecessary). We still want a visual margin around
+     printed content, so we move it from @page onto body padding instead —
+     and make body the positioned ancestor so .print-isolate's inset:0 lands
+     inside that padding rather than covering the full physical page. */
   @page {
-    margin: 2cm 1.5cm;
+    margin: 0;
   }
 
+  body {
+    position: relative;
+    padding: 2cm 1.5cm;
+  }
+
+  /* #site-header wraps both the announcement banner and the nav <header>;
+     targeting it directly (rather than only the bare <header> tag) keeps the
+     banner from repeating over the top of every printed page. */
+  #site-header,
   header,
   footer {
     display: none !important;
@@ -200,6 +209,24 @@ body {
   .print-isolate {
     position: absolute;
     inset: 0;
+  }
+
+  /* Printed output should always read like light mode, even when the site is
+     toggled to dark — the `.dark` class stays on <html> while printing since
+     print doesn't change the DOM, so without this override every bg-card /
+     border-border / bg-muted / text-muted-foreground / bg-accent element
+     would still resolve to its dark-mode color. */
+  :root,
+  .dark {
+    --background: oklch(98.5% 0.004 250);
+    --foreground: oklch(22% 0.01 260);
+    --muted: oklch(96% 0.006 250);
+    --muted-foreground: oklch(44% 0.012 260);
+    --card: oklch(98.5% 0.004 250);
+    --border: oklch(90% 0.006 250);
+    --accent: oklch(60% 0.20 258);
+    --accent-foreground: oklch(99% 0 0);
+    --accent-warm: oklch(64% 0.15 55);
   }
 
   body {

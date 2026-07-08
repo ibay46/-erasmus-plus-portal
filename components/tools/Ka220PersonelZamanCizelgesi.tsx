@@ -435,7 +435,7 @@ export function Ka220PersonelZamanCizelgesi() {
 
           <div className="space-y-8">
             {months.map((block) => (
-              <div key={block.id} className="border-t border-border pt-4 first:border-t-0 first:pt-0">
+              <div key={block.id} className="border-t border-border pt-4 first:border-t-0 first:pt-0 print:break-before-page print:border-t-0 print:pt-0">
                 <div className="flex items-center gap-3 mb-3 print:hidden">
                   <select
                     value={block.month}
@@ -529,7 +529,7 @@ export function Ka220PersonelZamanCizelgesi() {
           </div>
         </Card>
 
-        <Card>
+        <Card className="print:break-before-page">
           <h2 className="font-medium mb-4 text-foreground">Özet</h2>
           <div className="grid sm:grid-cols-3 gap-4 text-sm">
             <div>
