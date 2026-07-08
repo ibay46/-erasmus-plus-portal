@@ -166,19 +166,14 @@ body {
 }
 
 @media print {
-  /* Chrome only omits its own injected date/title/URL header+footer when the
-     @page margin is exactly 0 (checking "Headers and footers" off in the
-     print dialog is then unnecessary). We still want a visual margin around
-     printed content, so we move it from @page onto body padding instead —
-     and make body the positioned ancestor so .print-isolate's inset:0 lands
-     inside that padding rather than covering the full physical page. */
+  /* A real @page margin applies on every printed page (not just the first) —
+     unlike padding on body, which (per CSS fragmentation rules) only takes
+     effect at the very start/end of the flow, leaving interior pages with no
+     top/bottom gap. Chrome's own injected date/title/URL header+footer can
+     render inside this margin band unless "Headers and footers" is unchecked
+     in the print dialog's "More settings". */
   @page {
-    margin: 0;
-  }
-
-  body {
-    position: relative;
-    padding: 2cm;
+    margin: 2cm;
   }
 
   /* #site-header wraps both the announcement banner and the nav <header>;
