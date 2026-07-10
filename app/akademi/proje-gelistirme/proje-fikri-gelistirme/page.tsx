@@ -25,18 +25,11 @@ export default async function ProjeFikriGelistirmePage() {
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Proje Fikri Geliştirme Sihirbazı</h1>
-      <p className="text-muted-foreground mb-3 max-w-2xl">
+      <p className="text-muted-foreground mb-8 max-w-2xl">
         Problem ve çözüm tanımınızdan başlayarak; hedef kitle, öncelikler, mantıksal çerçeve, vizyon ve
         gösterge önerileriyle desteklenen, AI destekli 9 adımlık bir süreçte konsept notunuzu geliştirin.
         Her adımda AI&apos;dan öneri alabilir, sonucu kendi bağlamınıza göre düzenleyip kaydedebilirsiniz.
         Son adımda konsept notunuzu PDF veya Word (.docx) olarak indirebilirsiniz.
-      </p>
-      <p className="text-xs text-muted-foreground mb-8 max-w-2xl">
-        Günlük AI üretim hakkınız <strong className="font-semibold text-foreground">20 istektir</strong> — bir
-        taslağı baştan sona tamamlamak için yeterli, kalan hakkınızla dilediğiniz adımları yeniden
-        üretebilirsiniz. Hak her gün gece yarısı yenilenir. Ayrıca aylık toplam hakkınız{" "}
-        <strong className="font-semibold text-foreground">150 istektir</strong>; bu hak her ayın 1&apos;inde
-        sıfırlanır.
       </p>
 
       <form action={createIdeaWizardSession} className="mb-8">
