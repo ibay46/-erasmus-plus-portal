@@ -13,8 +13,21 @@ function startOfToday(): Date {
   return date;
 }
 
+function startOfMonth(): Date {
+  const date = new Date();
+  date.setDate(1);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
 export async function getTodayUsageCount(toolKey: string, visitorHash: string): Promise<number> {
   return prisma.toolSubmission.count({
     where: { toolKey, visitorHash, createdAt: { gte: startOfToday() } },
+  });
+}
+
+export async function getMonthUsageCount(toolKey: string, visitorHash: string): Promise<number> {
+  return prisma.toolSubmission.count({
+    where: { toolKey, visitorHash, createdAt: { gte: startOfMonth() } },
   });
 }
