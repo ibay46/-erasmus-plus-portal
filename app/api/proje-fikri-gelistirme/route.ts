@@ -5,7 +5,7 @@ import { getVisitorHash, getTodayUsageCount } from "@/lib/toolRateLimit";
 import { getIdeaWizardStep, IDEA_WIZARD_STEPS } from "@/lib/content/ideaWizardSteps";
 
 const TOOL_KEY = "proje-fikri-gelistirme";
-const DAILY_AI_LIMIT = 40;
+const DAILY_AI_LIMIT = 20;
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 
 interface RequestBody {
