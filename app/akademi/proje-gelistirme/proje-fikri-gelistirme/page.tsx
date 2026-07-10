@@ -34,7 +34,9 @@ export default async function ProjeFikriGelistirmePage() {
       <p className="text-xs text-muted-foreground mb-8 max-w-2xl">
         Günlük AI üretim hakkınız <strong className="font-semibold text-foreground">20 istektir</strong> — bir
         taslağı baştan sona tamamlamak için yeterli, kalan hakkınızla dilediğiniz adımları yeniden
-        üretebilirsiniz. Hak her gün gece yarısı yenilenir.
+        üretebilirsiniz. Hak her gün gece yarısı yenilenir. Ayrıca aylık toplam hakkınız{" "}
+        <strong className="font-semibold text-foreground">150 istektir</strong>; bu hak her ayın 1&apos;inde
+        sıfırlanır.
       </p>
 
       <form action={createIdeaWizardSession} className="mb-8">

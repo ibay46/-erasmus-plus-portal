@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireTier } from "@/lib/auth";
-import { getVisitorHash, getTodayUsageCount } from "@/lib/toolRateLimit";
+import { getVisitorHash, getTodayUsageCount, getMonthUsageCount } from "@/lib/toolRateLimit";
 import { getIdeaWizardStep, IDEA_WIZARD_STEPS } from "@/lib/content/ideaWizardSteps";
 
 const TOOL_KEY = "proje-fikri-gelistirme";
 const DAILY_AI_LIMIT = 20;
+const MONTHLY_AI_LIMIT = 150;
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 
 interface RequestBody {
@@ -85,6 +86,14 @@ export async function POST(request: Request) {
   if (usedToday >= DAILY_AI_LIMIT) {
     return NextResponse.json(
       { error: `Günlük AI kullanım hakkınız (${DAILY_AI_LIMIT}) doldu. Yarın tekrar deneyebilirsiniz.` },
+      { status: 429 }
+    );
+  }
+
+  const usedThisMonth = await getMonthUsageCount(TOOL_KEY, visitorHash);
+  if (usedThisMonth >= MONTHLY_AI_LIMIT) {
+    return NextResponse.json(
+      { error: `Aylık AI kullanım hakkınız (${MONTHLY_AI_LIMIT}) doldu. Gelecek ay tekrar deneyebilirsiniz.` },
       { status: 429 }
     );
   }
