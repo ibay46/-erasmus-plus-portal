@@ -102,8 +102,10 @@ export async function POST(request: Request) {
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 4096,
-      system,
-      messages: [{ role: "user", content: userPrompt }],
+      system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
+      messages: [
+        { role: "user", content: [{ type: "text", text: userPrompt, cache_control: { type: "ephemeral" } }] },
+      ],
     }),
   });
 
