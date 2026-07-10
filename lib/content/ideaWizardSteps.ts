@@ -56,16 +56,8 @@ Mümkün olan yerlerde iddiaları Avrupa'dan, 5 yıldan eski olmayan kaynaklarla
 Yanıtını düz metin/markdown olarak ver (gerektiğinde başlıklar, madde işaretleri, tablo kullanabilirsin);
 JSON döndürme.`;
 
-// Anormal/aşırı uzun bir önceki-adım çıktısının (örn. tekrar tekrar "AI'dan Tekrar
-// Üret" ile şişen bir metin) sonraki adımların prompt'unu ve maliyetini patlatmasını
-// önleyen güvenlik sınırı. Normal çıktılar (~1000-2500 karakter) bu sınırın çok
-// altında kaldığı için hiç etkilenmez.
-const MAX_CONTEXT_CHARS = 6000;
-
 function ctx(priorOutputs: Record<string, string>, key: string): string {
-  const value = priorOutputs[key]?.trim();
-  if (!value) return "(henüz girilmedi)";
-  return value.length > MAX_CONTEXT_CHARS ? `${value.slice(0, MAX_CONTEXT_CHARS)}\n[...]` : value;
+  return priorOutputs[key]?.trim() || "(henüz girilmedi)";
 }
 
 export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
