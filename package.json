@@ -25,6 +25,7 @@
     "@tiptap/starter-kit": "^3.27.1",
     "@vercel/blob": "^2.4.1",
     "bcryptjs": "^3.0.3",
+    "docx": "^9.7.1",
     "docx-preview": "^0.3.7",
     "exceljs": "^4.4.0",
     "jspdf": "^4.2.1",

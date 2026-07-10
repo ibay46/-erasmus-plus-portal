@@ -29,12 +29,13 @@ model User {
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
 
-  accounts        Account[]
-  sessions        Session[]
-  posts           Post[]
-  ilanlar         Ilan[]
-  leads           ConsultingLead[]
-  toolSubmissions ToolSubmission[]
+  accounts          Account[]
+  sessions          Session[]
+  posts             Post[]
+  ilanlar           Ilan[]
+  leads             ConsultingLead[]
+  toolSubmissions   ToolSubmission[]
+  ideaWizardSessions IdeaWizardSession[]
 }
 
 // NextAuth (Auth.js) Prisma adapter şeması
@@ -301,4 +302,31 @@ model ConsultingLead {
   user        User?      @relation(fields: [userId], references: [id])
   status      LeadStatus @default(NEW)
   createdAt   DateTime   @default(now())
+}
+
+// "AI Destekli Proje Fikri Geliştirme" sihirbazı: kullanıcı başına, adım adım
+// AI destekli proje fikri taslakları (bkz. app/api/proje-fikri-gelistirme).
+model IdeaWizardSession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String   @default("Adsız Proje Fikri")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  steps IdeaWizardStep[]
+
+  @@index([userId])
+}
+
+model IdeaWizardStep {
+  id        String            @id @default(cuid())
+  sessionId String
+  session   IdeaWizardSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  stepKey   String
+  input     Json
+  output    String            @default("")
+  updatedAt DateTime          @updatedAt
+
+  @@unique([sessionId, stepKey])
 }

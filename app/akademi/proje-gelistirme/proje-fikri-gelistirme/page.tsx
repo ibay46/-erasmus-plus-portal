@@ -1,0 +1,87 @@
+import Link from "next/link";
+import { requireTier } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { Card } from "@/components/ui/Card";
+import { IDEA_WIZARD_STEPS } from "@/lib/content/ideaWizardSteps";
+import { createIdeaWizardSession, deleteIdeaWizardSession } from "@/lib/actions/ideaWizard";
+
+export const metadata = { title: "Proje Fikri Geliştirme Sihirbazı | Erasmus Akademi" };
+
+const TOTAL_STEPS = IDEA_WIZARD_STEPS.length;
+
+function formatDate(date: Date): string {
+  return new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "long", year: "numeric" }).format(date);
+}
+
+export default async function ProjeFikriGelistirmePage() {
+  const user = await requireTier("PREMIUM");
+
+  const sessions = await prisma.ideaWizardSession.findMany({
+    where: { userId: user.id },
+    orderBy: { updatedAt: "desc" },
+    include: { _count: { select: { steps: true } } },
+  });
+
+  return (
+    <div>
+      <h1 className="text-3xl font-semibold mb-2 text-foreground">Proje Fikri Geliştirme Sihirbazı</h1>
+      <p className="text-muted-foreground mb-8 max-w-2xl">
+        Problem ve çözüm tanımınızdan başlayarak; hedef kitle, öncelikler, mantıksal çerçeve, vizyon ve
+        gösterge önerileriyle desteklenen, AI destekli 9 adımlık bir süreçte konsept notunuzu geliştirin.
+        Her adımda AI&apos;dan öneri alabilir, sonucu kendi bağlamınıza göre düzenleyip kaydedebilirsiniz.
+      </p>
+
+      <form action={createIdeaWizardSession} className="mb-8">
+        <button
+          type="submit"
+          className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
+        >
+          + Yeni Taslak Oluştur
+        </button>
+      </form>
+
+      {sessions.length === 0 ? (
+        <Card>
+          <p className="text-sm text-muted-foreground">
+            Henüz bir proje fikri taslağınız yok. Yukarıdaki düğmeyle yeni bir taslak başlatın.
+          </p>
+        </Card>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {sessions.map((session) => {
+            const completed = session._count.steps;
+            return (
+              <Card key={session.id} className="flex flex-col">
+                <Link
+                  href={`/akademi/proje-gelistirme/proje-fikri-gelistirme/${session.id}`}
+                  className="cursor-pointer group flex-1"
+                >
+                  <h3 className="font-medium text-foreground group-hover:text-accent">{session.title}</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">Son güncelleme: {formatDate(session.updatedAt)}</p>
+                  <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-accent transition-all duration-300"
+                      style={{ width: `${Math.min(100, Math.round((completed / TOTAL_STEPS) * 100))}%` }}
+                    />
+                  </div>
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    {completed} / {TOTAL_STEPS} adım tamamlandı
+                  </p>
+                </Link>
+                <form action={deleteIdeaWizardSession} className="mt-3">
+                  <input type="hidden" name="sessionId" value={session.id} />
+                  <button
+                    type="submit"
+                    className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-red-600"
+                  >
+                    Taslağı Sil
+                  </button>
+                </form>
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

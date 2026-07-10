@@ -23,6 +23,7 @@ export const STANDARD_LINKS: TierFeature[] = [
 ];
 
 export const PREMIUM_LINKS: TierFeature[] = [
+  { href: "/akademi/proje-gelistirme/proje-fikri-gelistirme", label: "Proje Fikri Geliştirme Sihirbazı" },
   { href: "/akademi/degerlendirme-rehberleri", label: "Proje Değerlendirme Rehberleri" },
   { href: "/akademi/ai-promptlari", label: "Yapay Zeka Promptları" },
   { href: "/akademi/ortak-havuzu", label: "Ortak Havuzu" },
