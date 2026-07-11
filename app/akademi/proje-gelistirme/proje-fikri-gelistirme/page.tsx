@@ -26,16 +26,42 @@ export default async function ProjeFikriGelistirmePage() {
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Proje Fikri Geliştirme Sihirbazı</h1>
       <p className="text-muted-foreground mb-3 max-w-2xl">
-        Problem ve çözüm tanımınızdan başlayarak; hedef kitle, öncelikler, mantıksal çerçeve, vizyon ve
-        gösterge önerileriyle desteklenen, AI destekli 9 adımlık bir süreçte konsept notunuzu geliştirin.
-        Her adımda AI&apos;dan öneri alabilir, sonucu kendi bağlamınıza göre düzenleyip kaydedebilirsiniz.
-        Son adımda konsept notunuzu PDF veya Word (.docx) olarak indirebilirsiniz.
+        Güçlü bir başvuru, konsept notu yazılmadan önce kurulur. AI&apos;ı sadece metni uzatmak için
+        kullanmak ifadeyi iyileştirir, mantığı değil — bu yüzden bu sihirbaz önce projenizin mantığını
+        (problem, hedef kitle, hedefler, hareketlilik/iş paketi zinciri) kurmanızı, sonra bu mantık üzerine
+        metni yazmanızı, son olarak da tamamlanan taslağı gerçek bir değerlendirici gözüyle denetlemenizi
+        sağlar.
       </p>
+
+      <div className="mb-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Card className="border-accent/40">
+          <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-1">1 · Kur</p>
+          <p className="text-sm font-medium text-foreground mb-1">Mantığı İnşa Edin</p>
+          <p className="text-xs text-muted-foreground">Adım 1-6: problem, hedef kitle, öncelikler, hedefler ve mantıksal çerçeve.</p>
+        </Card>
+        <Card className="border-accent/40">
+          <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-1">2 · Yaz</p>
+          <p className="text-sm font-medium text-foreground mb-1">Metni Bu Mantığa Göre Şekillendirin</p>
+          <p className="text-xs text-muted-foreground">Adım 7-9: vizyon, gösterge ve konsept notu; kurduğunuz mantığın üzerine yazılır.</p>
+        </Card>
+        <Card className="border-accent-warm/40">
+          <p className="text-xs font-semibold uppercase tracking-wide text-accent-warm mb-1">3 · Denetleyin</p>
+          <p className="text-sm font-medium text-foreground mb-1">Değerlendirici Gözüyle Puanlatın</p>
+          <p className="text-xs text-muted-foreground">Adım 10: AI, taslağı gerçek kriterlerle puanlar; zayıf noktaları ve eksik kanıtları işaretler.</p>
+        </Card>
+        <Card className="border-accent-warm/40">
+          <p className="text-xs font-semibold uppercase tracking-wide text-accent-warm mb-1">4 · Tekrarlayın</p>
+          <p className="text-sm font-medium text-foreground mb-1">İyileştirin, Yeniden Denetleyin</p>
+          <p className="text-xs text-muted-foreground">İşaretlenen adıma dönüp düzeltin, ardından denetimi tekrar üretin. Puan yeterli olana kadar tekrarlayın.</p>
+        </Card>
+      </div>
+
       <p className="text-xs text-muted-foreground mb-8 max-w-2xl">
         Günlük AI üretim hakkınız <strong className="font-semibold text-foreground">15 istektir</strong>, hak
         her gün gece yarısı yenilenir. Ayrıca aylık toplam hakkınız{" "}
         <strong className="font-semibold text-foreground">150 istektir</strong>; bu hak her ayın 1&apos;inde
-        sıfırlanır.
+        sıfırlanır. Son adımdan sonra konsept notunuzu (denetim sonucuyla birlikte) PDF veya Word (.docx)
+        olarak indirebilirsiniz.
       </p>
 
       <form action={createIdeaWizardSession} className="mb-8">
