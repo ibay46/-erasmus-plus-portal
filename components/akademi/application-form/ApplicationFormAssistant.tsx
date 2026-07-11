@@ -30,6 +30,49 @@ async function callApi(body: Record<string, unknown>) {
   return data;
 }
 
+function AccordionSection({
+  sectionKey,
+  title,
+  subtitle,
+  badge,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  sectionKey: string;
+  title: string;
+  subtitle?: string;
+  badge?: string;
+  isOpen: boolean;
+  onToggle: (sectionKey: string) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="overflow-hidden rounded-xl border border-border">
+      <button
+        type="button"
+        onClick={() => onToggle(sectionKey)}
+        className="cursor-pointer flex w-full items-center justify-between gap-4 bg-card px-5 py-4 text-left transition-colors duration-200 hover:bg-muted/40"
+      >
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+          {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
+        </div>
+        <div className="flex shrink-0 items-center gap-3">
+          {badge && <span className="text-xs text-muted-foreground">{badge}</span>}
+          <span
+            className={`text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+            aria-hidden
+          >
+            ▾
+          </span>
+        </div>
+      </button>
+      {isOpen && <div className="border-t border-border px-5 py-5">{children}</div>}
+    </section>
+  );
+}
+
 function QuestionCard({
   question,
   instanceIndex,
@@ -92,12 +135,33 @@ export function ApplicationFormAssistant({
   const [titleSaved, setTitleSaved] = useState(true);
   const [denetimOutput, setDenetimOutput] = useState(initialDenetimOutput);
   const [denetimLoading, setDenetimLoading] = useState(false);
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set([ONCE_SECTION_ORDER[0]]));
+
+  function toggleSection(sectionKey: string) {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(sectionKey)) next.delete(sectionKey);
+      else next.add(sectionKey);
+      return next;
+    });
+  }
 
   const answeredCount = Object.entries(answers).filter(
     ([k, v]) => !k.startsWith(ORG_INFO_KEY_PREFIX) && v.trim()
   ).length;
   const totalQuestions =
     ONCE_QUESTIONS.length + PER_ACTIVITY_QUESTIONS.length * hareketlilikSayisi + PER_PARTNER_QUESTIONS.length * kurulusSayisi;
+
+  const activityAnswered = Array.from({ length: hareketlilikSayisi }, (_, i) => i).reduce(
+    (sum, activityIndex) =>
+      sum + PER_ACTIVITY_QUESTIONS.filter((q) => (answers[key(q.id, activityIndex)] ?? "").trim()).length,
+    0
+  );
+  const orgAnswered = Array.from({ length: kurulusSayisi }, (_, i) => i).reduce(
+    (sum, partnerIndex) =>
+      sum + PER_PARTNER_QUESTIONS.filter((q) => (answers[key(q.id, partnerIndex)] ?? "").trim()).length,
+    0
+  );
 
   function setLoading(k: string, isLoading: boolean) {
     setLoadingKeys((prev) => {
@@ -197,13 +261,20 @@ export function ApplicationFormAssistant({
         hareketlilik ve kuruluş cevaplarını da otomatik olarak dikkate alır.
       </p>
 
-      <div className="space-y-10">
+      <div className="space-y-4">
         {ONCE_SECTION_ORDER.map((section) => {
           const questions = onceQuestionsBySection(section);
           if (questions.length === 0) return null;
+          const answeredInSection = questions.filter((q) => (answers[key(q.id, 0)] ?? "").trim()).length;
           return (
-            <section key={section}>
-              <h2 className="mb-1 text-xl font-semibold text-foreground">{section}</h2>
+            <AccordionSection
+              key={section}
+              sectionKey={section}
+              title={section}
+              badge={`${answeredInSection}/${questions.length}`}
+              isOpen={openSections.has(section)}
+              onToggle={toggleSection}
+            >
               <div className="space-y-4">
                 {questions.map((q) => {
                   const k = key(q.id, 0);
@@ -221,15 +292,18 @@ export function ApplicationFormAssistant({
                   );
                 })}
               </div>
-            </section>
+            </AccordionSection>
           );
         })}
 
-        <section>
-          <h2 className="mb-1 text-xl font-semibold text-foreground">Activity</h2>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Her hareketlilik için ayrı bir sekme olarak tekrarlanır.
-          </p>
+        <AccordionSection
+          sectionKey="Activity"
+          title="Activity"
+          subtitle="Her hareketlilik için ayrı bir sekme olarak tekrarlanır."
+          badge={`${activityAnswered}/${PER_ACTIVITY_QUESTIONS.length * hareketlilikSayisi}`}
+          isOpen={openSections.has("Activity")}
+          onToggle={toggleSection}
+        >
           <div className="space-y-8">
             {Array.from({ length: hareketlilikSayisi }, (_, i) => i).map((activityIndex) => (
               <div key={activityIndex}>
@@ -256,14 +330,16 @@ export function ApplicationFormAssistant({
               </div>
             ))}
           </div>
-        </section>
+        </AccordionSection>
 
-        <section>
-          <h2 className="mb-1 text-xl font-semibold text-foreground">Organisation Profile</h2>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Başvuran dahil her kuruluş için önce kısa bir kuruluş bilgisi girin — AI sadece bu bilgileri kullanır,
-            detay uydurmaz.
-          </p>
+        <AccordionSection
+          sectionKey="Organisation Profile"
+          title="Organisation Profile"
+          subtitle="Başvuran dahil her kuruluş için önce kısa bir kuruluş bilgisi girin — AI sadece bu bilgileri kullanır, detay uydurmaz."
+          badge={`${orgAnswered}/${PER_PARTNER_QUESTIONS.length * kurulusSayisi}`}
+          isOpen={openSections.has("Organisation Profile")}
+          onToggle={toggleSection}
+        >
           <div className="space-y-8">
             {Array.from({ length: kurulusSayisi }, (_, i) => i).map((partnerIndex) => {
               const orgKey = key(ORG_INFO_KEY_PREFIX, partnerIndex);
@@ -305,32 +381,34 @@ export function ApplicationFormAssistant({
               );
             })}
           </div>
-        </section>
+        </AccordionSection>
 
-        <section>
-          <Card className="border-accent-warm/40">
-            <h2 className="mb-2 text-xl font-semibold text-foreground">Denetim</h2>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Tüm cevaplarınızı gerçek bir KA210 değerlendiricisi gibi puanlar; zayıf noktaları ve düzeltme
-              planını gösterir. Sorularınızı doldurdukça tekrar çalıştırıp puanınızın yükseldiğini görebilirsiniz.
-            </p>
-            <button
-              type="button"
-              onClick={handleDenetim}
-              disabled={denetimLoading || answeredCount === 0}
-              className="cursor-pointer mb-4 inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {denetimLoading ? "Denetleniyor…" : denetimOutput ? "Tekrar Denetle" : "Denetimi Başlat"}
-            </button>
-            {denetimOutput && (
-              <textarea
-                readOnly
-                value={denetimOutput}
-                className={`${textareaClass} min-h-[280px] font-mono text-[13px]`}
-              />
-            )}
-          </Card>
-        </section>
+        <AccordionSection
+          sectionKey="Denetim"
+          title="Denetim"
+          isOpen={openSections.has("Denetim")}
+          onToggle={toggleSection}
+        >
+          <p className="mb-4 text-sm text-muted-foreground">
+            Tüm cevaplarınızı gerçek bir KA210 değerlendiricisi gibi puanlar; zayıf noktaları ve düzeltme
+            planını gösterir. Sorularınızı doldurdukça tekrar çalıştırıp puanınızın yükseldiğini görebilirsiniz.
+          </p>
+          <button
+            type="button"
+            onClick={handleDenetim}
+            disabled={denetimLoading || answeredCount === 0}
+            className="cursor-pointer mb-4 inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {denetimLoading ? "Denetleniyor…" : denetimOutput ? "Tekrar Denetle" : "Denetimi Başlat"}
+          </button>
+          {denetimOutput && (
+            <textarea
+              readOnly
+              value={denetimOutput}
+              className={`${textareaClass} min-h-[280px] font-mono text-[13px]`}
+            />
+          )}
+        </AccordionSection>
       </div>
     </div>
   );
