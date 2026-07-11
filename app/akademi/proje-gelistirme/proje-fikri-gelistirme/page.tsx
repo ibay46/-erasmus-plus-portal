@@ -56,6 +56,27 @@ export default async function ProjeFikriGelistirmePage() {
         </Card>
       </div>
 
+      <div className="mb-8 max-w-2xl rounded-xl border border-border bg-card p-5">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Örnek — Adım 10 (Denetim) Çıktısı
+        </p>
+        <div className="whitespace-pre-wrap rounded-lg bg-muted/40 p-4 font-mono text-xs leading-relaxed text-foreground">
+{`PUANLAMA
+Uygunluk (30 puan) — 12/30  ⚠ EŞİK ALTINDA
+Tasarım ve Uygulama Kalitesi (30 puan) — 11/30  ⚠ EŞİK ALTINDA
+Ortaklık Kalitesi (20 puan) — 6/20  ⚠ EŞİK ALTINDA
+Etki (20 puan) — 8/20  ⚠ EŞİK ALTINDA
+
+⛔ TOPLAM PUAN = 37/100 — EŞİK (60) ALTINDA, OTOMATİK RED
+Proje dört kriterden dördünde de kendi eşiğinin altında kalmıştır.`}
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Bu, gerçek bir test taslağından alınan örnek bir çıktıdır. Sihirbaz, konsept notunuzu göndermeden önce
+          tam olarak bu şekilde KA210&apos;un 4 resmi değerlendirme kriterine göre puanlar ve hangi eşiğin altında
+          kaldığınızı — ret riskini görmeden önce — gösterir.
+        </p>
+      </div>
+
       <p className="text-xs text-muted-foreground mb-8 max-w-2xl">
         Günlük AI üretim hakkınız <strong className="font-semibold text-foreground">15 istektir</strong>, hak
         her gün gece yarısı yenilenir. Ayrıca aylık toplam hakkınız{" "}
