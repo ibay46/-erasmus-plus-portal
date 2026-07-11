@@ -2,7 +2,7 @@ import { KA_ACTION_LABELS, EDUCATION_SECTOR_LABELS, KA_ACTION_SECTORS } from "./
 import { HORIZONTAL_PRIORITIES_FULL, SECTORAL_PRIORITIES_FULL, type EducationSectorCode } from "./erasmusPrioritiesFull";
 
 // "AI Destekli Proje Fikri Geliştirme" sihirbazının 9 adımlık konfigürasyonu.
-// Kaynak: public/uploads/NEW !2024 AI supported IDEA DEVELOPMENT TEMPLATE.docx
+// Kaynak: public/NEW !2024 AI supported IDEA DEVELOPMENT TEMPLATE.docx
 // (belgedeki ~20 alt bölüm, içerik kaybı olmadan 9 adıma gruplanmıştır).
 //
 // Her adım bir form (fields) ve -varsa- Anthropic'e gönderilecek prompt'u üreten
@@ -58,6 +58,13 @@ JSON döndürme.`;
 
 function ctx(priorOutputs: Record<string, string>, key: string): string {
   return priorOutputs[key]?.trim() || "(henüz girilmedi)";
+}
+
+// KA210 (Küçük Ölçekli Ortaklıklar) resmi "iş paketi" yapısı kullanmaz; bunun yerine
+// birbirini tamamlayan somut hareketliliklerle (öğrenme/öğretme/eğitim faaliyetleri)
+// uygulanır. Diğer eylemler (KA220/KA240) iş paketi (WP) yapısını kullanır.
+function isKa210(priorOutputs: Record<string, string>): boolean {
+  return ctx(priorOutputs, "problem-cozum").includes("KA210");
 }
 
 export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
@@ -225,7 +232,7 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
         user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
           `Hedef kitle:\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
           `Seçilen öncelikler:\n${ctx(priorOutputs, "oncelikler")}\n\n` +
-          `Bu bilgilere göre, bir genel hedef (tek cümle, projenin genel vizyonunu/yönünü belirten) ve bu genel hedefi somut, ölçülebilir adımlara bölen 3-5 özel hedef (SO1, SO2, SO3...) öner. Şimdilik tam SMART formatı zorunlu değil, netlik önceliklidir.\n\n` +
+          `Bu bilgilere göre, bir genel hedef (tek cümle, projenin genel vizyonunu/yönünü belirten) ve bu genel hedefi somut, ölçülebilir adımlara bölen 3-5 özel hedef (SO1, SO2, SO3...) öner. Şimdilik tam SMART formatı zorunlu değil, netlik önceliklidir. Her özel hedef, yukarıdaki hedef kitleye açıkça hitap etsin ve ilerleyen adımlarda somut bir faaliyete/hareketliliğe dönüştürülebilecek kadar spesifik olsun — genel geçer, ölçülemez ifadelerden kaçın.\n\n` +
           `Yanıtını "GENEL HEDEF" ve "ÖZEL HEDEFLER" başlıkları altında ver.`,
       };
     },
@@ -236,17 +243,26 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
     title: "Mantıksal Çerçeve ve Uyum Kontrolü",
     shortTitle: "Mantıksal Çerçeve",
     description:
-      "AI; özel hedeflerinizi iş paketlerine (WP) dönüştüren bir mantıksal çerçeve tablosu üretir ve toplam etkinin genel hedefinizle uyumunu değerlendirir.",
+      "AI; özel hedeflerinizi (KA210 için birbirini tamamlayan hareketliliklere, KA220/KA240 için iş paketlerine (WP)) dönüştüren bir mantıksal çerçeve tablosu üretir ve toplam etkinin genel hedefinizle uyumunu değerlendirir.",
     requiresAi: true,
     fields: [],
     buildPrompt(_input, priorOutputs) {
+      const ka210 = isKa210(priorOutputs);
+      const unitLabel = ka210 ? "Hareketlilik" : "İş Paketi (WP)";
+      const continuityPhrase = ka210
+        ? "hareketliliklerin birbirini nasıl tamamladığını — hangi hareketliliğin çıktısının bir sonraki hareketliliğe girdi sağladığını"
+        : "iş paketlerinin birbirini nasıl tamamladığını — hangi iş paketinin çıktısının bir sonraki iş paketine girdi sağladığını";
+      const unitInstruction = ka210
+        ? `KA210 küçük ölçekli ortaklıklarda resmi "iş paketi" yapısı kullanılmaz. Bunun yerine, her özel hedefi somut bir hareketliliğe (öğrenme/öğretme/eğitim faaliyeti, ortaklık toplantısı veya çoğaltıcı/yaygınlaştırma etkinliği gibi) karşılık gelecek şekilde yapılandır. Hareketlilikler birbirinden bağımsız, tekrarlayan veya kopuk OLMAMALI: her hareketlilik bir öncekinin somut çıktısını girdi olarak kullanmalı veya bir sonrakini doğrudan beslemeli, böylece hazırlıktan sonuca uzanan tek, kesintisiz bir uygulama zinciri oluşturmalı.`
+        : `Her özel hedefi bir çalışma paketine (WP) karşılık gelecek şekilde yapılandır. İş paketleri birbirinden bağımsız, tekrarlayan görevler OLMAMALI: her iş paketi bir öncekinin somut çıktısını girdi olarak kullanmalı veya bir sonrakini doğrudan beslemeli, böylece tek, kesintisiz bir uygulama akışı oluşturmalı.`;
+
       return {
         system: EXPERT_PERSONA,
         user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
           `Hedef kitle:\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
           `Genel hedef ve özel hedefler:\n${ctx(priorOutputs, "hedefler")}\n\n` +
-          `Görev 1: Her özel hedefi bir çalışma paketine (WP) karşılık gelecek şekilde, "WP | Özel Hedef | Hedef Kitle | Sonuçlar | Etki" sütunlarından oluşan bir markdown tablosu olarak yapılandır. Her merkezi öğeyi yeni bir satıra koy, net ve öz ifadeler kullan.\n\n` +
-          `Görev 2: Tablodaki tüm "Etki" sütununu topluca değerlendirdiğinde, bunların genel hedefi karşılayıp karşılamadığını analiz et. Uyumsuzluk varsa somut, uygulanabilir düzeltme adımları öner.\n\n` +
+          `Görev 1: ${unitInstruction} Sonucu "${unitLabel} | Özel Hedef | Hedef Kitle | Somut Çıktı | Etki" sütunlarından oluşan bir markdown tablosu olarak ver. Her merkezi öğeyi yeni bir satıra koy, net ve öz ifadeler kullan. "Hedef Kitle" sütunu yukarıda tanımlanan hedef kitleyle tutarlı olsun; "Somut Çıktı" sütunu her zaman elle tutulur, doğrulanabilir bir ürün/belge/sertifika/etkinlik olsun, soyut ifadelerden kaçın.\n\n` +
+          `Görev 2: Tablodaki tüm "Etki" sütununu topluca değerlendirdiğinde, bunların genel hedefi karşılayıp karşılamadığını analiz et. Ayrıca ${continuityPhrase} kısaca özetle. Uyumsuzluk veya kopukluk varsa somut, uygulanabilir düzeltme adımları öner.\n\n` +
           `Yanıtını "MANTIKSAL ÇERÇEVE" (tablo) ve "UYUM DEĞERLENDİRMESİ" başlıkları altında ver.`,
       };
     },
@@ -298,11 +314,12 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
       },
     ],
     buildPrompt(input, priorOutputs) {
+      const unitPlural = isKa210(priorOutputs) ? "hareketlilikler" : "iş paketleri";
       return {
         system: EXPERT_PERSONA,
-        user: `Mantıksal çerçeve (iş paketleri):\n${ctx(priorOutputs, "mantiksal-cerceve")}\n\n` +
+        user: `Mantıksal çerçeve (${unitPlural}):\n${ctx(priorOutputs, "mantiksal-cerceve")}\n\n` +
           `Tahmini proje bütçesi: ${input.butce} EUR\n\n` +
-          `Bu iş paketlerindeki sonuç ve etkilere dayanarak, Erasmus+ Sonuçlar Platformu'ndaki iyi uygulamaları ve Erasmus+ değerlendirme kılavuzunu göz önünde bulundurarak, sayısal hedefler içeren niteliksel ve niceliksel göstergeler öner. Erasmus+'ın çevre dostu uygulamaları ve dijitalleşmeyi teşvik ettiğini dikkate al.`,
+          `Bu ${unitPlural} listesindeki sonuç ve etkilere dayanarak, Erasmus+ Sonuçlar Platformu'ndaki iyi uygulamaları ve Erasmus+ değerlendirme kılavuzunu göz önünde bulundurarak, sayısal hedefler içeren niteliksel ve niceliksel göstergeler öner. Erasmus+'ın çevre dostu uygulamaları ve dijitalleşmeyi teşvik ettiğini dikkate al.`,
       };
     },
   },
@@ -318,7 +335,7 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
     buildPrompt(_input, priorOutputs) {
       return {
         system: EXPERT_PERSONA,
-        user: `Aşağıdaki bilgileri kullanarak projenin yaklaşık 4000 karakterlik bir genel bakış (konsept notu) metnini yaz: vizyon, tanımlanan problem, genel/özel hedefler, seçilen öncelikler, somut ve soyut sonuçlar, inovasyon ve bir sonuç paragrafı. Vizyon ve hedef kitleyle başla. Özel hedefleri, amaçları ve öncelikleri madde işaretleriyle anlat. Problem tanımı daha uzun olsun (yaklaşık 800 karakter). Her bölümün kendi kalın (bold) başlığı olsun. Kanıtları metnin içine göm, sonda ayrı bir kaynakça listesi verme. Profesyonel ama anlaşılır, yüksek okunabilirlikte bir dil kullan.\n\n` +
+        user: `Aşağıdaki bilgileri kullanarak projenin yaklaşık 4000 karakterlik bir genel bakış (konsept notu) metnini yaz: vizyon, tanımlanan problem, genel/özel hedefler, seçilen öncelikler, somut ve soyut sonuçlar, inovasyon ve bir sonuç paragrafı. Vizyon ve hedef kitleyle başla. Özel hedefleri, amaçları ve öncelikleri madde işaretleriyle anlat. Problem tanımı daha uzun olsun (yaklaşık 800 karakter). Her bölümün kendi kalın (bold) başlığı olsun. Kanıtları metnin içine göm, sonda ayrı bir kaynakça listesi verme. Profesyonel ama anlaşılır, yüksek okunabilirlikte bir dil kullan. Metin boyunca genel hedef, özel hedefler, hedef kitle, somut çıktılar ve hareketlilikler/iş paketleri arasında birbirini tutarlı biçimde tamamlayan, aynı hedef kitleye ve aynı genel hedefe atıf yapan tek bir bütün olarak oku; çelişen veya birbirinden kopuk ifadeler varsa metni yazarken bunları uyumlu hâle getir.\n\n` +
           `Problem ve çözüm:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
           `Tez testi ve hedef kitle:\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
           `Nedenler, sonuçlar ve etki:\n${ctx(priorOutputs, "nedenler-sonuclar-etki")}\n\n` +
