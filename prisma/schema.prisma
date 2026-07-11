@@ -265,6 +265,8 @@ model ToolVisibility {
   id        String   @id @default(cuid())
   toolKey   String   @unique
   published Boolean  @default(true)
+  // Ücretsiz mi ücretli mi: true ise araç sayfasına erişim PREMIUM üyelik gerektirir.
+  isPremium Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

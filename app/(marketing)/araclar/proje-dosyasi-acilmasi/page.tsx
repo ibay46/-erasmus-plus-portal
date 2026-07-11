@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { DosyaAcilmasiFormu } from "@/components/tools/DosyaAcilmasiFormu";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "Proje Dosyası Açılması Dilekçesi | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function ProjeDosyasiAcilmasiPage() {
   if (!(await isToolPublished("/araclar/proje-dosyasi-acilmasi"))) notFound();
+  if (await isToolPremium("/araclar/proje-dosyasi-acilmasi")) await requireTier("PREMIUM");
 
   return (
     <div>

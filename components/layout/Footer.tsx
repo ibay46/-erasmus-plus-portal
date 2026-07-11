@@ -17,7 +17,7 @@ const FOOTER_COLUMNS = [
     heading: "Akademi & Destek",
     links: [
       { href: "/akademi", label: "Erasmus Akademi" },
-      { href: "/araclar", label: "Ücretsiz Araçlar" },
+      { href: "/araclar", label: "Araçlar" },
       { href: "/danismanlik", label: "Danışmanlık" },
       { href: "/sss", label: "Sıkça Sorulan Sorular" },
     ],

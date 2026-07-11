@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Ka220PersonelZamanCizelgesi } from "@/components/tools/Ka220PersonelZamanCizelgesi";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "KA220 Personel Zaman Çizelgesi (Timesheet) | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function Ka220PersonelZamanCizelgesiPage() {
   if (!(await isToolPublished("/araclar/ka220-personel-zaman-cizelgesi"))) notFound();
+  if (await isToolPremium("/araclar/ka220-personel-zaman-cizelgesi")) await requireTier("PREMIUM");
 
   return (
     <div>

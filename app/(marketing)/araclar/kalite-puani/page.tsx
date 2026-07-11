@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import KaScoreSimulator from "@/components/tools/KaScoreSimulator";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "KA210 Değerlendirme Kriteri Rehberi | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function KalitePuaniPage() {
   if (!(await isToolPublished("/araclar/kalite-puani"))) notFound();
+  if (await isToolPremium("/araclar/kalite-puani")) await requireTier("PREMIUM");
 
   return (
     <div>

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { MebPptsProjeFormu } from "@/components/tools/MebPptsProjeFormu";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "MEB Proje ve Protokol Takip Sistemi (PPTS) Formu | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function MebPptsProjeFormuPage() {
   if (!(await isToolPublished("/araclar/meb-ppts-proje-formu"))) notFound();
+  if (await isToolPremium("/araclar/meb-ppts-proje-formu")) await requireTier("PREMIUM");
 
   return (
     <div>

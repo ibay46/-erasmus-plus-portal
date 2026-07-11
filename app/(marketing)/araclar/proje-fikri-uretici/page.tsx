@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 import { ProjectIdeaGenerator } from "@/components/tools/ProjectIdeaGenerator";
 
 export const metadata = {
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function ProjeFikriUreticiPage() {
   if (!(await isToolPublished("/araclar/proje-fikri-uretici"))) notFound();
+  if (await isToolPremium("/araclar/proje-fikri-uretici")) await requireTier("PREMIUM");
 
   return (
     <div>

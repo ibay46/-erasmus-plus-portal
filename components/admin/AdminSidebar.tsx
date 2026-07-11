@@ -140,7 +140,7 @@ const NAV_GROUPS: NavGroup[] = [
       { href: "/admin/proje-sonuclari", label: "Proje Sonuçları", icon: ICONS.trophy },
       { href: "/admin/acik-cagrilar", label: "Açık Çağrılar", icon: ICONS.calendar },
       { href: "/admin/yararli-linkler", label: "Yararlı Linkler", icon: ICONS.link },
-      { href: "/admin/araclar", label: "Ücretsiz Araçlar", icon: ICONS.wrench },
+      { href: "/admin/araclar", label: "Araçlar", icon: ICONS.wrench },
     ],
   },
   {

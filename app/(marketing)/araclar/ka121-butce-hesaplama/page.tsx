@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Ka121BudgetCalculator } from "@/components/tools/Ka121BudgetCalculator";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "KA121/KA122 Personel Hareketliliği Bütçe Hesaplayıcı | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function Ka121BudgetPage() {
   if (!(await isToolPublished("/araclar/ka121-butce-hesaplama"))) notFound();
+  if (await isToolPremium("/araclar/ka121-butce-hesaplama")) await requireTier("PREMIUM");
 
   return (
     <div>

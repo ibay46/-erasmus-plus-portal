@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { YollukBildirimi } from "@/components/tools/YollukBildirimi";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "Geçici Görev Yolluğu Bildirimi | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function YollukBildirimiPage() {
   if (!(await isToolPublished("/araclar/yolluk-bildirimi"))) notFound();
+  if (await isToolPremium("/araclar/yolluk-bildirimi")) await requireTier("PREMIUM");
 
   return (
     <div>

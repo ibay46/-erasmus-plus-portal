@@ -142,7 +142,7 @@ const SECTIONS: HomeSection[] = [
   },
   {
     href: "/araclar",
-    title: "Ücretsiz Araçlar",
+    title: "Araçlar",
     description: "Bütçe hesaplayıcısı, proje zaman çizelgesi ve yolluk bildirimi gibi pratik araçlar.",
     icon: <IconAraclar />,
     levels: ["orta", "uzman"],
@@ -386,7 +386,7 @@ export default async function Home() {
                 href="/araclar"
                 className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
               >
-                Ücretsiz Araçları Keşfet
+                Araçları Keşfet
               </Link>
               <Link
                 href="/proje-sonuclari"

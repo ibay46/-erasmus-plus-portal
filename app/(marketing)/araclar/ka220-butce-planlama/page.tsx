@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Ka220BudgetCalculator } from "@/components/tools/Ka220BudgetCalculator";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "KA220 Bütçe ve İş Paketi Planlama Aracı | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function Ka220BudgetPlanlamaPage() {
   if (!(await isToolPublished("/araclar/ka220-butce-planlama"))) notFound();
+  if (await isToolPremium("/araclar/ka220-butce-planlama")) await requireTier("PREMIUM");
 
   return (
     <div>

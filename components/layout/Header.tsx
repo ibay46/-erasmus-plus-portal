@@ -56,7 +56,7 @@ const NAV_GROUPS = [
     sections: [
       {
         items: [
-          { href: "/araclar", label: "Ücretsiz Araçlar", desc: "Bütçe, takvim ve bildirim araçları" },
+          { href: "/araclar", label: "Araçlar", desc: "Bütçe, takvim ve bildirim araçları" },
           { href: "/akademi", label: "Erasmus Akademi", desc: "Üyelikle özel içerik ve eğitimler" },
         ],
       },

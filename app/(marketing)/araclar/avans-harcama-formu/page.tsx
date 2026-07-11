@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { AvansHarcamaFormu } from "@/components/tools/AvansHarcamaFormu";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "AB Hibe Proje Avans Harcama Formu | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function AvansHarcamaFormuPage() {
   if (!(await isToolPublished("/araclar/avans-harcama-formu"))) notFound();
+  if (await isToolPremium("/araclar/avans-harcama-formu")) await requireTier("PREMIUM");
 
   return (
     <div>

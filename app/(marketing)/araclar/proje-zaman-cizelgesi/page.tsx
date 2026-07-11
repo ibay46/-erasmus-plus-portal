@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { GanttChartBuilder } from "@/components/tools/GanttChartBuilder";
 import { Card } from "@/components/ui/Card";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "Proje Zaman Çizelgesi (Gantt) | Erasmus+ Portal",
@@ -41,6 +42,7 @@ const STEPS = [
 
 export default async function ProjeZamanCizelgesiPage() {
   if (!(await isToolPublished("/araclar/proje-zaman-cizelgesi"))) notFound();
+  if (await isToolPremium("/araclar/proje-zaman-cizelgesi")) await requireTier("PREMIUM");
 
   return (
     <div>

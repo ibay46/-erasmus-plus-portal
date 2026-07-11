@@ -243,8 +243,8 @@ export default async function AdminDashboardPage() {
     },
     {
       href: "/admin/araclar",
-      title: "Ücretsiz Araçlar",
-      description: "Araçlar sayfasında hangi araçların yayında olacağını seçin.",
+      title: "Araçlar",
+      description: "Araçlar sayfasında hangi araçların yayında ve ücretli olacağını seçin.",
       count: TOOLS.length,
       icon: (
         <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">

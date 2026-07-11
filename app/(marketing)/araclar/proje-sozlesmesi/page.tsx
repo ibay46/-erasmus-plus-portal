@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ProjeSozlesmesi } from "@/components/tools/ProjeSozlesmesi";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "Proje Ortaklık Sözleşmesi | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function ProjeSozlesmesiPage() {
   if (!(await isToolPublished("/araclar/proje-sozlesmesi"))) notFound();
+  if (await isToolPremium("/araclar/proje-sozlesmesi")) await requireTier("PREMIUM");
 
   return (
     <div>

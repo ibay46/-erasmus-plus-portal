@@ -10,7 +10,7 @@ export const FREE_FEATURES: TierFeature[] = [
   { href: "/proje-sonuclari", label: "Proje Sonuçları" },
   { href: "/ab-hibe-projeleri", label: "Hibe Projeleri" },
   { href: "/mevzuat", label: "Mevzuat" },
-  { href: "/araclar", label: "Ücretsiz Araçlar" },
+  { href: "/araclar", label: "Araçlar" },
   { href: "/danismanlik", label: "Genel Danışmanlık Bilgisi" },
 ];
 

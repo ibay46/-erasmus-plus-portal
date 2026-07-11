@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { Ka210BudgetCalculator } from "@/components/tools/Ka210BudgetCalculator";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = { title: "KA210 Bütçe Hesaplama | Erasmus+ Portal" };
 
 export default async function Ka210ButceHesaplamaPage() {
   if (!(await isToolPublished("/araclar/ka210-butce-hesaplama"))) notFound();
+  if (await isToolPremium("/araclar/ka210-butce-hesaplama")) await requireTier("PREMIUM");
 
   return (
     <div>

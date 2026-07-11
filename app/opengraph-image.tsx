@@ -70,7 +70,7 @@ export default async function Image() {
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{ fontSize: 26, fontWeight: 400, color: "#5B6473" }}>
-            Haberler &middot; Rehberler &middot; Ücretsiz Araçlar &middot; Danışmanlık
+            Haberler &middot; Rehberler &middot; Araçlar &middot; Danışmanlık
           </span>
           <span style={{ fontSize: 26, fontWeight: 700, color: "#2F6FEB" }}>erasmusportal.com</span>
         </div>

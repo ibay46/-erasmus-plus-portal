@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { OnMaliKontrolListesi } from "@/components/tools/OnMaliKontrolListesi";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "Ön Malî Kontrol Listesi | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function OnMaliKontrolListesiPage() {
   if (!(await isToolPublished("/araclar/on-mali-kontrol-listesi"))) notFound();
+  if (await isToolPremium("/araclar/on-mali-kontrol-listesi")) await requireTier("PREMIUM");
 
   return (
     <div>

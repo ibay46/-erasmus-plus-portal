@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { PriorityMatcher } from "@/components/tools/PriorityMatcher";
-import { isToolPublished } from "@/lib/toolVisibility";
+import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
+import { requireTier } from "@/lib/auth";
 
 export const metadata = {
   title: "Öncelik Eşleştirici | Erasmus+ Portal",
@@ -10,6 +11,7 @@ export const metadata = {
 
 export default async function OncelikEslestiriciPage() {
   if (!(await isToolPublished("/araclar/oncelik-eslestirici"))) notFound();
+  if (await isToolPremium("/araclar/oncelik-eslestirici")) await requireTier("PREMIUM");
 
   return (
     <div>
