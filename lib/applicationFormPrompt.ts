@@ -82,8 +82,10 @@ export function buildApplicationFormAnswerPrompt(params: {
   orgInfo?: string;
   answeredSoFar?: string;
   activityType?: ActivityType;
+  previousAnswer?: string;
+  refinementNote?: string;
 }): { system: string; user: string } {
-  const { question, instanceIndex, totalInScope, conceptNote, mantiksalCerceve, orgInfo, answeredSoFar, activityType } = params;
+  const { question, instanceIndex, totalInScope, conceptNote, mantiksalCerceve, orgInfo, answeredSoFar, activityType, previousAnswer, refinementNote } = params;
 
   const parts: string[] = [];
 
@@ -118,7 +120,16 @@ export function buildApplicationFormAnswerPrompt(params: {
   if (question.note) parts.push(`Değerlendiricilerin burada aradığı şey: ${question.note}`);
   if (question.bilingual) parts.push(BILINGUAL_INSTRUCTION);
   parts.push(`\nRESMİ FORM SORUSU (İngilizce, sadece referans içindir):\n"${question.text}"`);
-  parts.push(`\nCevabı şimdi yaz.`);
+
+  if (refinementNote?.trim()) {
+    parts.push(
+      `KULLANICININ ÖNCEKİ TASLAĞI (sıfırdan yazma — bu taslağın üzerine kullanıcının istediği değişikliği/eklemeyi yap, geri kalanını olduğu gibi koru):\n${previousAnswer?.trim() || "(önceki taslak yok)"}`
+    );
+    parts.push(`KULLANICININ EK TALEBİ (mutlaka uygula): ${refinementNote.trim()}`);
+    parts.push(`\nGüncellenmiş taslağı şimdi yaz.`);
+  } else {
+    parts.push(`\nCevabı şimdi yaz.`);
+  }
 
   return { system: FORM_EXPERT_PERSONA, user: parts.join("\n\n") };
 }

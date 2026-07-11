@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { inputClass, textareaClass } from "@/components/akademi/impact/sharedStyles";
 import {
   IDEA_WIZARD_STEPS,
   resolveFieldOptions,
+  PARTNER_ACTIVITY_PLAN_STEP_KEY,
   type IdeaWizardStepConfig,
 } from "@/lib/content/ideaWizardSteps";
 import { renameIdeaWizardSession } from "@/lib/actions/ideaWizard";
@@ -57,6 +59,7 @@ export function IdeaWizard({
   const [saving, setSaving] = useState(false);
   const [title, setTitle] = useState(sessionTitle);
   const [titleSaved, setTitleSaved] = useState(true);
+  const router = useRouter();
 
   const step = IDEA_WIZARD_STEPS[currentIndex];
   const state = stepStates[step.key];
@@ -80,15 +83,15 @@ export function IdeaWizard({
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error ?? "Bir hata oluştu. Lütfen tekrar deneyin.");
-    return data.output as string;
+    return data as { output: string; applicationFormSessionId?: string };
   }
 
   async function handleGenerate() {
     setLoading(true);
     setError(null);
     try {
-      const output = await callApi("generate");
-      updateStepState(step.key, { output });
+      const data = await callApi("generate");
+      updateStepState(step.key, { output: data.output });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Bağlantı hatası. Lütfen tekrar deneyin.");
     } finally {
@@ -103,8 +106,12 @@ export function IdeaWizard({
     setSaving(true);
     setError(null);
     try {
-      await callApi("save", outputToSave);
-      if (currentIndex < IDEA_WIZARD_STEPS.length - 1) setCurrentIndex(currentIndex + 1);
+      const data = await callApi("save", outputToSave);
+      if (data.applicationFormSessionId) {
+        router.push(`/akademi/proje-gelistirme/basvuru-formu-asistani/${data.applicationFormSessionId}`);
+      } else if (currentIndex < IDEA_WIZARD_STEPS.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Kaydedilemedi. Lütfen tekrar deneyin.");
     } finally {
@@ -118,7 +125,10 @@ export function IdeaWizard({
   }
 
   function buildExportSections() {
-    return IDEA_WIZARD_STEPS.map((s) => ({ title: s.title, content: stepStates[s.key].output }));
+    return IDEA_WIZARD_STEPS.filter((s) => s.key !== PARTNER_ACTIVITY_PLAN_STEP_KEY).map((s) => ({
+      title: s.title,
+      content: stepStates[s.key].output,
+    }));
   }
 
   function handleExportPdf() {
@@ -277,7 +287,7 @@ export function IdeaWizard({
         </div>
       </Card>
 
-      {currentIndex === IDEA_WIZARD_STEPS.length - 1 && stepStates[step.key].output && (
+      {stepStates["konsept-not"]?.output && (
         <Card className="mt-6">
           <h3 className="mb-2 font-medium text-foreground">Konsept Notunu Dışa Aktar</h3>
           <p className="mb-3 text-sm text-muted-foreground">

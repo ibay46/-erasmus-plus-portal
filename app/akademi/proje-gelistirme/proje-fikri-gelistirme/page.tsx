@@ -19,7 +19,7 @@ export default async function ProjeFikriGelistirmePage() {
   const sessions = await prisma.ideaWizardSession.findMany({
     where: { userId: user.id },
     orderBy: { updatedAt: "desc" },
-    include: { _count: { select: { steps: true } } },
+    include: { _count: { select: { steps: true } }, applicationFormSessions: { select: { id: true } } },
   });
 
   return (
@@ -30,15 +30,16 @@ export default async function ProjeFikriGelistirmePage() {
         tasarlanmıştır. Güçlü bir başvuru, konsept notu yazılmadan önce kurulur. AI&apos;ı sadece metni
         uzatmak için kullanmak ifadeyi iyileştirir, mantığı değil — bu yüzden bu sihirbaz önce projenizin
         mantığını (problem, hedef kitle, hedefler, birbirini tamamlayan hareketlilik zinciri) kurmanızı,
-        sonra bu mantık üzerine metni yazmanızı sağlar. Konsept notunuz hazır olduğunda,{" "}
+        sonra bu mantık üzerine metni yazmanızı sağlar. Son adımda ortak kuruluş ve faaliyet sayılarınızı
+        girdiğinizde,{" "}
         <Link
           href="/akademi/proje-gelistirme/basvuru-formu-asistani"
           className="cursor-pointer text-accent underline"
         >
           Başvuru Formu Asistanı
         </Link>{" "}
-        ile gerçek KA210 başvuru formunu bu konsept notunu temel alarak doldurabilir, sonra gerçek kriterlerle
-        denetleyebilirsiniz.
+        otomatik oluşturulur ve doğrudan oraya yönlendirilirsiniz — ayrı bir oturum açmanız gerekmez, tek bir
+        kesintisiz akış olarak gerçek KA210 formunu doldurup gerçek kriterlerle denetleyebilirsiniz.
       </p>
 
       <div className="mb-8 grid gap-3 sm:grid-cols-3">
@@ -53,9 +54,9 @@ export default async function ProjeFikriGelistirmePage() {
           <p className="text-xs text-muted-foreground">Adım 7-10: vizyon, proje adı, gösterge ve konsept notu; kurduğunuz mantığın üzerine yazılır.</p>
         </Card>
         <Card className="border-accent-warm/40">
-          <p className="text-xs font-semibold uppercase tracking-wide text-accent-warm mb-1">3 · Sonraki Adım</p>
-          <p className="text-sm font-medium text-foreground mb-1">Başvuru Formu Asistanı&apos;na Geçin</p>
-          <p className="text-xs text-muted-foreground">Gerçek form sorularını bu konsept notuyla doldurun, sonra gerçek kriterlerle denetleyin.</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-accent-warm mb-1">3 · Devam Et</p>
+          <p className="text-sm font-medium text-foreground mb-1">Ortaklar &amp; Faaliyet Planı</p>
+          <p className="text-xs text-muted-foreground">Adım 11: ortak/faaliyet sayılarını girin — Başvuru Formu Asistanı otomatik açılır.</p>
         </Card>
       </div>
 
@@ -63,7 +64,7 @@ export default async function ProjeFikriGelistirmePage() {
         Günlük AI üretim hakkınız <strong className="font-semibold text-foreground">15 istektir</strong>, hak
         her gün gece yarısı yenilenir. Ayrıca aylık toplam hakkınız{" "}
         <strong className="font-semibold text-foreground">150 istektir</strong>; bu hak her ayın 1&apos;inde
-        sıfırlanır. Son adımdan sonra konsept notunuzu PDF veya Word (.docx) olarak indirebilirsiniz.
+        sıfırlanır. Konsept notunuzu PDF veya Word (.docx) olarak indirebilirsiniz.
       </p>
 
       <form action={createIdeaWizardSession} className="mb-8">
@@ -103,15 +104,25 @@ export default async function ProjeFikriGelistirmePage() {
                     {completed} / {TOTAL_STEPS} adım tamamlandı
                   </p>
                 </Link>
-                <form action={deleteIdeaWizardSession} className="mt-3">
-                  <input type="hidden" name="sessionId" value={session.id} />
-                  <button
-                    type="submit"
-                    className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-red-600"
-                  >
-                    Taslağı Sil
-                  </button>
-                </form>
+                <div className="mt-3 flex items-center justify-between">
+                  {session.applicationFormSessions[0] && (
+                    <Link
+                      href={`/akademi/proje-gelistirme/basvuru-formu-asistani/${session.applicationFormSessions[0].id}`}
+                      className="cursor-pointer text-xs font-medium text-accent hover:underline"
+                    >
+                      Başvuru Formu Asistanı&apos;na git →
+                    </Link>
+                  )}
+                  <form action={deleteIdeaWizardSession}>
+                    <input type="hidden" name="sessionId" value={session.id} />
+                    <button
+                      type="submit"
+                      className="cursor-pointer text-xs font-medium text-muted-foreground hover:text-red-600"
+                    >
+                      Taslağı Sil
+                    </button>
+                  </form>
+                </div>
               </Card>
             );
           })}

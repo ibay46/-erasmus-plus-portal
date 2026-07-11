@@ -33,12 +33,12 @@ export default async function BasvuruFormuAsistaniPage() {
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Başvuru Formu Asistanı</h1>
       <p className="text-muted-foreground mb-8 max-w-2xl">
-        Proje Fikri Geliştirme Sihirbazı&apos;nda tamamladığınız bir konsept notunu temel alarak, KA210-SCH&apos;nin
-        gerçek resmi başvuru formu sorularını (EU Funding &amp; Tender Portal) Türkçe taslak olarak AI ile
-        doldurun — forma geçirmeden önce kendiniz İngilizce&apos;ye çevirirsiniz (Project Summary bölümü hariç,
-        o hem Türkçe hem İngilizce üretilir). Soru sayısı sabit değildir — faaliyet türleri (ulusötesi/yerel/
-        yönetim) ve ortak kuruluş sayınıza göre çoğalır. Son adımda tüm cevaplarınız gerçek KA210 kriterlerine
-        göre denetlenir.
+        Proje Fikri Geliştirme Sihirbazı&apos;nın son adımını tamamladığınızda bu araç otomatik oluşturulur ve
+        doğrudan buraya yönlendirilirsiniz. Konsept notunuzu temel alarak, KA210-SCH&apos;nin gerçek resmi
+        başvuru formu sorularını (EU Funding &amp; Tender Portal) Türkçe taslak olarak AI ile doldurun — forma
+        geçirmeden önce kendiniz İngilizce&apos;ye çevirirsiniz (Project Summary bölümü hariç, o hem Türkçe hem
+        İngilizce üretilir). Soru sayısı sabit değildir — faaliyet türleri (ulusötesi/yerel/yönetim) ve ortak
+        kuruluş sayınıza göre çoğalır. Son adımda tüm cevaplarınız gerçek KA210 kriterlerine göre denetlenir.
       </p>
 
       <div className="mb-8 max-w-2xl rounded-xl border border-border bg-card p-5">
@@ -69,12 +69,16 @@ Proje dört kriterden dördünde de kendi eşiğinin altında kalmıştır.`}
             <Link href="/akademi/proje-gelistirme/proje-fikri-gelistirme" className="cursor-pointer text-accent underline">
               Proje Fikri Geliştirme Sihirbazı
             </Link>{" "}
-            ile en az bir konsept notu tamamlamanız gerekiyor.
+            ile bir konsept notu tamamlayın — son adımda bu araç otomatik oluşturulur.
           </p>
         </Card>
       ) : (
         <Card className="mb-8">
-          <h2 className="mb-3 font-medium text-foreground">Yeni Başvuru Oluştur</h2>
+          <h2 className="mb-1 font-medium text-foreground">Ek Başvuru Oluştur</h2>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Genelde gerekmez — Sihirbaz&apos;ın son adımı bunu otomatik yapar. Bu form, aynı konsept notundan
+            ikinci bir başvuru denemesi başlatmak istediğinizde kullanılır.
+          </p>
           <form action={createApplicationFormSession} className="space-y-4">
             <label className="block">
               <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">

@@ -85,6 +85,8 @@ function QuestionCard({
   onChange,
   onBlurSave,
   onGenerate,
+  refinementNote,
+  onRefinementNoteChange,
 }: {
   question: ApplicationFormQuestion;
   instanceIndex: number;
@@ -93,21 +95,39 @@ function QuestionCard({
   onChange: (v: string) => void;
   onBlurSave: () => void;
   onGenerate: () => void;
+  refinementNote: string;
+  onRefinementNoteChange: (v: string) => void;
 }) {
   const { maxChars, bilingual } = question;
   const overLimit = !bilingual && maxChars !== undefined && value.length > maxChars;
+  const hasNote = refinementNote.trim().length > 0;
+  const generateLabel = loading
+    ? "Üretiliyor…"
+    : !value
+      ? "AI'dan Öneri Al"
+      : hasNote
+        ? "Talimatla Güncelle"
+        : "AI'dan Tekrar Üret";
   return (
     <Card>
       <p className="mb-0.5 text-sm font-medium text-foreground">{question.text}</p>
       <p className="mb-2 text-sm italic text-muted-foreground">{question.textTr}</p>
       {question.note && <p className="mb-3 text-xs text-muted-foreground">↳ {question.note}</p>}
+      {value && (
+        <input
+          value={refinementNote}
+          onChange={(e) => onRefinementNoteChange(e.target.value)}
+          placeholder="Ek talimat (opsiyonel) — örn. &quot;ayrıca X'i de ekle&quot;, &quot;bunu kısalt&quot;"
+          className={`${inputClass} mb-2 text-xs`}
+        />
+      )}
       <button
         type="button"
         onClick={onGenerate}
         disabled={loading}
         className="cursor-pointer mb-3 inline-flex items-center rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? "Üretiliyor…" : value ? "AI'dan Tekrar Üret" : "AI'dan Öneri Al"}
+        {generateLabel}
       </button>
       <textarea
         value={value}
@@ -152,6 +172,7 @@ export function ApplicationFormAssistant({
   initialDenetimOutput: string;
 }) {
   const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers);
+  const [refinementNotes, setRefinementNotes] = useState<Record<string, string>>({});
   const [loadingKeys, setLoadingKeys] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [title, setTitle] = useState(sessionTitle);
@@ -199,11 +220,13 @@ export function ApplicationFormAssistant({
 
   async function handleGenerate(questionId: string, instanceIndex: number) {
     const k = key(questionId, instanceIndex);
+    const refinementNote = refinementNotes[k];
     setLoading(k, true);
     setError(null);
     try {
-      const data = await callApi({ sessionId, action: "generate", questionId, instanceIndex });
+      const data = await callApi({ sessionId, action: "generate", questionId, instanceIndex, refinementNote });
       setAnswers((prev) => ({ ...prev, [k]: data.answer }));
+      if (refinementNote) setRefinementNotes((prev) => ({ ...prev, [k]: "" }));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Bağlantı hatası.");
     } finally {
@@ -316,6 +339,8 @@ export function ApplicationFormAssistant({
                       onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
                       onBlurSave={() => handleSave(q.id, 0)}
                       onGenerate={() => handleGenerate(q.id, 0)}
+                      refinementNote={refinementNotes[k] ?? ""}
+                      onRefinementNoteChange={(v) => setRefinementNotes((prev) => ({ ...prev, [k]: v }))}
                     />
                   );
                 })}
@@ -367,6 +392,8 @@ export function ApplicationFormAssistant({
                               onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
                               onBlurSave={() => handleSave(q.id, storedIndex)}
                               onGenerate={() => handleGenerate(q.id, storedIndex)}
+                              refinementNote={refinementNotes[k] ?? ""}
+                              onRefinementNoteChange={(v) => setRefinementNotes((prev) => ({ ...prev, [k]: v }))}
                             />
                           );
                         })}
@@ -420,6 +447,8 @@ export function ApplicationFormAssistant({
                           onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
                           onBlurSave={() => handleSave(q.id, partnerIndex)}
                           onGenerate={() => handleGenerate(q.id, partnerIndex)}
+                          refinementNote={refinementNotes[k] ?? ""}
+                          onRefinementNoteChange={(v) => setRefinementNotes((prev) => ({ ...prev, [k]: v }))}
                         />
                       );
                     })}

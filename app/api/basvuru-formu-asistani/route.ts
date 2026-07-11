@@ -4,6 +4,7 @@ import { requireTier } from "@/lib/auth";
 import { getVisitorHash, getTodayUsageCount, getMonthUsageCount } from "@/lib/toolRateLimit";
 import { getApplicationFormQuestion, decodeActivityInstance, ACTIVITY_TYPE_LABELS } from "@/lib/content/applicationFormQuestions";
 import { buildApplicationFormAnswerPrompt, buildApplicationFormDenetimPrompt, enforceCharLimit } from "@/lib/applicationFormPrompt";
+import { PARTNER_ACTIVITY_PLAN_STEP_KEY } from "@/lib/content/ideaWizardSteps";
 
 const TOOL_KEY = "basvuru-formu-asistani";
 const DAILY_AI_LIMIT = 15;
@@ -18,6 +19,7 @@ interface RequestBody {
   instanceIndex?: number;
   answer?: string;
   orgInfo?: string;
+  refinementNote?: string;
 }
 
 // gpt-5.6-sol bir "reasoning" modelidir: max_completion_tokens, görünmeyen reasoning
@@ -130,7 +132,10 @@ export async function POST(request: Request) {
 
   const stepOutputs: Record<string, string> = {};
   for (const step of session.ideaWizardSession.steps) stepOutputs[step.stepKey] = step.output;
-  const conceptNote = stepOutputs["konsept-not"]?.trim() || "(konsept notu henüz tamamlanmamış)";
+  const partnerActivityPlan = stepOutputs[PARTNER_ACTIVITY_PLAN_STEP_KEY]?.trim();
+  const conceptNote =
+    (stepOutputs["konsept-not"]?.trim() || "(konsept notu henüz tamamlanmamış)") +
+    (partnerActivityPlan ? `\n\nOrtaklar ve Faaliyet Planı:\n${partnerActivityPlan}` : "");
   const mantiksalCerceve = stepOutputs["mantiksal-cerceve"]?.trim() || "(mantıksal çerçeve henüz tamamlanmamış)";
 
   // "denetim": tüm gerçek form cevaplarını gerçek kriterlere göre puanlar.
@@ -181,7 +186,7 @@ export async function POST(request: Request) {
 
   // "generate": tek bir soru için AI taslağı üretir.
   if (action === "generate") {
-    const { questionId, instanceIndex = 0 } = body;
+    const { questionId, instanceIndex = 0, refinementNote } = body;
     if (!questionId) return NextResponse.json({ error: "Soru belirtilmedi." }, { status: 400 });
 
     const question = getApplicationFormQuestion(questionId);
@@ -233,6 +238,16 @@ export async function POST(request: Request) {
       }
     }
 
+    // Kullanıcı "ek talimat" girdiyse (ör. "ayrıca X'i de ekle"), sıfırdan değil,
+    // önceki taslağın üzerine bu talebi işleyen bir güncelleme üretilir.
+    let previousAnswer: string | undefined;
+    if (refinementNote?.trim()) {
+      const existingRow = await prisma.applicationFormAnswer.findUnique({
+        where: { sessionId_questionId_instanceIndex: { sessionId, questionId, instanceIndex } },
+      });
+      previousAnswer = existingRow?.answer;
+    }
+
     const { system, user: userPrompt } = buildApplicationFormAnswerPrompt({
       question,
       instanceIndex: promptInstanceIndex,
@@ -242,6 +257,8 @@ export async function POST(request: Request) {
       orgInfo,
       answeredSoFar,
       activityType,
+      previousAnswer,
+      refinementNote,
     });
 
     // Karakter sınırı bilinen alanlarda, ~3.2 karakter/token varsayımıyla + reasoning

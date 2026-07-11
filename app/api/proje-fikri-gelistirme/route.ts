@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireTier } from "@/lib/auth";
 import { getVisitorHash, getTodayUsageCount, getMonthUsageCount } from "@/lib/toolRateLimit";
-import { getIdeaWizardStep, IDEA_WIZARD_STEPS } from "@/lib/content/ideaWizardSteps";
+import { getIdeaWizardStep, IDEA_WIZARD_STEPS, PARTNER_ACTIVITY_PLAN_STEP_KEY } from "@/lib/content/ideaWizardSteps";
 
 const TOOL_KEY = "proje-fikri-gelistirme";
 const DAILY_AI_LIMIT = 15;
@@ -68,7 +68,36 @@ export async function POST(request: Request) {
 
     await prisma.ideaWizardSession.update({ where: { id: sessionId }, data: { updatedAt: new Date() } });
 
-    return NextResponse.json({ output: saved.output });
+    // Sihirbazın son adımı (Ortaklar ve Faaliyet Planı) kaydedildiğinde, iki aracı tek
+    // bir kesintisiz akış hâline getirmek için Başvuru Formu Asistanı oturumu otomatik
+    // oluşturulur (idempotent — zaten varsa yenisi açılmaz) ve id'si döndürülür; istemci
+    // kullanıcıyı doğrudan oraya yönlendirir.
+    let applicationFormSessionId: string | undefined;
+    if (stepKey === PARTNER_ACTIVITY_PLAN_STEP_KEY) {
+      const existing = await prisma.applicationFormSession.findFirst({ where: { ideaWizardSessionId: sessionId } });
+      if (existing) {
+        applicationFormSessionId = existing.id;
+      } else {
+        const kurulusSayisi = Math.max(1, Math.min(20, Number(input.kurulusSayisi) || 1));
+        const ulusotesiSayisi = Math.max(0, Math.min(20, Number(input.ulusotesiSayisi) || 0));
+        const yerelSayisi = Math.max(0, Math.min(20, Number(input.yerelSayisi) || 0));
+        const yonetimYayginSayisi = input.yonetimYayginSayisi === "1" ? 1 : 0;
+        const created = await prisma.applicationFormSession.create({
+          data: {
+            userId: user.id,
+            ideaWizardSessionId: sessionId,
+            kurulusSayisi,
+            ulusotesiSayisi,
+            yerelSayisi,
+            yonetimYayginSayisi,
+            title: session.title,
+          },
+        });
+        applicationFormSessionId = created.id;
+      }
+    }
+
+    return NextResponse.json({ output: saved.output, applicationFormSessionId });
   }
 
   // "generate": AI çağrısı gerektirir.

@@ -57,6 +57,11 @@ Mümkün olan yerlerde iddiaları Avrupa'dan, 5 yıldan eski olmayan kaynaklarla
 Yanıtını düz metin/markdown olarak ver (gerektiğinde başlıklar, madde işaretleri, tablo kullanabilirsin);
 JSON döndürme.`;
 
+// Sihirbazın son adımı — kaydedildiğinde Başvuru Formu Asistanı bu anahtarı arar
+// (bkz. app/api/proje-fikri-gelistirme/route.ts) ve otomatik bir ApplicationFormSession
+// oluşturup kullanıcıyı doğrudan oraya yönlendirir; iki araç tek bir kesintisiz akış olur.
+export const PARTNER_ACTIVITY_PLAN_STEP_KEY = "ortaklar-hareketlilik-plani";
+
 function ctx(priorOutputs: Record<string, string>, key: string): string {
   return priorOutputs[key]?.trim() || "(henüz girilmedi)";
 }
@@ -286,7 +291,7 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
     title: "Konsept Notu",
     shortTitle: "Konsept Notu",
     description:
-      "Son adım: AI, önceki tüm adımları birleştirerek yaklaşık 4000 karakterlik bir konsept notu üretir.",
+      "AI, önceki tüm adımları birleştirerek yaklaşık 4000 karakterlik bir konsept notu üretir.",
     requiresAi: true,
     fields: [],
     buildPrompt(_input, priorOutputs) {
@@ -305,7 +310,72 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
       };
     },
   },
+  {
+    key: PARTNER_ACTIVITY_PLAN_STEP_KEY,
+    order: 11,
+    title: "Ortaklar ve Faaliyet Planı",
+    shortTitle: "Ortaklar & Faaliyetler",
+    description:
+      "Son adım: kaç ortak kuruluşunuz, kaç ulusötesi/yerel faaliyetiniz olacağını ve toplam hibe tutarınızı girin. Kaydettiğinizde Başvuru Formu Asistanı otomatik oluşturulur ve doğrudan oraya yönlendirilirsiniz — gerçek KA210-SCH form sorularını bu konsept notuna dayanarak dolduracaksınız.",
+    requiresAi: false,
+    fields: [
+      {
+        key: "kurulusSayisi",
+        label: "Kaç ortak kuruluş var? (başvuran dahil)",
+        type: "text",
+        required: true,
+        placeholder: "Örn. 2",
+        helpText: "Başvuran kuruluş dahil toplam kuruluş sayısı.",
+      },
+      {
+        key: "ulusotesiSayisi",
+        label: "Kaç ulusötesi hareketliliğiniz var?",
+        type: "text",
+        required: true,
+        placeholder: "Örn. 3",
+        helpText: "Gün bazında planlanan, yurt dışındaki hareketlilikler. Mantıksal Çerçeve tablonuzdaki satır sayısı.",
+      },
+      {
+        key: "yerelSayisi",
+        label: "Kaç yerel faaliyetiniz var? (varsa)",
+        type: "text",
+        placeholder: "Örn. 0",
+        helpText: "Saat bazında planlanan, kendi ülkenizdeki faaliyetler.",
+      },
+      {
+        key: "yonetimYayginSayisi",
+        label: "Ayrı bir yönetim ve yaygınlaştırma faaliyeti olacak mı?",
+        type: "select",
+        options: [
+          { value: "0", label: "Hayır" },
+          { value: "1", label: "Evet" },
+        ],
+      },
+      {
+        key: "lumpSum",
+        label: "Toplam götürü (lump sum) hibe tutarı",
+        type: "select",
+        options: [
+          { value: "30000", label: "30.000 €" },
+          { value: "60000", label: "60.000 €" },
+        ],
+        helpText: "KA210-SCH'de sadece bu iki sabit tutar seçilebilir.",
+      },
+    ],
+    formatOutput(input) {
+      const yonetim = input.yonetimYayginSayisi === "1" ? "Evet" : "Hayır";
+      return `Ortak kuruluş sayısı (başvuran dahil): ${input.kurulusSayisi}\nUlusötesi hareketlilik sayısı: ${input.ulusotesiSayisi}\nYerel faaliyet sayısı: ${input.yerelSayisi || 0}\nAyrı yönetim ve yaygınlaştırma faaliyeti: ${yonetim}\nToplam götürü hibe tutarı: ${Number(input.lumpSum).toLocaleString("tr-TR")} €`;
+    },
+  },
 ];
+
+export const PARTNER_ACTIVITY_PLAN_INPUT_KEYS = [
+  "kurulusSayisi",
+  "ulusotesiSayisi",
+  "yerelSayisi",
+  "yonetimYayginSayisi",
+  "lumpSum",
+] as const;
 
 export function getIdeaWizardStep(stepKey: string): IdeaWizardStepConfig | undefined {
   return IDEA_WIZARD_STEPS.find((s) => s.key === stepKey);
