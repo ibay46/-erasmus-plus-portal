@@ -12,9 +12,11 @@ export default async function EtkiYonetimiPage() {
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Etki Yönetimi Araçları</h1>
       <p className="text-muted-foreground mb-4 max-w-2xl">
-        Avrupa Komisyonu&apos;nun Erasmus+ yararlanıcıları için hazırladığı &quot;Impact Toolkit&quot;
-        temel alınarak hazırlanmış 9 pratik araç. Projenizin başvuru, uygulama, ara değerlendirme ve
-        raporlama aşamalarında etkinizi planlamak, izlemek ve raporlamak için kullanabilirsiniz.
+        Avrupa Komisyonu&apos;nun Erasmus+ yararlanıcıları için hazırladığı &quot;Impact Toolkit&quot; ve
+        davranış değişimi (COM-B), yayılım (Rogers&apos; Diffusion) ve sosyal değer (SROI) gibi yerleşik
+        etki yönetimi çerçeveleri temel alınarak hazırlanmış 12 pratik araç. Projenizin başvuru,
+        uygulama, ara değerlendirme ve raporlama aşamalarında etkinizi planlamak, izlemek ve
+        raporlamak için kullanabilirsiniz.
       </p>
       <p className="text-sm mb-10">
         <Link href="/akademi/etki-yonetimi/sozluk" className="cursor-pointer text-accent underline">

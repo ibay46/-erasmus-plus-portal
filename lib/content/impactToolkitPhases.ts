@@ -41,6 +41,33 @@ export const IMPACT_PHASES: ImpactPhase[] = [
           description: "Kilometre taşları, faaliyetler, kaynaklar ve zaman çizelgesini tek sayfada planlayın.",
         },
       },
+      {
+        title: "Aşama 3: Değişim Mekanizmasını Tasarlayın",
+        description: "Etkinin kendiliğinden olacağını varsaymak yerine, davranış değişiminin önündeki engelleri önceden test edin.",
+        tool: {
+          title: "Davranış Değişimi Tasarımı",
+          href: "/akademi/etki-yonetimi/davranis-degisimi-tasarimi",
+          description: "COM-B çerçevesiyle (Kapasite, Fırsat, Motivasyon) hedef davranışın önündeki engelleri ve müdahale mantığını haritalayın.",
+        },
+      },
+      {
+        title: "Aşama 4: Yaygınlaştırma Stratejinizi Planlayın",
+        description: "Geniş çaplı yaymak yerine, hedef kitlenizi segmentlere ayırıp her birine özel bir mesaj tasarlayın.",
+        tool: {
+          title: "Benimseyen Segmentasyonu",
+          href: "/akademi/etki-yonetimi/benimseyen-segmentasyonu",
+          description: "Rogers' Diffusion modeliyle beş benimseyen grubunu tanımlayın ve transfer mesajlarını planlayın.",
+        },
+      },
+      {
+        title: "Aşama 5: Maliyet-Etkinliği Gerekçelendirin",
+        description: "Uygulama maliyetini açıklamak yerine, bütçenin karşılığında elde edilecek geniş sosyal değeri gösterin.",
+        tool: {
+          title: "Sosyal Değer Gerekçesi",
+          href: "/akademi/etki-yonetimi/sosyal-deger-gerekcesi",
+          description: "Niteliksel değer göstergeleri (KVI) tanımlayın ve SROI mantığıyla değerlendirici için iş gerekçesi hazırlayın.",
+        },
+      },
     ],
   },
   {
