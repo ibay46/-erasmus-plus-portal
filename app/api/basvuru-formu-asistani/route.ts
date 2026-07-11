@@ -181,6 +181,27 @@ export async function POST(request: Request) {
       orgInfo = orgInfoRow?.answer;
     }
 
+    // "once" (genel/özet) sorular, o ana kadar cevaplanmış hareketlilik/kuruluş
+    // sorularını da bağlam olarak alır — projeyi baştan sona incelemiş gibi cevap verir.
+    let answeredSoFar: string | undefined;
+    if (question.scope === "once") {
+      const priorAnswers = await prisma.applicationFormAnswer.findMany({
+        where: { sessionId, NOT: { questionId: ORG_INFO_QUESTION_ID } },
+      });
+      const relevant = priorAnswers.filter((a) => {
+        const q = getApplicationFormQuestion(a.questionId);
+        return q && q.scope !== "once" && a.answer.trim();
+      });
+      if (relevant.length > 0) {
+        answeredSoFar = relevant
+          .map((a) => {
+            const q = getApplicationFormQuestion(a.questionId)!;
+            return `Q (#${a.instanceIndex + 1}): ${q.text}\nA: ${a.answer.trim()}`;
+          })
+          .join("\n\n");
+      }
+    }
+
     const { system, user: userPrompt } = buildApplicationFormAnswerPrompt({
       question,
       instanceIndex,
@@ -188,6 +209,7 @@ export async function POST(request: Request) {
       conceptNote,
       mantiksalCerceve,
       orgInfo,
+      answeredSoFar,
     });
 
     let output: string;

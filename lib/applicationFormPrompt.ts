@@ -28,8 +28,9 @@ export function buildApplicationFormAnswerPrompt(params: {
   conceptNote: string;
   mantiksalCerceve: string;
   orgInfo?: string;
+  answeredSoFar?: string;
 }): { system: string; user: string } {
-  const { question, instanceIndex, totalInScope, conceptNote, mantiksalCerceve, orgInfo } = params;
+  const { question, instanceIndex, totalInScope, conceptNote, mantiksalCerceve, orgInfo, answeredSoFar } = params;
 
   const parts: string[] = [
     `PROJECT CONTEXT (concept note, originally developed in Turkish — use it as ground truth, translate/adapt into English for the answer):\n${conceptNote}`,
@@ -40,6 +41,11 @@ export function buildApplicationFormAnswerPrompt(params: {
   }
   if (question.scope === "per-partner") {
     parts.push(`ORGANISATION PROFILE (facts provided by the user for this organisation — use only these facts):\n${orgInfo?.trim() || "(No information provided yet — write a template answer with clearly marked placeholders for missing facts.)"}`);
+  }
+  if (question.scope === "once" && answeredSoFar?.trim()) {
+    parts.push(
+      `ALREADY-DRAFTED ANSWERS FOR THIS APPLICATION (per-activity and per-partner questions, answered before this one on purpose — this question is a project-wide/summary question, so answer it AFTER reviewing all the concrete details below, the same way an experienced writer drafts the executive summary last):\n${answeredSoFar}`
+    );
   }
 
   parts.push(scopeContext(question, instanceIndex, totalInScope));

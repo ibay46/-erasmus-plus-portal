@@ -190,28 +190,6 @@ export function ApplicationFormAssistant({
 
       <div className="space-y-10">
         <section>
-          <h2 className="mb-1 text-xl font-semibold text-foreground">Bir Kez Sorulan Sorular</h2>
-          <p className="mb-4 text-sm text-muted-foreground">Proje geneli için tek sefer cevaplanır.</p>
-          <div className="space-y-4">
-            {ONCE_QUESTIONS.map((q) => {
-              const k = key(q.id, 0);
-              return (
-                <QuestionCard
-                  key={k}
-                  question={q}
-                  instanceIndex={0}
-                  value={answers[k] ?? ""}
-                  loading={loadingKeys.has(k)}
-                  onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
-                  onBlurSave={() => handleSave(q.id, 0)}
-                  onGenerate={() => handleGenerate(q.id, 0)}
-                />
-              );
-            })}
-          </div>
-        </section>
-
-        <section>
           <h2 className="mb-1 text-xl font-semibold text-foreground">Hareketlilik Bazlı Sorular</h2>
           <p className="mb-4 text-sm text-muted-foreground">
             Her hareketlilik için ayrı ayrı sorulur ve cevaplanır.
@@ -288,6 +266,32 @@ export function ApplicationFormAssistant({
                     })}
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-1 text-xl font-semibold text-foreground">Genel/Özet Sorular</h2>
+          <p className="mb-4 text-sm text-muted-foreground">
+            Bilerek en sona bırakıldı: motivasyon, öncelik bağlantısı gibi sorular projenin bütününü
+            özetler — deneyimli bir yazarın özet bölümünü en son yazması gibi, AI bu soruları yukarıdaki
+            hareketlilik ve kuruluş cevaplarınızı &quot;okuduktan sonra&quot; cevaplar.
+          </p>
+          <div className="space-y-4">
+            {ONCE_QUESTIONS.map((q) => {
+              const k = key(q.id, 0);
+              return (
+                <QuestionCard
+                  key={k}
+                  question={q}
+                  instanceIndex={0}
+                  value={answers[k] ?? ""}
+                  loading={loadingKeys.has(k)}
+                  onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
+                  onBlurSave={() => handleSave(q.id, 0)}
+                  onGenerate={() => handleGenerate(q.id, 0)}
+                />
               );
             })}
           </div>
