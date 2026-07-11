@@ -7,6 +7,8 @@ import {
   ONCE_QUESTIONS,
   PER_ACTIVITY_QUESTIONS,
   PER_PARTNER_QUESTIONS,
+  ONCE_SECTION_ORDER,
+  onceQuestionsBySection,
   type ApplicationFormQuestion,
 } from "@/lib/content/applicationFormQuestions";
 import { renameApplicationFormSession } from "@/lib/actions/applicationFormAssistant";
@@ -188,17 +190,51 @@ export function ApplicationFormAssistant({
         </div>
       )}
 
+      <p className="mb-8 text-xs text-muted-foreground">
+        Sekmeler, gerçek KA210 başvuru formunun (EU Funding &amp; Tender Portal) kendi bölümleriyle
+        aynı sırada — cevapları buradan gerçek forma taşırken kolayca eşleştirebilirsiniz. Sırayla
+        doldurmak zorunda değilsiniz; genel/özet sorular ürettiğinizde AI, o ana kadar doldurduğunuz
+        hareketlilik ve kuruluş cevaplarını da otomatik olarak dikkate alır.
+      </p>
+
       <div className="space-y-10">
+        {ONCE_SECTION_ORDER.map((section) => {
+          const questions = onceQuestionsBySection(section);
+          if (questions.length === 0) return null;
+          return (
+            <section key={section}>
+              <h2 className="mb-1 text-xl font-semibold text-foreground">{section}</h2>
+              <div className="space-y-4">
+                {questions.map((q) => {
+                  const k = key(q.id, 0);
+                  return (
+                    <QuestionCard
+                      key={k}
+                      question={q}
+                      instanceIndex={0}
+                      value={answers[k] ?? ""}
+                      loading={loadingKeys.has(k)}
+                      onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
+                      onBlurSave={() => handleSave(q.id, 0)}
+                      onGenerate={() => handleGenerate(q.id, 0)}
+                    />
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+
         <section>
-          <h2 className="mb-1 text-xl font-semibold text-foreground">Hareketlilik Bazlı Sorular</h2>
+          <h2 className="mb-1 text-xl font-semibold text-foreground">Activity</h2>
           <p className="mb-4 text-sm text-muted-foreground">
-            Her hareketlilik için ayrı ayrı sorulur ve cevaplanır.
+            Her hareketlilik için ayrı bir sekme olarak tekrarlanır.
           </p>
           <div className="space-y-8">
             {Array.from({ length: hareketlilikSayisi }, (_, i) => i).map((activityIndex) => (
               <div key={activityIndex}>
                 <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-accent">
-                  Hareketlilik {activityIndex + 1}
+                  {activityIndex + 1}- Activity
                 </h3>
                 <div className="space-y-4">
                   {PER_ACTIVITY_QUESTIONS.map((q) => {
@@ -223,7 +259,7 @@ export function ApplicationFormAssistant({
         </section>
 
         <section>
-          <h2 className="mb-1 text-xl font-semibold text-foreground">Ortak Kuruluş Bazlı Sorular</h2>
+          <h2 className="mb-1 text-xl font-semibold text-foreground">Organisation Profile</h2>
           <p className="mb-4 text-sm text-muted-foreground">
             Başvuran dahil her kuruluş için önce kısa bir kuruluş bilgisi girin — AI sadece bu bilgileri kullanır,
             detay uydurmaz.
@@ -266,32 +302,6 @@ export function ApplicationFormAssistant({
                     })}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section>
-          <h2 className="mb-1 text-xl font-semibold text-foreground">Genel/Özet Sorular</h2>
-          <p className="mb-4 text-sm text-muted-foreground">
-            Bilerek en sona bırakıldı: motivasyon, öncelik bağlantısı gibi sorular projenin bütününü
-            özetler — deneyimli bir yazarın özet bölümünü en son yazması gibi, AI bu soruları yukarıdaki
-            hareketlilik ve kuruluş cevaplarınızı &quot;okuduktan sonra&quot; cevaplar.
-          </p>
-          <div className="space-y-4">
-            {ONCE_QUESTIONS.map((q) => {
-              const k = key(q.id, 0);
-              return (
-                <QuestionCard
-                  key={k}
-                  question={q}
-                  instanceIndex={0}
-                  value={answers[k] ?? ""}
-                  loading={loadingKeys.has(k)}
-                  onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
-                  onBlurSave={() => handleSave(q.id, 0)}
-                  onGenerate={() => handleGenerate(q.id, 0)}
-                />
               );
             })}
           </div>
