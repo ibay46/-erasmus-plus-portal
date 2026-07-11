@@ -32,9 +32,17 @@ export function buildApplicationFormAnswerPrompt(params: {
 }): { system: string; user: string } {
   const { question, instanceIndex, totalInScope, conceptNote, mantiksalCerceve, orgInfo, answeredSoFar } = params;
 
-  const parts: string[] = [
-    `PROJECT CONTEXT (concept note, originally developed in Turkish — use it as ground truth, translate/adapt into English for the answer):\n${conceptNote}`,
-  ];
+  const parts: string[] = [];
+
+  if (question.maxChars) {
+    parts.push(
+      `HARD CHARACTER LIMIT: This exact field on the EU Funding & Tender Portal accepts a MAXIMUM of ${question.maxChars} characters, including spaces. This is a strict platform limit, not a suggestion. Write a complete, well-developed answer that stays comfortably within this limit (aim for roughly 85-100% of it) — never exceed it.`
+    );
+  }
+
+  parts.push(
+    `PROJECT CONTEXT (concept note, originally developed in Turkish — use it as ground truth, translate/adapt into English for the answer):\n${conceptNote}`
+  );
 
   if (question.scope === "per-activity") {
     parts.push(`LOGICAL FRAMEWORK / ACTIVITIES:\n${mantiksalCerceve}`);
@@ -54,6 +62,18 @@ export function buildApplicationFormAnswerPrompt(params: {
   parts.push(`\nWrite the answer now.`);
 
   return { system: FORM_EXPERT_PERSONA, user: parts.join("\n\n") };
+}
+
+// Model, prompttaki karakter sınırı talimatına rağmen bazen sınırı aşabilir.
+// Bu, gerçek forma yapıştırıldığında kesilmeye/reddedilmeye yol açar — bu yüzden
+// sunucu tarafında sert bir güvenlik ağı olarak, sınırı aşan cevapları en yakın
+// cümle sonunda keseriz.
+export function enforceCharLimit(text: string, maxChars: number | undefined): string {
+  if (!maxChars || text.length <= maxChars) return text;
+  const truncated = text.slice(0, maxChars);
+  const lastSentenceEnd = Math.max(truncated.lastIndexOf(". "), truncated.lastIndexOf("! "), truncated.lastIndexOf("? "));
+  if (lastSentenceEnd > maxChars * 0.6) return truncated.slice(0, lastSentenceEnd + 1).trim();
+  return truncated.trim();
 }
 
 const DENETIM_PERSONA = `Sen 20 yıllık deneyime sahip, Erasmus+ KA210 değerlendiricisi bir uzmansın. Kibarlık yapmadan, gerçek bir değerlendirici gibi eleştir. Türkçe yaz.`;

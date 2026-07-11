@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireTier } from "@/lib/auth";
 import { getVisitorHash, getTodayUsageCount, getMonthUsageCount } from "@/lib/toolRateLimit";
 import { getApplicationFormQuestion } from "@/lib/content/applicationFormQuestions";
-import { buildApplicationFormAnswerPrompt, buildApplicationFormDenetimPrompt } from "@/lib/applicationFormPrompt";
+import { buildApplicationFormAnswerPrompt, buildApplicationFormDenetimPrompt, enforceCharLimit } from "@/lib/applicationFormPrompt";
 
 const TOOL_KEY = "basvuru-formu-asistani";
 const DAILY_AI_LIMIT = 15;
@@ -20,13 +20,13 @@ interface RequestBody {
   orgInfo?: string;
 }
 
-async function callAnthropic(apiKey: string, system: string, userPrompt: string): Promise<string> {
+async function callAnthropic(apiKey: string, system: string, userPrompt: string, maxTokens = 4096): Promise<string> {
   const res = await fetch(ANTHROPIC_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 4096,
+      max_tokens: maxTokens,
       system,
       messages: [{ role: "user", content: userPrompt }],
     }),
@@ -212,12 +212,17 @@ export async function POST(request: Request) {
       answeredSoFar,
     });
 
+    // Karakter sınırı bilinen alanlarda, ~3.2 karakter/token varsayımıyla + tampon payı
+    // kadar token isteriz; model sınırı aşsa bile enforceCharLimit sert güvenlik ağıdır.
+    const maxTokens = question.maxChars ? Math.min(4096, Math.ceil(question.maxChars / 3.2) + 150) : 1200;
+
     let output: string;
     try {
-      output = await callAnthropic(apiKey, system, userPrompt);
+      output = await callAnthropic(apiKey, system, userPrompt, maxTokens);
     } catch (err) {
       return NextResponse.json({ error: err instanceof Error ? err.message : "Bilinmeyen hata." }, { status: 502 });
     }
+    output = enforceCharLimit(output, question.maxChars);
 
     await prisma.applicationFormAnswer.upsert({
       where: { sessionId_questionId_instanceIndex: { sessionId, questionId, instanceIndex } },

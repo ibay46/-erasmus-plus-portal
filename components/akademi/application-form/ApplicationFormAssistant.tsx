@@ -90,6 +90,8 @@ function QuestionCard({
   onBlurSave: () => void;
   onGenerate: () => void;
 }) {
+  const { maxChars } = question;
+  const overLimit = maxChars !== undefined && value.length > maxChars;
   return (
     <Card>
       <p className="mb-2 text-sm font-medium text-foreground">{question.text}</p>
@@ -109,6 +111,11 @@ function QuestionCard({
         placeholder="AI'dan öneri almak için yukarıdaki düğmeyi kullanın veya doğrudan yazın."
         className={`${textareaClass} min-h-[120px] font-mono text-[13px]`}
       />
+      <p className={`mt-1.5 text-right text-xs ${overLimit ? "font-semibold text-red-600 dark:text-red-400" : "text-muted-foreground"}`}>
+        {value.length}
+        {maxChars !== undefined ? ` / ${maxChars}` : ""} karakter (boşluk dahil)
+        {overLimit && " — gerçek formun sınırını aşıyor"}
+      </p>
     </Card>
   );
 }
