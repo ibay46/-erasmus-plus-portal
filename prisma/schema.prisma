@@ -36,6 +36,7 @@ model User {
   leads             ConsultingLead[]
   toolSubmissions   ToolSubmission[]
   ideaWizardSessions IdeaWizardSession[]
+  applicationFormSessions ApplicationFormSession[]
 }
 
 // NextAuth (Auth.js) Prisma adapter şeması
@@ -317,6 +318,7 @@ model IdeaWizardSession {
   updatedAt DateTime @updatedAt
 
   steps IdeaWizardStep[]
+  applicationFormSessions ApplicationFormSession[]
 
   @@index([userId])
 }
@@ -331,4 +333,39 @@ model IdeaWizardStep {
   updatedAt DateTime          @updatedAt
 
   @@unique([sessionId, stepKey])
+}
+
+// "Başvuru Formu Asistanı": Proje Fikri Geliştirme Sihirbazı'nda üretilen
+// konsept notunu context alıp, KA210'un gerçek resmi başvuru formu sorularını
+// (bkz. lib/content/applicationFormQuestions.ts) AI ile doldurtan araç.
+// Soru sayısı sabit değildir: bazı sorular tek sefer, bazıları her hareketlilik
+// (hareketlilikSayisi), bazıları her ortak kuruluş (kurulusSayisi) için tekrarlanır.
+model ApplicationFormSession {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ideaWizardSessionId String
+  ideaWizardSession   IdeaWizardSession @relation(fields: [ideaWizardSessionId], references: [id], onDelete: Cascade)
+  title               String   @default("Adsız Başvuru")
+  hareketlilikSayisi  Int      @default(1)
+  kurulusSayisi       Int      @default(1)
+  denetimOutput       String   @default("")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  answers ApplicationFormAnswer[]
+
+  @@index([userId])
+}
+
+model ApplicationFormAnswer {
+  id            String   @id @default(cuid())
+  sessionId     String
+  session       ApplicationFormSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId    String
+  instanceIndex Int      @default(0)
+  answer        String   @default("")
+  updatedAt     DateTime @updatedAt
+
+  @@unique([sessionId, questionId, instanceIndex])
 }

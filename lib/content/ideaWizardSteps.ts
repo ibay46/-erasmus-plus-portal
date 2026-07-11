@@ -1,10 +1,14 @@
 import { KA_ACTION_LABELS, EDUCATION_SECTOR_LABELS, KA_ACTION_SECTORS } from "./kaActions";
 import { HORIZONTAL_PRIORITIES_FULL, SECTORAL_PRIORITIES_FULL, type EducationSectorCode } from "./erasmusPrioritiesFull";
 
-// "AI Destekli Proje Fikri Geliştirme" sihirbazının 10 adımlık konfigürasyonu.
+// "AI Destekli Proje Fikri Geliştirme" sihirbazının 9 adımlık konfigürasyonu.
 // Kaynak: public/NEW !2024 AI supported IDEA DEVELOPMENT TEMPLATE.docx
-// (belgedeki ~20 alt bölüm, içerik kaybı olmadan 9 adıma gruplanmış; 10. adım —
-// Denetim/Audit — Design→Draft→Audit→Refine→Repeat döngüsü için sonradan eklendi).
+// (belgedeki ~20 alt bölüm, içerik kaybı olmadan 9 adıma gruplanmıştır).
+//
+// Denetim (Audit/Score), artık burada değil — Başvuru Formu Asistanı'nın son
+// adımı: gerçek resmi form cevapları hazır olmadan anlamlı bir puanlama
+// yapılamayacağı için, denetim gerçek cevaplar üretildikten sonra çalışır
+// (bkz. app/api/basvuru-formu-asistani, lib/applicationFormPrompt.ts).
 //
 // Her adım bir form (fields) ve -varsa- Anthropic'e gönderilecek prompt'u üreten
 // buildPrompt fonksiyonu tanımlar. AI çağrısı gerektirmeyen adımlarda (örn. ilk adım)
@@ -330,7 +334,7 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
     title: "Konsept Not ve İsim Önerileri",
     shortTitle: "Konsept Not",
     description:
-      "AI, önceki tüm adımları birleştirerek yaklaşık 4000 karakterlik bir konsept notu ve 5 proje adı önerisi üretir. Son adımda bu taslak bir değerlendirici gözüyle denetlenecek.",
+      "Son adım: AI, önceki tüm adımları birleştirerek yaklaşık 4000 karakterlik bir konsept notu ve 5 proje adı önerisi üretir.",
     requiresAi: true,
     fields: [],
     buildPrompt(_input, priorOutputs) {
@@ -346,34 +350,6 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
           `Vizyon ve inovasyon:\n${ctx(priorOutputs, "vizyon-inovasyon")}\n\n` +
           `Göstergeler:\n${ctx(priorOutputs, "gostergeler")}\n\n` +
           `Konsept notunun ardından, "PROJE ADI ÖNERİLERİ" başlığı altında, şu formatta 5 potansiyel proje adı öner: "MindCrafters: Gerçek Dünya Senaryolarıyla Bilişsel Beceriler Kazandırmak" gibi çarpıcı, akılda kalıcı isimler.`,
-      };
-    },
-  },
-  {
-    key: "denetim",
-    order: 10,
-    title: "Denetim: Zayıf Nokta ve Değerlendirici Riski Analizi",
-    shortTitle: "Denetim",
-    description:
-      "Son adım: AI, tamamladığınız konsept notunu gerçek bir Erasmus+ değerlendiricisi gözüyle puanlar; zayıf varsayımları, eksik kanıtları ve yapısal boşlukları işaretleyip somut bir düzeltme planı verir. Bulgulara göre ilgili adıma dönüp düzenleme yapın, ardından puanınızı yükseltmek için bu adımı tekrar üretin.",
-    requiresAi: true,
-    fields: [],
-    buildPrompt(_input, priorOutputs) {
-      const scoringInstruction = isKa210(priorOutputs)
-        ? `KA210 için resmi değerlendirme kriterlerini birebir kullan: Uygunluk (30 puan, eşik 15), Tasarım ve Uygulama Kalitesi (30 puan, eşik 15), Ortaklık Kalitesi (20 puan, eşik 10), Etki (20 puan, eşik 10). Toplam eşik 100 üzerinden 60'tır. Herhangi bir kriter kendi eşiğinin altında kalırsa proje otomatik reddedilir — bu durumu açıkça belirt.`
-        : `Erasmus+'ın dört standart değerlendirme kriterine göre değerlendir: Uygunluk (Relevance), Tasarım ve Uygulama Kalitesi (Design & Implementation), Ortaklık Kalitesi (Partnership), Etki (Impact). Kesin puan yerine her kriter için Zayıf/Orta/Güçlü değerlendirmesi ver; bu eylem için tam puan ağırlıkları burada teyit edilmemiştir, uydurma sayı verme.`;
-
-      return {
-        system: EXPERT_PERSONA,
-        user: `Aşağıda tamamlanmış bir proje konsept notu ve onu destekleyen tüm ara adımlar var. Şimdi yazar değil, gerçek bir Erasmus+ değerlendiricisi gibi oku ve eleştir. Kibar olma, dürüst ol.\n\n` +
-          `Konsept Not:\n${ctx(priorOutputs, "konsept-not")}\n\n` +
-          `Mantıksal çerçeve:\n${ctx(priorOutputs, "mantiksal-cerceve")}\n\n` +
-          `Göstergeler:\n${ctx(priorOutputs, "gostergeler")}\n\n` +
-          `${scoringInstruction}\n\n` +
-          `Görev 1 — Puanlama: Her kriter için puanını/değerlendirmeni ver ve tek cümlede gerekçelendir.\n\n` +
-          `Görev 2 — Zayıf Noktalar: En fazla 6 madde hâlinde, projenin somut zayıf varsayımlarını, eksik kanıtlarını, belirsiz ifadelerini veya yapısal boşluklarını (örn. hedef kitle ile bir hareketliliğin/iş paketinin uyumsuzluğu, kanıtsız iddialar, ölçülemez göstergeler) listele. Her biri için hangi sihirbaz adımının (Problem/Çözüm, Hedefler, Mantıksal Çerçeve, Göstergeler vb.) düzeltilmesi gerektiğini belirt.\n\n` +
-          `Görev 3 — Düzeltme Planı: Zayıf noktaların her biri için, kullanıcının hangi adıma dönüp tam olarak ne değiştirmesi gerektiğini söyleyen somut, uygulanabilir bir aksiyon listesi ver.\n\n` +
-          `Yanıtını "PUANLAMA", "ZAYIF NOKTALAR" ve "DÜZELTME PLANI" başlıkları altında ver.`,
       };
     },
   },
