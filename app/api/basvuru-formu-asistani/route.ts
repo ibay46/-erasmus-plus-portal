@@ -8,7 +8,7 @@ import { buildApplicationFormAnswerPrompt, buildApplicationFormDenetimPrompt, en
 const TOOL_KEY = "basvuru-formu-asistani";
 const DAILY_AI_LIMIT = 15;
 const MONTHLY_AI_LIMIT = 150;
-const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
+const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const ORG_INFO_QUESTION_ID = "org-info";
 
 interface RequestBody {
@@ -20,24 +20,26 @@ interface RequestBody {
   orgInfo?: string;
 }
 
-async function callAnthropic(apiKey: string, system: string, userPrompt: string, maxTokens = 4096): Promise<string> {
-  const res = await fetch(ANTHROPIC_API_URL, {
+async function callOpenAI(apiKey: string, system: string, userPrompt: string, maxTokens = 4096): Promise<string> {
+  const res = await fetch(OPENAI_API_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: maxTokens,
-      system,
-      messages: [{ role: "user", content: userPrompt }],
+      model: "gpt-5.6-sol",
+      max_completion_tokens: maxTokens,
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: userPrompt },
+      ],
     }),
   });
   if (!res.ok) {
     const err = await res.text();
-    console.error("Anthropic API error:", err);
+    console.error("OpenAI API error:", err);
     throw new Error("AI servisi şu anda yanıt vermiyor. Lütfen tekrar deneyin.");
   }
   const data = await res.json();
-  const output: string = data.content?.[0]?.type === "text" ? data.content[0].text : "";
+  const output: string = data.choices?.[0]?.message?.content ?? "";
   if (!output.trim()) throw new Error("AI yanıtı boş döndü. Lütfen tekrar deneyin.");
   return output;
 }
@@ -94,9 +96,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ answer: saved.answer });
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: "AI servisi için ANTHROPIC_API_KEY yapılandırılmamış." }, { status: 503 });
+    return NextResponse.json({ error: "AI servisi için OPENAI_API_KEY yapılandırılmamış." }, { status: 503 });
   }
 
   const visitorHash = getVisitorHash(request);
@@ -142,7 +144,7 @@ export async function POST(request: Request) {
 
     let output: string;
     try {
-      output = await callAnthropic(apiKey, system, userPrompt);
+      output = await callOpenAI(apiKey, system, userPrompt);
     } catch (err) {
       return NextResponse.json({ error: err instanceof Error ? err.message : "Bilinmeyen hata." }, { status: 502 });
     }
@@ -218,7 +220,7 @@ export async function POST(request: Request) {
 
     let output: string;
     try {
-      output = await callAnthropic(apiKey, system, userPrompt, maxTokens);
+      output = await callOpenAI(apiKey, system, userPrompt, maxTokens);
     } catch (err) {
       return NextResponse.json({ error: err instanceof Error ? err.message : "Bilinmeyen hata." }, { status: 502 });
     }
