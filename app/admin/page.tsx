@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { HABERLER_CATEGORIES } from "@/lib/content/postCategories";
+import { TOOLS } from "@/lib/content/tools";
+import { getAnnouncement } from "@/lib/announcement";
 import type { ReactNode } from "react";
 
 function StatCard({
@@ -84,6 +86,9 @@ export default async function AdminDashboardPage() {
     userCount,
     linkCount,
     draftPostCount,
+    openCallCount,
+    pageViewCount,
+    announcement,
   ] = await Promise.all([
     prisma.post.count({ where: { category: { in: HABERLER_CATEGORIES as never[] } } }),
     prisma.post.count({ where: { category: "SALTO_YOUTH" } }),
@@ -97,6 +102,9 @@ export default async function AdminDashboardPage() {
     prisma.user.count(),
     prisma.usefulLink.count(),
     prisma.post.count({ where: { published: false } }),
+    prisma.openCall.count(),
+    prisma.pageView.count(),
+    getAnnouncement(),
   ]);
 
   const sections = [
@@ -221,6 +229,53 @@ export default async function AdminDashboardPage() {
         </svg>
       ),
     },
+    {
+      href: "/admin/acik-cagrilar",
+      title: "Açık Çağrılar",
+      description: "Sonuçlanmamış Ulusal Ajans çağrılarını yönetin.",
+      count: openCallCount,
+      icon: (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <path d="M16 2v4M8 2v4M3 10h18" />
+        </svg>
+      ),
+    },
+    {
+      href: "/admin/araclar",
+      title: "Ücretsiz Araçlar",
+      description: "Araçlar sayfasında hangi araçların yayında olacağını seçin.",
+      count: TOOLS.length,
+      icon: (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 1 5.4-5.4l-2.6 2.6-2-2z" />
+        </svg>
+      ),
+    },
+    {
+      href: "/admin/istatistikler",
+      title: "İstatistikler",
+      description: "Site trafiği ve sayfa görüntülenmelerini inceleyin.",
+      count: pageViewCount,
+      icon: (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 3v18h18" />
+          <path d="M7 16l4-4 4 3 4-6" />
+        </svg>
+      ),
+    },
+    {
+      href: "/admin/duyuru",
+      title: "Duyuru Şeridi",
+      description: "Başlığın üstündeki kapatılabilir duyuruyu düzenleyin.",
+      count: announcement?.enabled ? "Aktif" : "Pasif",
+      icon: (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 11v2a1 1 0 0 0 1 1h2l4 4V6l-4 4H4a1 1 0 0 0-1 1z" />
+          <path d="M15 8a3 3 0 0 1 0 8M18 4a8 8 0 0 1 0 16" />
+        </svg>
+      ),
+    },
   ] as const;
 
   return (
@@ -292,7 +347,7 @@ export default async function AdminDashboardPage() {
       {/* Section cards */}
       <div className="rounded-xl bg-card shadow">
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
-          <h2 className="font-semibold text-foreground">İçerik Modülleri</h2>
+          <h2 className="font-semibold text-foreground">Yönetim Modülleri</h2>
           <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
             {sections.length} modül
           </span>
