@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireTier } from "@/lib/auth";
 import { getVisitorHash, getTodayUsageCount, getMonthUsageCount } from "@/lib/toolRateLimit";
-import { getApplicationFormQuestion } from "@/lib/content/applicationFormQuestions";
+import { getApplicationFormQuestion, decodeActivityInstance, ACTIVITY_TYPE_LABELS } from "@/lib/content/applicationFormQuestions";
 import { buildApplicationFormAnswerPrompt, buildApplicationFormDenetimPrompt, enforceCharLimit } from "@/lib/applicationFormPrompt";
 
 const TOOL_KEY = "basvuru-formu-asistani";
@@ -20,13 +20,24 @@ interface RequestBody {
   orgInfo?: string;
 }
 
-async function callOpenAI(apiKey: string, system: string, userPrompt: string, maxTokens = 4096): Promise<string> {
+// gpt-5.6-sol bir "reasoning" modelidir: max_completion_tokens, görünmeyen reasoning
+// token'larını da kapsar. reasoning_effort belirtilmezse (veya token payı dar bırakılırsa)
+// model tüm payı görünmez akıl yürütmede tüketip boş string + finish_reason:"length"
+// döndürebilir — bu yüzden hem effort düşük tutulur hem de payda bolca tampon bırakılır.
+async function callOpenAI(
+  apiKey: string,
+  system: string,
+  userPrompt: string,
+  maxTokens = 4096,
+  reasoningEffort: "low" | "medium" = "low"
+): Promise<string> {
   const res = await fetch(OPENAI_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
       model: "gpt-5.6-sol",
       max_completion_tokens: maxTokens,
+      reasoning_effort: reasoningEffort,
       messages: [
         { role: "system", content: system },
         { role: "user", content: userPrompt },
@@ -135,7 +146,13 @@ export async function POST(request: Request) {
       .filter((a) => a.answer.trim())
       .map((a) => {
         const q = getApplicationFormQuestion(a.questionId);
-        const label = q?.scope === "once" ? "" : ` (#${a.instanceIndex + 1})`;
+        let label = "";
+        if (q?.scope === "per-activity") {
+          const { activityType, localIndex } = decodeActivityInstance(a.instanceIndex);
+          label = ` (${ACTIVITY_TYPE_LABELS[activityType]} #${localIndex + 1})`;
+        } else if (q?.scope === "per-partner") {
+          label = ` (Kuruluş #${a.instanceIndex + 1})`;
+        }
         return `Q: ${q?.text ?? a.questionId}${label}\nA: ${a.answer.trim()}`;
       })
       .join("\n\n");
@@ -144,7 +161,7 @@ export async function POST(request: Request) {
 
     let output: string;
     try {
-      output = await callOpenAI(apiKey, system, userPrompt);
+      output = await callOpenAI(apiKey, system, userPrompt, 4096, "medium");
     } catch (err) {
       return NextResponse.json({ error: err instanceof Error ? err.message : "Bilinmeyen hata." }, { status: 502 });
     }
@@ -170,10 +187,22 @@ export async function POST(request: Request) {
     const question = getApplicationFormQuestion(questionId);
     if (!question) return NextResponse.json({ error: "Geçersiz soru." }, { status: 400 });
 
-    const totalInScope =
-      question.scope === "per-activity" ? session.hareketlilikSayisi
-      : question.scope === "per-partner" ? session.kurulusSayisi
-      : 1;
+    // Per-activity sorularda instanceIndex, hangi faaliyet türüne ait olduğunu da
+    // kodlayan bir "stored index"tir (bkz. ACTIVITY_TYPE_OFFSET) — burada çözülür.
+    let activityType: "transnational" | "local" | "management" | undefined;
+    let promptInstanceIndex = instanceIndex;
+    let totalInScope = 1;
+    if (question.scope === "per-activity") {
+      const decoded = decodeActivityInstance(instanceIndex);
+      activityType = decoded.activityType;
+      promptInstanceIndex = decoded.localIndex;
+      totalInScope =
+        activityType === "transnational" ? session.ulusotesiSayisi
+        : activityType === "local" ? session.yerelSayisi
+        : session.yonetimYayginSayisi;
+    } else if (question.scope === "per-partner") {
+      totalInScope = session.kurulusSayisi;
+    }
 
     let orgInfo: string | undefined;
     if (question.scope === "per-partner") {
@@ -206,25 +235,29 @@ export async function POST(request: Request) {
 
     const { system, user: userPrompt } = buildApplicationFormAnswerPrompt({
       question,
-      instanceIndex,
+      instanceIndex: promptInstanceIndex,
       totalInScope,
       conceptNote,
       mantiksalCerceve,
       orgInfo,
       answeredSoFar,
+      activityType,
     });
 
-    // Karakter sınırı bilinen alanlarda, ~3.2 karakter/token varsayımıyla + tampon payı
-    // kadar token isteriz; model sınırı aşsa bile enforceCharLimit sert güvenlik ağıdır.
-    const maxTokens = question.maxChars ? Math.min(4096, Math.ceil(question.maxChars / 3.2) + 150) : 1200;
+    // Karakter sınırı bilinen alanlarda, ~3.2 karakter/token varsayımıyla + reasoning
+    // token'ları için bolca tampon payı kadar token isteriz (bkz. callOpenAI yorumu);
+    // model sınırı aşsa bile enforceCharLimit sert güvenlik ağıdır. Bilingual sorularda
+    // (TR+EN) çıktı iki katına çıkacağından pay da iki katına çıkarılır.
+    const charBudget = question.bilingual ? (question.maxChars ?? 0) * 2 : question.maxChars;
+    const maxTokens = charBudget ? Math.min(4096, Math.max(1000, Math.ceil(charBudget / 3.2) + 500)) : 1200;
 
     let output: string;
     try {
-      output = await callOpenAI(apiKey, system, userPrompt, maxTokens);
+      output = await callOpenAI(apiKey, system, userPrompt, maxTokens, "low");
     } catch (err) {
       return NextResponse.json({ error: err instanceof Error ? err.message : "Bilinmeyen hata." }, { status: 502 });
     }
-    output = enforceCharLimit(output, question.maxChars);
+    output = enforceCharLimit(output, question.maxChars, question.bilingual);
 
     await prisma.applicationFormAnswer.upsert({
       where: { sessionId_questionId_instanceIndex: { sessionId, questionId, instanceIndex } },

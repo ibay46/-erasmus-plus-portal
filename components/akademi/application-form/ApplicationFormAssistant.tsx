@@ -9,11 +9,15 @@ import {
   PER_PARTNER_QUESTIONS,
   ONCE_SECTION_ORDER,
   onceQuestionsBySection,
+  encodeActivityInstance,
+  ACTIVITY_TYPE_LABELS,
   type ApplicationFormQuestion,
+  type ActivityType,
 } from "@/lib/content/applicationFormQuestions";
 import { renameApplicationFormSession } from "@/lib/actions/applicationFormAssistant";
 
 const ORG_INFO_KEY_PREFIX = "org-info";
+const ACTIVITY_TYPES: ActivityType[] = ["transnational", "local", "management"];
 
 function key(questionId: string, instanceIndex: number): string {
   return `${questionId}:${instanceIndex}`;
@@ -90,11 +94,12 @@ function QuestionCard({
   onBlurSave: () => void;
   onGenerate: () => void;
 }) {
-  const { maxChars } = question;
-  const overLimit = maxChars !== undefined && value.length > maxChars;
+  const { maxChars, bilingual } = question;
+  const overLimit = !bilingual && maxChars !== undefined && value.length > maxChars;
   return (
     <Card>
-      <p className="mb-2 text-sm font-medium text-foreground">{question.text}</p>
+      <p className="mb-0.5 text-sm font-medium text-foreground">{question.text}</p>
+      <p className="mb-2 text-sm italic text-muted-foreground">{question.textTr}</p>
       {question.note && <p className="mb-3 text-xs text-muted-foreground">↳ {question.note}</p>}
       <button
         type="button"
@@ -111,11 +116,18 @@ function QuestionCard({
         placeholder="AI'dan öneri almak için yukarıdaki düğmeyi kullanın veya doğrudan yazın."
         className={`${textareaClass} min-h-[120px] font-mono text-[13px]`}
       />
-      <p className={`mt-1.5 text-right text-xs ${overLimit ? "font-semibold text-red-600 dark:text-red-400" : "text-muted-foreground"}`}>
-        {value.length}
-        {maxChars !== undefined ? ` / ${maxChars}` : ""} karakter (boşluk dahil)
-        {overLimit && " — gerçek formun sınırını aşıyor"}
-      </p>
+      {bilingual ? (
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          {value.length} karakter · Türkçe ve İngilizce üretilir, karakter sınırı ({maxChars}) her iki bölüme de
+          ayrı ayrı uygulanır.
+        </p>
+      ) : (
+        <p className={`mt-1.5 text-right text-xs ${overLimit ? "font-semibold text-red-600 dark:text-red-400" : "text-muted-foreground"}`}>
+          {value.length}
+          {maxChars !== undefined ? ` / ${maxChars}` : ""} karakter (boşluk dahil)
+          {overLimit && " — gerçek formun sınırını aşıyor"}
+        </p>
+      )}
     </Card>
   );
 }
@@ -123,14 +135,18 @@ function QuestionCard({
 export function ApplicationFormAssistant({
   sessionId,
   sessionTitle,
-  hareketlilikSayisi,
+  ulusotesiSayisi,
+  yerelSayisi,
+  yonetimYayginSayisi,
   kurulusSayisi,
   initialAnswers,
   initialDenetimOutput,
 }: {
   sessionId: string;
   sessionTitle: string;
-  hareketlilikSayisi: number;
+  ulusotesiSayisi: number;
+  yerelSayisi: number;
+  yonetimYayginSayisi: number;
   kurulusSayisi: number;
   initialAnswers: Record<string, string>;
   initialDenetimOutput: string;
@@ -143,6 +159,13 @@ export function ApplicationFormAssistant({
   const [denetimOutput, setDenetimOutput] = useState(initialDenetimOutput);
   const [denetimLoading, setDenetimLoading] = useState(false);
   const [openSections, setOpenSections] = useState<Set<string>>(new Set([ONCE_SECTION_ORDER[0]]));
+
+  const activityCounts: Record<ActivityType, number> = {
+    transnational: ulusotesiSayisi,
+    local: yerelSayisi,
+    management: yonetimYayginSayisi,
+  };
+  const totalActivities = ulusotesiSayisi + yerelSayisi + yonetimYayginSayisi;
 
   function toggleSection(sectionKey: string) {
     setOpenSections((prev) => {
@@ -157,13 +180,8 @@ export function ApplicationFormAssistant({
     ([k, v]) => !k.startsWith(ORG_INFO_KEY_PREFIX) && v.trim()
   ).length;
   const totalQuestions =
-    ONCE_QUESTIONS.length + PER_ACTIVITY_QUESTIONS.length * hareketlilikSayisi + PER_PARTNER_QUESTIONS.length * kurulusSayisi;
+    ONCE_QUESTIONS.length + PER_ACTIVITY_QUESTIONS.length * totalActivities + PER_PARTNER_QUESTIONS.length * kurulusSayisi;
 
-  const activityAnswered = Array.from({ length: hareketlilikSayisi }, (_, i) => i).reduce(
-    (sum, activityIndex) =>
-      sum + PER_ACTIVITY_QUESTIONS.filter((q) => (answers[key(q.id, activityIndex)] ?? "").trim()).length,
-    0
-  );
   const orgAnswered = Array.from({ length: kurulusSayisi }, (_, i) => i).reduce(
     (sum, partnerIndex) =>
       sum + PER_PARTNER_QUESTIONS.filter((q) => (answers[key(q.id, partnerIndex)] ?? "").trim()).length,
@@ -252,7 +270,9 @@ export function ApplicationFormAssistant({
       </div>
 
       <p className="mb-8 text-sm text-muted-foreground">
-        {answeredCount} / {totalQuestions} soru cevaplandı · {hareketlilikSayisi} hareketlilik · {kurulusSayisi} kuruluş
+        {answeredCount} / {totalQuestions} soru cevaplandı · {ulusotesiSayisi} ulusötesi · {yerelSayisi} yerel ·{" "}
+        {yonetimYayginSayisi > 0 ? "1 yönetim/yaygınlaştırma · " : ""}
+        {kurulusSayisi} kuruluş
       </p>
 
       {error && (
@@ -262,10 +282,11 @@ export function ApplicationFormAssistant({
       )}
 
       <p className="mb-8 text-xs text-muted-foreground">
-        Sekmeler, gerçek KA210 başvuru formunun (EU Funding &amp; Tender Portal) kendi bölümleriyle
-        aynı sırada — cevapları buradan gerçek forma taşırken kolayca eşleştirebilirsiniz. Sırayla
-        doldurmak zorunda değilsiniz; genel/özet sorular ürettiğinizde AI, o ana kadar doldurduğunuz
-        hareketlilik ve kuruluş cevaplarını da otomatik olarak dikkate alır.
+        Sekmeler, gerçek KA210-SCH başvuru formunun (EU Funding &amp; Tender Portal) kendi bölümleriyle
+        aynı sırada. Her soru için önce resmi İngilizce metin, altında Türkçe karşılığı gösterilir — cevaplar
+        Türkçe üretilir (Project Summary hariç, o hem Türkçe hem İngilizce üretilir); forma geçirmeden önce
+        kendiniz İngilizce&apos;ye çevirin. Sırayla doldurmak zorunda değilsiniz; genel/özet sorular
+        ürettiğinizde AI, o ana kadar doldurduğunuz faaliyet ve kuruluş cevaplarını da otomatik dikkate alır.
       </p>
 
       <div className="space-y-4">
@@ -303,41 +324,60 @@ export function ApplicationFormAssistant({
           );
         })}
 
-        <AccordionSection
-          sectionKey="Activity"
-          title="Activity"
-          subtitle="Her hareketlilik için ayrı bir sekme olarak tekrarlanır."
-          badge={`${activityAnswered}/${PER_ACTIVITY_QUESTIONS.length * hareketlilikSayisi}`}
-          isOpen={openSections.has("Activity")}
-          onToggle={toggleSection}
-        >
-          <div className="space-y-8">
-            {Array.from({ length: hareketlilikSayisi }, (_, i) => i).map((activityIndex) => (
-              <div key={activityIndex}>
-                <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-accent">
-                  {activityIndex + 1}- Activity
-                </h3>
-                <div className="space-y-4">
-                  {PER_ACTIVITY_QUESTIONS.map((q) => {
-                    const k = key(q.id, activityIndex);
-                    return (
-                      <QuestionCard
-                        key={k}
-                        question={q}
-                        instanceIndex={activityIndex}
-                        value={answers[k] ?? ""}
-                        loading={loadingKeys.has(k)}
-                        onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
-                        onBlurSave={() => handleSave(q.id, activityIndex)}
-                        onGenerate={() => handleGenerate(q.id, activityIndex)}
-                      />
-                    );
-                  })}
-                </div>
+        {ACTIVITY_TYPES.map((activityType) => {
+          const count = activityCounts[activityType];
+          if (count === 0) return null;
+          const answeredInType = Array.from({ length: count }, (_, i) => i).reduce(
+            (sum, i) =>
+              sum + PER_ACTIVITY_QUESTIONS.filter((q) => (answers[key(q.id, encodeActivityInstance(activityType, i))] ?? "").trim()).length,
+            0
+          );
+          return (
+            <AccordionSection
+              key={activityType}
+              sectionKey={activityType}
+              title={ACTIVITY_TYPE_LABELS[activityType]}
+              subtitle={
+                activityType === "management"
+                  ? "Ayrı bir bütçe kalemi."
+                  : "Her faaliyet için ayrı bir sekme olarak tekrarlanır."
+              }
+              badge={`${answeredInType}/${PER_ACTIVITY_QUESTIONS.length * count}`}
+              isOpen={openSections.has(activityType)}
+              onToggle={toggleSection}
+            >
+              <div className="space-y-8">
+                {Array.from({ length: count }, (_, i) => i).map((localIndex) => {
+                  const storedIndex = encodeActivityInstance(activityType, localIndex);
+                  return (
+                    <div key={localIndex}>
+                      <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-accent">
+                        {localIndex + 1}- {ACTIVITY_TYPE_LABELS[activityType]}
+                      </h3>
+                      <div className="space-y-4">
+                        {PER_ACTIVITY_QUESTIONS.map((q) => {
+                          const k = key(q.id, storedIndex);
+                          return (
+                            <QuestionCard
+                              key={k}
+                              question={q}
+                              instanceIndex={storedIndex}
+                              value={answers[k] ?? ""}
+                              loading={loadingKeys.has(k)}
+                              onChange={(v) => setAnswers((prev) => ({ ...prev, [k]: v }))}
+                              onBlurSave={() => handleSave(q.id, storedIndex)}
+                              onGenerate={() => handleGenerate(q.id, storedIndex)}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
-        </AccordionSection>
+            </AccordionSection>
+          );
+        })}
 
         <AccordionSection
           sectionKey="Organisation Profile"

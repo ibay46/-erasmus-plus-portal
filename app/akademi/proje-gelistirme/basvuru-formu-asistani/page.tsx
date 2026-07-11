@@ -33,10 +33,12 @@ export default async function BasvuruFormuAsistaniPage() {
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Başvuru Formu Asistanı</h1>
       <p className="text-muted-foreground mb-8 max-w-2xl">
-        Proje Fikri Geliştirme Sihirbazı&apos;nda tamamladığınız bir konsept notunu temel alarak, KA210&apos;un
-        gerçek resmi başvuru formu sorularını (EU Funding &amp; Tender Portal) İngilizce, forma doğrudan
-        yapıştırılabilecek şekilde AI ile doldurun. Soru sayısı sabit değildir — hareketlilik ve ortak kuruluş
-        sayınıza göre çoğalır. Son adımda tüm cevaplarınız gerçek KA210 kriterlerine göre denetlenir.
+        Proje Fikri Geliştirme Sihirbazı&apos;nda tamamladığınız bir konsept notunu temel alarak, KA210-SCH&apos;nin
+        gerçek resmi başvuru formu sorularını (EU Funding &amp; Tender Portal) Türkçe taslak olarak AI ile
+        doldurun — forma geçirmeden önce kendiniz İngilizce&apos;ye çevirirsiniz (Project Summary bölümü hariç,
+        o hem Türkçe hem İngilizce üretilir). Soru sayısı sabit değildir — faaliyet türleri (ulusötesi/yerel/
+        yönetim) ve ortak kuruluş sayınıza göre çoğalır. Son adımda tüm cevaplarınız gerçek KA210 kriterlerine
+        göre denetlenir.
       </p>
 
       <div className="mb-8 max-w-2xl rounded-xl border border-border bg-card p-5">
@@ -89,20 +91,44 @@ Proje dört kriterden dördünde de kendi eşiğinin altında kalmıştır.`}
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block">
                 <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Kaç hareketlilik/aktiviteniz var?
+                  Kaç ulusötesi hareketliliğiniz var?
                 </span>
                 <input
                   type="number"
-                  name="hareketlilikSayisi"
-                  min={1}
+                  name="ulusotesiSayisi"
+                  min={0}
                   max={20}
                   defaultValue={3}
                   required
                   className={inputClass}
                 />
                 <span className="mt-1 block text-xs text-muted-foreground">
-                  Mantıksal Çerçeve tablonuzdaki satır sayısı.
+                  Gün bazında planlanan, yurt dışındaki hareketlilikler. Mantıksal Çerçeve tablonuzdaki satır sayısı.
                 </span>
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Kaç yerel faaliyetiniz var?
+                </span>
+                <input
+                  type="number"
+                  name="yerelSayisi"
+                  min={0}
+                  max={20}
+                  defaultValue={0}
+                  required
+                  className={inputClass}
+                />
+                <span className="mt-1 block text-xs text-muted-foreground">Saat bazında planlanan, kendi ülkenizdeki faaliyetler.</span>
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Ayrı bir yönetim ve yaygınlaştırma faaliyeti olacak mı?
+                </span>
+                <select name="yonetimYayginSayisi" defaultValue={0} className={`${inputClass} cursor-pointer`}>
+                  <option value={0}>Hayır</option>
+                  <option value={1}>Evet</option>
+                </select>
               </label>
               <label className="block">
                 <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -144,8 +170,8 @@ Proje dört kriterden dördünde de kendi eşiğinin altında kalmıştır.`}
                 <h3 className="font-medium text-foreground group-hover:text-accent">{session.title}</h3>
                 <p className="mt-1 text-xs text-muted-foreground">Son güncelleme: {formatDate(session.updatedAt)}</p>
                 <p className="mt-1.5 text-xs text-muted-foreground">
-                  {session._count.answers} cevap kaydedildi · {session.hareketlilikSayisi} hareketlilik ·{" "}
-                  {session.kurulusSayisi} kuruluş
+                  {session._count.answers} cevap kaydedildi · {session.ulusotesiSayisi} ulusötesi ·{" "}
+                  {session.yerelSayisi} yerel · {session.kurulusSayisi} kuruluş
                 </p>
               </Link>
               <form action={deleteApplicationFormSession} className="mt-3">

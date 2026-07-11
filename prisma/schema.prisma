@@ -338,8 +338,9 @@ model IdeaWizardStep {
 // "Başvuru Formu Asistanı": Proje Fikri Geliştirme Sihirbazı'nda üretilen
 // konsept notunu context alıp, KA210'un gerçek resmi başvuru formu sorularını
 // (bkz. lib/content/applicationFormQuestions.ts) AI ile doldurtan araç.
-// Soru sayısı sabit değildir: bazı sorular tek sefer, bazıları her hareketlilik
-// (hareketlilikSayisi), bazıları her ortak kuruluş (kurulusSayisi) için tekrarlanır.
+// Soru sayısı sabit değildir: bazı sorular tek sefer, bazıları her faaliyet
+// (ulusotesiSayisi/yerelSayisi/yonetimYayginSayisi), bazıları her ortak kuruluş
+// (kurulusSayisi) için tekrarlanır.
 model ApplicationFormSession {
   id                  String   @id @default(cuid())
   userId              String
@@ -347,7 +348,9 @@ model ApplicationFormSession {
   ideaWizardSessionId String
   ideaWizardSession   IdeaWizardSession @relation(fields: [ideaWizardSessionId], references: [id], onDelete: Cascade)
   title               String   @default("Adsız Başvuru")
-  hareketlilikSayisi  Int      @default(1)
+  ulusotesiSayisi     Int      @default(1)
+  yerelSayisi         Int      @default(0)
+  yonetimYayginSayisi Int      @default(0)
   kurulusSayisi       Int      @default(1)
   denetimOutput       String   @default("")
   createdAt           DateTime @default(now())

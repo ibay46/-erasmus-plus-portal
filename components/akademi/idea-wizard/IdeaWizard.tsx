@@ -23,7 +23,7 @@ function computeDefaults(step: IdeaWizardStepConfig, existing: Record<string, st
   const values = { ...existing };
   for (const field of step.fields) {
     if (field.type === "select" && !values[field.key]) {
-      const opts = resolveFieldOptions(field, values);
+      const opts = resolveFieldOptions(field);
       if (opts[0]) values[field.key] = opts[0].value;
     }
   }
@@ -66,18 +66,10 @@ export function IdeaWizard({
   }
 
   function handleFieldChange(key: string, value: string) {
-    setStepStates((prev) => {
-      const next = { ...prev[step.key].formValues, [key]: value };
-      for (const field of step.fields) {
-        if (field.dependsOn === key) {
-          const opts = resolveFieldOptions(field, next);
-          if (!opts.some((o) => o.value === next[field.key])) {
-            next[field.key] = opts[0]?.value ?? "";
-          }
-        }
-      }
-      return { ...prev, [step.key]: { ...prev[step.key], formValues: next } };
-    });
+    setStepStates((prev) => ({
+      ...prev,
+      [step.key]: { ...prev[step.key], formValues: { ...prev[step.key].formValues, [key]: value } },
+    }));
   }
 
   async function callApi(action: "generate" | "save", output?: string) {
@@ -206,7 +198,7 @@ export function IdeaWizard({
                     onChange={(e) => handleFieldChange(field.key, e.target.value)}
                     className={`${inputClass} cursor-pointer`}
                   >
-                    {resolveFieldOptions(field, state.formValues).map((opt) => (
+                    {resolveFieldOptions(field).map((opt) => (
                       <option key={opt.value} value={opt.value}>
                         {opt.label}
                       </option>

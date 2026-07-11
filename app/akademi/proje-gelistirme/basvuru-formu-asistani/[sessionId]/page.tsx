@@ -30,7 +30,9 @@ export default async function ApplicationFormSessionPage({
       <ApplicationFormAssistant
         sessionId={session.id}
         sessionTitle={session.title}
-        hareketlilikSayisi={session.hareketlilikSayisi}
+        ulusotesiSayisi={session.ulusotesiSayisi}
+        yerelSayisi={session.yerelSayisi}
+        yonetimYayginSayisi={session.yonetimYayginSayisi}
         kurulusSayisi={session.kurulusSayisi}
         initialAnswers={answers}
         initialDenetimOutput={session.denetimOutput}

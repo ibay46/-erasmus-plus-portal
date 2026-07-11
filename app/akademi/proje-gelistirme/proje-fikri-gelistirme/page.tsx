@@ -26,10 +26,11 @@ export default async function ProjeFikriGelistirmePage() {
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Proje Fikri Geliştirme Sihirbazı</h1>
       <p className="text-muted-foreground mb-3 max-w-2xl">
-        Güçlü bir başvuru, konsept notu yazılmadan önce kurulur. AI&apos;ı sadece metni uzatmak için
-        kullanmak ifadeyi iyileştirir, mantığı değil — bu yüzden bu sihirbaz önce projenizin mantığını
-        (problem, hedef kitle, hedefler, hareketlilik/iş paketi zinciri) kurmanızı, sonra bu mantık üzerine
-        metni yazmanızı sağlar. Konsept notunuz hazır olduğunda,{" "}
+        Bu sihirbaz sadece KA210-SCH (Erasmus+ Small-scale Partnerships in School Education) için
+        tasarlanmıştır. Güçlü bir başvuru, konsept notu yazılmadan önce kurulur. AI&apos;ı sadece metni
+        uzatmak için kullanmak ifadeyi iyileştirir, mantığı değil — bu yüzden bu sihirbaz önce projenizin
+        mantığını (problem, hedef kitle, hedefler, birbirini tamamlayan hareketlilik zinciri) kurmanızı,
+        sonra bu mantık üzerine metni yazmanızı sağlar. Konsept notunuz hazır olduğunda,{" "}
         <Link
           href="/akademi/proje-gelistirme/basvuru-formu-asistani"
           className="cursor-pointer text-accent underline"
@@ -44,12 +45,12 @@ export default async function ProjeFikriGelistirmePage() {
         <Card className="border-accent/40">
           <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-1">1 · Kur</p>
           <p className="text-sm font-medium text-foreground mb-1">Mantığı İnşa Edin</p>
-          <p className="text-xs text-muted-foreground">Adım 1-6: problem, hedef kitle, öncelikler, hedefler ve mantıksal çerçeve.</p>
+          <p className="text-xs text-muted-foreground">Adım 1-6: problem, hedef kitle, ortaklık gerekçesi, öncelikler, hedefler ve mantıksal çerçeve.</p>
         </Card>
         <Card className="border-accent/40">
           <p className="text-xs font-semibold uppercase tracking-wide text-accent mb-1">2 · Yaz</p>
           <p className="text-sm font-medium text-foreground mb-1">Konsept Notunu Tamamlayın</p>
-          <p className="text-xs text-muted-foreground">Adım 7-9: vizyon, gösterge ve konsept notu; kurduğunuz mantığın üzerine yazılır.</p>
+          <p className="text-xs text-muted-foreground">Adım 7-10: vizyon, proje adı, gösterge ve konsept notu; kurduğunuz mantığın üzerine yazılır.</p>
         </Card>
         <Card className="border-accent-warm/40">
           <p className="text-xs font-semibold uppercase tracking-wide text-accent-warm mb-1">3 · Sonraki Adım</p>

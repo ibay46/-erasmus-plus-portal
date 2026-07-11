@@ -1,29 +1,25 @@
-import { KA_ACTION_LABELS, EDUCATION_SECTOR_LABELS, KA_ACTION_SECTORS } from "./kaActions";
-import { HORIZONTAL_PRIORITIES_FULL, SECTORAL_PRIORITIES_FULL, type EducationSectorCode } from "./erasmusPrioritiesFull";
+import { HORIZONTAL_PRIORITIES_FULL, SECTORAL_PRIORITIES_FULL } from "./erasmusPrioritiesFull";
 
-// "AI Destekli Proje Fikri Geliştirme" sihirbazının 9 adımlık konfigürasyonu.
-// Kaynak: public/NEW !2024 AI supported IDEA DEVELOPMENT TEMPLATE.docx
-// (belgedeki ~20 alt bölüm, içerik kaybı olmadan 9 adıma gruplanmıştır).
+// "AI Destekli Proje Fikri Geliştirme" sihirbazının 10 adımlık konfigürasyonu.
+// Sadece KA210-SCH (Erasmus+ Small-scale Partnerships in School Education) içindir —
+// KA220/KA240 gibi diğer eylemler bu sihirbazın kapsamı dışındadır (iş paketi/WP
+// yapısı KULLANILMAZ, sadece birbirini tamamlayan hareketlilikler kullanılır).
 //
-// Denetim (Audit/Score), artık burada değil — Başvuru Formu Asistanı'nın son
-// adımı: gerçek resmi form cevapları hazır olmadan anlamlı bir puanlama
-// yapılamayacağı için, denetim gerçek cevaplar üretildikten sonra çalışır
-// (bkz. app/api/basvuru-formu-asistani, lib/applicationFormPrompt.ts).
+// Kaynak yapı: kullanıcının FAZ 0 olarak tanımladığı 10 alt adım (ChatGPT_Sihirbaz_Prompt.md /
+// ChatGPT_GPT_Bilgi_Dosyasi.md), sitenin adım-form + AI-üretim mimarisine uyarlanmış hâli.
 //
-// Her adım bir form (fields) ve -varsa- Anthropic'e gönderilecek prompt'u üreten
-// buildPrompt fonksiyonu tanımlar. AI çağrısı gerektirmeyen adımlarda (örn. ilk adım)
-// requiresAi=false olur ve formatOutput ile girdi doğrudan "output" metnine çevrilir.
+// Denetim (Audit/Score) burada değil — Başvuru Formu Asistanı'nın son adımı: gerçek
+// resmi form cevapları hazır olmadan anlamlı bir puanlama yapılamayacağı için, denetim
+// gerçek cevaplar üretildikten sonra çalışır (bkz. app/api/basvuru-formu-asistani,
+// lib/applicationFormPrompt.ts).
+//
+// Her adım bir form (fields) ve -varsa- AI'a gönderilecek prompt'u üreten buildPrompt
+// fonksiyonu tanımlar. AI çağrısı gerektirmeyen adımlarda (örn. ilk adım) requiresAi=false
+// olur ve formatOutput ile girdi doğrudan "output" metnine çevrilir.
 
 export type FieldType = "text" | "textarea" | "select";
 
-// Bazı select alanlarının seçenekleri sabit değildir; component bunları ilgili
-// içerik dosyalarından (kaActions.ts / erasmusPrioritiesFull.ts) çözer.
-export type OptionsSource =
-  | "kaActions"
-  | "sectorsForKaAction" // dependsOn: "kaAction"
-  | "sectors" // tüm eğitim sektörleri (YOUTH/ADU/HE/SCH/VET)
-  | "horizontalPriorities"
-  | "sectoralPriorities"; // dependsOn: "sector"
+export type OptionsSource = "horizontalPriorities" | "sectoralPrioritiesSch";
 
 export interface IdeaWizardFieldOption {
   value: string;
@@ -37,9 +33,8 @@ export interface IdeaWizardField {
   required?: boolean;
   placeholder?: string;
   helpText?: string;
-  options?: IdeaWizardFieldOption[]; // type "select" ve sabit seçenekli alanlar için
-  optionsSource?: OptionsSource; // type "select" ve dinamik seçenekli alanlar için
-  dependsOn?: string; // optionsSource "sectorsForKaAction" / "sectoralPriorities" için
+  options?: IdeaWizardFieldOption[];
+  optionsSource?: OptionsSource;
 }
 
 export interface IdeaWizardStepConfig {
@@ -54,8 +49,9 @@ export interface IdeaWizardStepConfig {
   formatOutput?: (input: Record<string, string>) => string;
 }
 
-const EXPERT_PERSONA = `Sen 20 yıllık deneyime sahip, Erasmus+ (KA210/KA220/KA240) proje yazımında uzman bir danışmansın.
-Somut, gerçekçi ve o proje ölçeğine uygun içerik üretirsin; genel geçer, boş ifadelerden kaçınırsın.
+const EXPERT_PERSONA = `Sen 20 yıllık deneyime sahip, Erasmus+ KA210-SCH (Small-scale Partnerships in School Education) proje yazımında uzman bir danışmansın.
+Somut, gerçekçi ve küçük ölçekli ortaklık bütçesine (30.000 € / 60.000 € götürü tutar) uygun içerik üretirsin; genel geçer, boş ifadelerden kaçınırsın.
+KA210'da resmi "iş paketi" (work package) yapısı YOKTUR — bunun yerine birbirini tamamlayan, birbirine girdi/çıktı sağlayan somut hareketliliklerle çalışılır.
 Mümkün olan yerlerde iddiaları Avrupa'dan, 5 yıldan eski olmayan kaynaklarla APA formatında kısaca destekle
 (metin içinde kısa atıf yeterli, sonda ayrı kaynakça listesi isteme). Her zaman akıcı, profesyonel Türkçe yaz.
 Yanıtını düz metin/markdown olarak ver (gerektiğinde başlıklar, madde işaretleri, tablo kullanabilirsin);
@@ -65,45 +61,23 @@ function ctx(priorOutputs: Record<string, string>, key: string): string {
   return priorOutputs[key]?.trim() || "(henüz girilmedi)";
 }
 
-// KA210 (Küçük Ölçekli Ortaklıklar) resmi "iş paketi" yapısı kullanmaz; bunun yerine
-// birbirini tamamlayan somut hareketliliklerle (öğrenme/öğretme/eğitim faaliyetleri)
-// uygulanır. Diğer eylemler (KA220/KA240) iş paketi (WP) yapısını kullanır.
-function isKa210(priorOutputs: Record<string, string>): boolean {
-  return ctx(priorOutputs, "problem-cozum").includes("KA210");
-}
-
 export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
   {
     key: "problem-cozum",
     order: 1,
-    title: "Proje Fikri: Problem ve Çözüm",
+    title: "Problem ve Çözüm",
     shortTitle: "Problem & Çözüm",
     description:
-      "Projenizin ele aldığı problemi ve önerdiğiniz çözümü kısa ve net cümlelerle tanımlayın. Sonraki tüm adımlar bu bilgiyi temel alacak.",
+      "Projenizin ele aldığı somut problemi ve önerdiğiniz çözümü tanımlayın. Sonraki tüm adımlar bu bilgiyi temel alacak.",
     requiresAi: false,
     fields: [
-      {
-        key: "kaAction",
-        label: "KA Eylemi",
-        type: "select",
-        required: true,
-        optionsSource: "kaActions",
-      },
-      {
-        key: "sector",
-        label: "Sektör",
-        type: "select",
-        required: true,
-        optionsSource: "sectorsForKaAction",
-        dependsOn: "kaAction",
-      },
       {
         key: "problem",
         label: "Problem",
         type: "textarea",
         required: true,
-        placeholder: 'Örn. "Avrupa\'da STEM alanlarında kadınların temsili yetersiz kalmaktadır."',
-        helpText: "Problemi kısa, net bir cümlede tanımlayın.",
+        placeholder: 'Örn. "Kırsal bölgedeki ortaokul öğrencilerinin dijital okuryazarlık düzeyi kentteki akranlarının gerisinde kalmaktadır."',
+        helpText: "Çözmeye çalıştığınız somut sorun ne? Nedenleri ve sonuçları neler?",
       },
       {
         key: "cozum",
@@ -111,114 +85,82 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
         type: "textarea",
         required: true,
         placeholder: "Çözümünüzü ve hedef grup üzerindeki etkisini açıklayın.",
-        helpText: "Çözümün hedef grup üzerindeki etkisini de belirtin.",
+        helpText: "Önerdiğiniz çözüm/yaklaşım ne? Hedef kitle üzerindeki etkisi ne olacak?",
       },
     ],
     formatOutput(input) {
-      const kaLabel = KA_ACTION_LABELS[input.kaAction] ?? input.kaAction;
-      const sectorLabel = EDUCATION_SECTOR_LABELS[input.sector] ?? input.sector;
-      return `KA Eylemi: ${kaLabel}\nSektör: ${sectorLabel}\n\nProblem:\n${input.problem}\n\nÇözüm:\n${input.cozum}`;
+      return `Problem:\n${input.problem}\n\nÇözüm:\n${input.cozum}`;
     },
   },
   {
-    key: "tez-hedef-kitle",
+    key: "hedef-kitle",
     order: 2,
-    title: "Tez Testi ve Hedef Kitle",
-    shortTitle: "Tez Testi & Hedef Kitle",
+    title: "Hedef Kitle",
+    shortTitle: "Hedef Kitle",
     description:
-      "AI, problem/çözüm tezinizin seçtiğiniz Erasmus+ eylemi için ne kadar geçerli olduğunu kanıtlarla değerlendirir ve en uygun hedef kitle ile yaş aralığını önerir.",
+      "AI; doğrudan/asıl faydalanıcıları, dolaylı faydalanıcıları ve varsa dezavantajlı/daha az fırsata sahip grupları netleştirir.",
     requiresAi: true,
     fields: [
       {
         key: "hedefKitleNotu",
         label: "Düşündüğünüz bir hedef kitle var mı? (opsiyonel)",
         type: "text",
-        placeholder: "Örn. 15-18 yaş lise öğrencileri",
+        placeholder: "Örn. 12-14 yaş 40 ortaokul öğrencisi, 8 öğretmen",
       },
     ],
     buildPrompt(input, priorOutputs) {
       return {
         system: EXPERT_PERSONA,
         user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
-          `Görev 1 — Tez testi: Bu problem/çözüm tezinin seçilen Erasmus+ eylemi ve sektörü için geçerli, gerçekçi ve kanıta dayalı olup olmadığını değerlendir. Güçlü ve zayıf yönlerini belirt.\n\n` +
-          `Görev 2 — Hedef kitle: Bu proje için en uygun hedef kitleyi ve yaş aralığını öner ve gerekçelendir.` +
+          `Bu proje için hedef kitleyi tam olarak netleştir:\n` +
+          `1) Doğrudan/asıl faydalanıcılar kimler? (yaş aralığı, sayı, sektör/rol)\n` +
+          `2) Dolaylı faydalanıcılar kimler? (projeden sonuçlar aracılığıyla yararlanacak diğer kişi/kurumlar)\n` +
+          `3) Bu gruplarda dezavantajlı/daha az fırsata sahip kişiler var mı (engellilik, ekonomik, coğrafi, sosyal dezavantaj)? Varsa nasıl dahil edileceğini belirt.` +
           (input.hedefKitleNotu?.trim()
             ? ` Kullanıcının düşündüğü hedef kitleyi de dikkate al: "${input.hedefKitleNotu.trim()}".`
             : "") +
-          `\n\nYanıtını "TEZ TESTİ" ve "HEDEF KİTLE" başlıkları altında iki bölüm halinde ver.`,
+          `\n\nYanıtını "DOĞRUDAN FAYDALANICILAR", "DOLAYLI FAYDALANICILAR" ve "DEZAVANTAJLI GRUPLAR" başlıkları altında ver.`,
       };
     },
   },
   {
-    key: "nedenler-sonuclar-etki",
+    key: "ortaklik-gerekcesi",
     order: 3,
-    title: "Nedenler, Sonuçlar ve Etki",
-    shortTitle: "Nedenler & Etki",
-    description:
-      "AI; problemin temel nedenlerini ve sonuçlarını, ardından önerdiğiniz çözümün doğrudan ve dolaylı etkilerini kanıtlarla birlikte üretir.",
+    title: "Ortaklık Gerekçesi",
+    shortTitle: "Ortaklık Gerekçesi",
+    description: "AI; bu problemin neden tek bir ülkede değil, ulusötesi ortaklarla çözülmesi gerektiğini gerekçelendirir.",
     requiresAi: true,
-    fields: [
-      {
-        key: "odakKonusu",
-        label: "Özellikle odaklanılmasını istediğiniz bir konu var mı? (opsiyonel)",
-        type: "text",
-        placeholder: "Örn. dijital beceriler",
-      },
-    ],
-    buildPrompt(input, priorOutputs) {
+    fields: [],
+    buildPrompt(_input, priorOutputs) {
       return {
         system: EXPERT_PERSONA,
         user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
-          `Hedef kitle (önceki adımdan):\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
-          `Görev 1: Problemin temel nedenlerini ve sonuçlarını kanıtlarla açıkla.\n` +
-          `Görev 2: Önerilen çözümün doğrudan etkilerini (en fazla 6 madde, her biri kısa kanıt atfıyla) ve bu doğrudan etkilerden doğan dolaylı faydaları (en fazla 6 madde) listele.` +
-          (input.odakKonusu?.trim() ? ` Özellikle şu konuya odaklan: "${input.odakKonusu.trim()}".` : "") +
-          `\n\nYanıtını "NEDENLER VE SONUÇLAR", "DOĞRUDAN ETKİLER" ve "DOLAYLI FAYDALAR" başlıkları altında ver.`,
+          `Hedef kitle:\n${ctx(priorOutputs, "hedef-kitle")}\n\n` +
+          `Neden bu problem tek ülkede değil, ulusötesi ortaklarla çözülmeli? Farklı ülkelerin bu probleme yaklaşımındaki farkları, birbirinden öğrenme fırsatını ve ulusötesi işbirliğinin katacağı somut değeri açıkla.`,
       };
     },
   },
   {
     key: "oncelikler",
     order: 4,
-    title: "Erasmus+ Öncelikleri",
+    title: "Öncelik Önerisi",
     shortTitle: "Öncelikler",
     description:
-      "Projenizin hitap edeceği sektörü, bir yatay öncelik ve o sektöre özel bir önceliği seçin. AI, bu seçimin projenizle uyumunu kanıtlarla gerekçelendirir.",
+      "AI; resmi öncelik listesinden projenize en uygun 1 yatay + 1 okul eğitimi (School Education) önceliğini önerir ve gerekçelendirir.",
     requiresAi: true,
-    fields: [
-      {
-        key: "sector",
-        label: "Sektör",
-        type: "select",
-        required: true,
-        optionsSource: "sectors",
-      },
-      {
-        key: "horizontalPriority",
-        label: "Yatay Öncelik",
-        type: "select",
-        required: true,
-        optionsSource: "horizontalPriorities",
-      },
-      {
-        key: "specificPriority",
-        label: "Sektöre Özel Öncelik",
-        type: "select",
-        required: true,
-        optionsSource: "sectoralPriorities",
-        dependsOn: "sector",
-      },
-    ],
-    buildPrompt(input, priorOutputs) {
-      const sectorLabel = EDUCATION_SECTOR_LABELS[input.sector] ?? input.sector;
+    fields: [],
+    buildPrompt(_input, priorOutputs) {
+      const horizontalList = HORIZONTAL_PRIORITIES_FULL.map((p) => `- ${p}`).join("\n");
+      const schList = SECTORAL_PRIORITIES_FULL.SCH.map((p) => `- ${p}`).join("\n");
       return {
         system: EXPERT_PERSONA,
         user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
-          `Hedef kitle:\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
-          `Seçilen sektör: ${sectorLabel}\n` +
-          `Seçilen yatay öncelik: ${input.horizontalPriority}\n` +
-          `Seçilen sektöre özel öncelik: ${input.specificPriority}\n\n` +
-          `Bu iki önceliğin (yatay + sektöre özel) proje fikriyle nasıl örtüştüğünü kanıtlarla açıkla ve gerekçelendir. Örtüşme zayıfsa dürüstçe belirt ve projeyi bu önceliklere daha iyi hizalamak için öneri sun.`,
+          `Hedef kitle:\n${ctx(priorOutputs, "hedef-kitle")}\n\n` +
+          `Ortaklık gerekçesi:\n${ctx(priorOutputs, "ortaklik-gerekcesi")}\n\n` +
+          `Aşağıdaki resmi listelerden, bu proje için EN UYGUN 1 yatay (horizontal) öncelik ve 1 okul eğitimi (School Education) önceliğini seç ve nedenini kısaca açıkla. Listede olmayan bir öncelik uydurma, sadece aşağıdakilerden seç.\n\n` +
+          `Yatay öncelikler:\n${horizontalList}\n\n` +
+          `Okul Eğitimi öncelikleri:\n${schList}\n\n` +
+          `Yanıtını "YATAY ÖNCELİK", "OKUL EĞİTİMİ ÖNCELİĞİ" ve "GEREKÇE" başlıkları altında ver.`,
       };
     },
   },
@@ -235,9 +177,9 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
       return {
         system: EXPERT_PERSONA,
         user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
-          `Hedef kitle:\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
+          `Hedef kitle:\n${ctx(priorOutputs, "hedef-kitle")}\n\n` +
           `Seçilen öncelikler:\n${ctx(priorOutputs, "oncelikler")}\n\n` +
-          `Bu bilgilere göre, bir genel hedef (tek cümle, projenin genel vizyonunu/yönünü belirten) ve bu genel hedefi somut, ölçülebilir adımlara bölen 3-5 özel hedef (SO1, SO2, SO3...) öner. Şimdilik tam SMART formatı zorunlu değil, netlik önceliklidir. Her özel hedef, yukarıdaki hedef kitleye açıkça hitap etsin ve ilerleyen adımlarda somut bir faaliyete/hareketliliğe dönüştürülebilecek kadar spesifik olsun — genel geçer, ölçülemez ifadelerden kaçın.\n\n` +
+          `Bu bilgilere göre, bir genel hedef (tek cümle, projenin genel vizyonunu/yönünü belirten) ve bu genel hedefi somut, ölçülebilir adımlara bölen 3-5 özel hedef (SO1, SO2, SO3...) öner. Şimdilik tam SMART formatı zorunlu değil, netlik önceliklidir. Her özel hedef, yukarıdaki hedef kitleye açıkça hitap etsin ve ilerleyen adımlarda somut bir hareketliliğe dönüştürülebilecek kadar spesifik olsun — genel geçer, ölçülemez ifadelerden kaçın.\n\n` +
           `Yanıtını "GENEL HEDEF" ve "ÖZEL HEDEFLER" başlıkları altında ver.`,
       };
     },
@@ -248,26 +190,17 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
     title: "Mantıksal Çerçeve ve Uyum Kontrolü",
     shortTitle: "Mantıksal Çerçeve",
     description:
-      "AI; özel hedeflerinizi (KA210 için birbirini tamamlayan hareketliliklere, KA220/KA240 için iş paketlerine (WP)) dönüştüren bir mantıksal çerçeve tablosu üretir ve toplam etkinin genel hedefinizle uyumunu değerlendirir.",
+      "AI; özel hedeflerinizi birbirini tamamlayan hareketliliklere dönüştüren bir mantıksal çerçeve tablosu üretir ve toplam etkinin genel hedefinizle uyumunu değerlendirir.",
     requiresAi: true,
     fields: [],
     buildPrompt(_input, priorOutputs) {
-      const ka210 = isKa210(priorOutputs);
-      const unitLabel = ka210 ? "Hareketlilik" : "İş Paketi (WP)";
-      const continuityPhrase = ka210
-        ? "hareketliliklerin birbirini nasıl tamamladığını — hangi hareketliliğin çıktısının bir sonraki hareketliliğe girdi sağladığını"
-        : "iş paketlerinin birbirini nasıl tamamladığını — hangi iş paketinin çıktısının bir sonraki iş paketine girdi sağladığını";
-      const unitInstruction = ka210
-        ? `KA210 küçük ölçekli ortaklıklarda resmi "iş paketi" yapısı kullanılmaz. Bunun yerine, her özel hedefi somut bir hareketliliğe (öğrenme/öğretme/eğitim faaliyeti, ortaklık toplantısı veya çoğaltıcı/yaygınlaştırma etkinliği gibi) karşılık gelecek şekilde yapılandır. Hareketlilikler birbirinden bağımsız, tekrarlayan veya kopuk OLMAMALI: her hareketlilik bir öncekinin somut çıktısını girdi olarak kullanmalı veya bir sonrakini doğrudan beslemeli, böylece hazırlıktan sonuca uzanan tek, kesintisiz bir uygulama zinciri oluşturmalı.`
-        : `Her özel hedefi bir çalışma paketine (WP) karşılık gelecek şekilde yapılandır. İş paketleri birbirinden bağımsız, tekrarlayan görevler OLMAMALI: her iş paketi bir öncekinin somut çıktısını girdi olarak kullanmalı veya bir sonrakini doğrudan beslemeli, böylece tek, kesintisiz bir uygulama akışı oluşturmalı.`;
-
       return {
         system: EXPERT_PERSONA,
         user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
-          `Hedef kitle:\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
+          `Hedef kitle:\n${ctx(priorOutputs, "hedef-kitle")}\n\n` +
           `Genel hedef ve özel hedefler:\n${ctx(priorOutputs, "hedefler")}\n\n` +
-          `Görev 1: ${unitInstruction} Sonucu "${unitLabel} | Özel Hedef | Hedef Kitle | Somut Çıktı | Etki" sütunlarından oluşan bir markdown tablosu olarak ver. Her merkezi öğeyi yeni bir satıra koy, net ve öz ifadeler kullan. "Hedef Kitle" sütunu yukarıda tanımlanan hedef kitleyle tutarlı olsun; "Somut Çıktı" sütunu her zaman elle tutulur, doğrulanabilir bir ürün/belge/sertifika/etkinlik olsun, soyut ifadelerden kaçın.\n\n` +
-          `Görev 2: Tablodaki tüm "Etki" sütununu topluca değerlendirdiğinde, bunların genel hedefi karşılayıp karşılamadığını analiz et. Ayrıca ${continuityPhrase} kısaca özetle. Uyumsuzluk veya kopukluk varsa somut, uygulanabilir düzeltme adımları öner.\n\n` +
+          `Görev 1: KA210 küçük ölçekli ortaklıklarda resmi "iş paketi" yapısı kullanılmaz. Her özel hedefi somut bir hareketliliğe (öğrenme/öğretme/eğitim faaliyeti, ortaklık toplantısı veya çoğaltıcı/yaygınlaştırma etkinliği gibi) karşılık gelecek şekilde yapılandır. Hareketlilikler birbirinden bağımsız, tekrarlayan veya kopuk OLMAMALI: her hareketlilik bir öncekinin somut çıktısını girdi olarak kullanmalı veya bir sonrakini doğrudan beslemeli, böylece hazırlıktan sonuca uzanan tek, kesintisiz bir uygulama zinciri oluşturmalı. Sonucu "Hareketlilik | Özel Hedef | Hedef Kitle | Somut Çıktı | Etki" sütunlarından oluşan bir markdown tablosu olarak ver. Her merkezi öğeyi yeni bir satıra koy, net ve öz ifadeler kullan. "Hedef Kitle" sütunu yukarıda tanımlanan hedef kitleyle tutarlı olsun; "Somut Çıktı" sütunu her zaman elle tutulur, doğrulanabilir bir ürün/belge/sertifika/etkinlik olsun, soyut ifadelerden kaçın.\n\n` +
+          `Görev 2: Tablodaki tüm "Etki" sütununu topluca değerlendirdiğinde, bunların genel hedefi karşılayıp karşılamadığını analiz et. Ayrıca hareketliliklerin birbirini nasıl tamamladığını — hangi hareketliliğin çıktısının bir sonraki hareketliliğe girdi sağladığını — kısaca özetle. Uyumsuzluk veya kopukluk varsa somut, uygulanabilir düzeltme adımları öner.\n\n` +
           `Yanıtını "MANTIKSAL ÇERÇEVE" (tablo) ve "UYUM DEĞERLENDİRMESİ" başlıkları altında ver.`,
       };
     },
@@ -292,7 +225,7 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
       return {
         system: EXPERT_PERSONA,
         user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
-          `Hedef kitle:\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
+          `Hedef kitle:\n${ctx(priorOutputs, "hedef-kitle")}\n\n` +
           `Genel hedef ve özel hedefler:\n${ctx(priorOutputs, "hedefler")}\n\n` +
           `Görev 1 — Vizyon: Şu formülü kullanarak tek cümlelik bir proje vizyonu yaz: "Projenin vizyonu ...(katkı)... sağlayarak ...(etki)... olmasıdır." Ana amacı, hedef kitleyi, kazandırılacak beceri/yetkinlikleri ve bunların pratik faydasını içersin.\n\n` +
           `Görev 2 — İnovasyon: Bu projenin genel inovasyonunu açıkla. Bu proje neden finanse edilmeli, fikirde yeni olan ne?` +
@@ -302,8 +235,27 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
     },
   },
   {
-    key: "gostergeler",
+    key: "proje-adi",
     order: 8,
+    title: "Proje Adı Önerileri",
+    shortTitle: "Proje Adı",
+    description: "AI; şimdiye kadarki tüm bilgilere dayanarak 5 potansiyel proje adı önerir.",
+    requiresAi: true,
+    fields: [],
+    buildPrompt(_input, priorOutputs) {
+      return {
+        system: EXPERT_PERSONA,
+        user: `Proje fikri:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
+          `Hedef kitle:\n${ctx(priorOutputs, "hedef-kitle")}\n\n` +
+          `Genel hedef ve özel hedefler:\n${ctx(priorOutputs, "hedefler")}\n\n` +
+          `Vizyon ve inovasyon:\n${ctx(priorOutputs, "vizyon-inovasyon")}\n\n` +
+          `Yukarıdaki bilgilere dayanarak, pozitif, akılda kalıcı, İngilizce 5 potansiyel proje adı öner. Her biri için tek cümlelik bir açıklama ekle (örn. "MindCrafters: Gerçek Dünya Senaryolarıyla Bilişsel Beceriler Kazandırmak").`,
+      };
+    },
+  },
+  {
+    key: "gostergeler",
+    order: 9,
     title: "Göstergeler (Indicators)",
     shortTitle: "Göstergeler",
     description:
@@ -315,41 +267,41 @@ export const IDEA_WIZARD_STEPS: IdeaWizardStepConfig[] = [
         label: "Tahmini Bütçe (EUR)",
         type: "text",
         required: true,
-        placeholder: "Örn. 250000",
+        placeholder: "Örn. 30000 veya 60000",
+        helpText: "KA210-SCH sabit götürü (lump sum) dilimlerdir: genelde 30.000 € veya 60.000 €.",
       },
     ],
     buildPrompt(input, priorOutputs) {
-      const unitPlural = isKa210(priorOutputs) ? "hareketlilikler" : "iş paketleri";
       return {
         system: EXPERT_PERSONA,
-        user: `Mantıksal çerçeve (${unitPlural}):\n${ctx(priorOutputs, "mantiksal-cerceve")}\n\n` +
+        user: `Mantıksal çerçeve (hareketlilikler):\n${ctx(priorOutputs, "mantiksal-cerceve")}\n\n` +
           `Tahmini proje bütçesi: ${input.butce} EUR\n\n` +
-          `Bu ${unitPlural} listesindeki sonuç ve etkilere dayanarak, Erasmus+ Sonuçlar Platformu'ndaki iyi uygulamaları ve Erasmus+ değerlendirme kılavuzunu göz önünde bulundurarak, sayısal hedefler içeren niteliksel ve niceliksel göstergeler öner. Erasmus+'ın çevre dostu uygulamaları ve dijitalleşmeyi teşvik ettiğini dikkate al.`,
+          `Bu hareketlilikler listesindeki sonuç ve etkilere dayanarak, Erasmus+ Sonuçlar Platformu'ndaki iyi uygulamaları ve Erasmus+ değerlendirme kılavuzunu göz önünde bulundurarak, sayısal hedefler içeren niteliksel ve niceliksel göstergeler öner. Erasmus+'ın çevre dostu uygulamaları ve dijitalleşmeyi teşvik ettiğini dikkate al.`,
       };
     },
   },
   {
     key: "konsept-not",
-    order: 9,
-    title: "Konsept Not ve İsim Önerileri",
-    shortTitle: "Konsept Not",
+    order: 10,
+    title: "Konsept Notu",
+    shortTitle: "Konsept Notu",
     description:
-      "Son adım: AI, önceki tüm adımları birleştirerek yaklaşık 4000 karakterlik bir konsept notu ve 5 proje adı önerisi üretir.",
+      "Son adım: AI, önceki tüm adımları birleştirerek yaklaşık 4000 karakterlik bir konsept notu üretir.",
     requiresAi: true,
     fields: [],
     buildPrompt(_input, priorOutputs) {
       return {
         system: EXPERT_PERSONA,
-        user: `Aşağıdaki bilgileri kullanarak projenin yaklaşık 4000 karakterlik bir genel bakış (konsept notu) metnini yaz: vizyon, tanımlanan problem, genel/özel hedefler, seçilen öncelikler, somut ve soyut sonuçlar, inovasyon ve bir sonuç paragrafı. Vizyon ve hedef kitleyle başla. Özel hedefleri, amaçları ve öncelikleri madde işaretleriyle anlat. Problem tanımı daha uzun olsun (yaklaşık 800 karakter). Her bölümün kendi kalın (bold) başlığı olsun. Kanıtları metnin içine göm, sonda ayrı bir kaynakça listesi verme. Profesyonel ama anlaşılır, yüksek okunabilirlikte bir dil kullan. Metin boyunca genel hedef, özel hedefler, hedef kitle, somut çıktılar ve hareketlilikler/iş paketleri arasında birbirini tutarlı biçimde tamamlayan, aynı hedef kitleye ve aynı genel hedefe atıf yapan tek bir bütün olarak oku; çelişen veya birbirinden kopuk ifadeler varsa metni yazarken bunları uyumlu hâle getir.\n\n` +
+        user: `Aşağıdaki bilgileri kullanarak projenin yaklaşık 4000 karakterlik bir genel bakış (konsept notu) metnini yaz: vizyon, tanımlanan problem, genel/özel hedefler, seçilen öncelikler, somut ve soyut sonuçlar, inovasyon ve bir sonuç paragrafı. Vizyon ve hedef kitleyle başla. Özel hedefleri, amaçları ve öncelikleri madde işaretleriyle anlat. Problem tanımı daha uzun olsun (yaklaşık 800 karakter). Her bölümün kendi kalın (bold) başlığı olsun. Kanıtları metnin içine göm, sonda ayrı bir kaynakça listesi verme. Profesyonel ama anlaşılır, yüksek okunabilirlikte bir dil kullan. Metin boyunca genel hedef, özel hedefler, hedef kitle, somut çıktılar ve hareketlilikler arasında birbirini tutarlı biçimde tamamlayan, aynı hedef kitleye ve aynı genel hedefe atıf yapan tek bir bütün olarak oku; çelişen veya birbirinden kopuk ifadeler varsa metni yazarken bunları uyumlu hâle getir.\n\n` +
           `Problem ve çözüm:\n${ctx(priorOutputs, "problem-cozum")}\n\n` +
-          `Tez testi ve hedef kitle:\n${ctx(priorOutputs, "tez-hedef-kitle")}\n\n` +
-          `Nedenler, sonuçlar ve etki:\n${ctx(priorOutputs, "nedenler-sonuclar-etki")}\n\n` +
+          `Hedef kitle:\n${ctx(priorOutputs, "hedef-kitle")}\n\n` +
+          `Ortaklık gerekçesi:\n${ctx(priorOutputs, "ortaklik-gerekcesi")}\n\n` +
           `Öncelikler:\n${ctx(priorOutputs, "oncelikler")}\n\n` +
           `Hedefler:\n${ctx(priorOutputs, "hedefler")}\n\n` +
           `Mantıksal çerçeve:\n${ctx(priorOutputs, "mantiksal-cerceve")}\n\n` +
           `Vizyon ve inovasyon:\n${ctx(priorOutputs, "vizyon-inovasyon")}\n\n` +
-          `Göstergeler:\n${ctx(priorOutputs, "gostergeler")}\n\n` +
-          `Konsept notunun ardından, "PROJE ADI ÖNERİLERİ" başlığı altında, şu formatta 5 potansiyel proje adı öner: "MindCrafters: Gerçek Dünya Senaryolarıyla Bilişsel Beceriler Kazandırmak" gibi çarpıcı, akılda kalıcı isimler.`,
+          `Proje adı:\n${ctx(priorOutputs, "proje-adi")}\n\n` +
+          `Göstergeler:\n${ctx(priorOutputs, "gostergeler")}`,
       };
     },
   },
@@ -359,28 +311,13 @@ export function getIdeaWizardStep(stepKey: string): IdeaWizardStepConfig | undef
   return IDEA_WIZARD_STEPS.find((s) => s.key === stepKey);
 }
 
-export function resolveFieldOptions(
-  field: IdeaWizardField,
-  formValues: Record<string, string>
-): IdeaWizardFieldOption[] {
+export function resolveFieldOptions(field: IdeaWizardField): IdeaWizardFieldOption[] {
   if (field.options) return field.options;
   switch (field.optionsSource) {
-    case "kaActions":
-      return Object.keys(KA_ACTION_LABELS).map((code) => ({ value: code, label: KA_ACTION_LABELS[code] }));
-    case "sectorsForKaAction": {
-      const kaAction = field.dependsOn ? formValues[field.dependsOn] : undefined;
-      const sectors = (kaAction && KA_ACTION_SECTORS[kaAction]) || [];
-      return sectors.map((code) => ({ value: code, label: EDUCATION_SECTOR_LABELS[code] ?? code }));
-    }
-    case "sectors":
-      return Object.keys(EDUCATION_SECTOR_LABELS).map((code) => ({ value: code, label: EDUCATION_SECTOR_LABELS[code] }));
     case "horizontalPriorities":
       return HORIZONTAL_PRIORITIES_FULL.map((p) => ({ value: p, label: p }));
-    case "sectoralPriorities": {
-      const sector = field.dependsOn ? (formValues[field.dependsOn] as EducationSectorCode) : undefined;
-      const list = sector ? SECTORAL_PRIORITIES_FULL[sector] ?? [] : [];
-      return list.map((p) => ({ value: p, label: p }));
-    }
+    case "sectoralPrioritiesSch":
+      return SECTORAL_PRIORITIES_FULL.SCH.map((p) => ({ value: p, label: p }));
     default:
       return [];
   }

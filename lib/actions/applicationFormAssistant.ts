@@ -16,14 +16,18 @@ export async function createApplicationFormSession(formData: FormData) {
   const ideaSession = await prisma.ideaWizardSession.findUnique({ where: { id: ideaWizardSessionId } });
   if (!ideaSession || ideaSession.userId !== user.id) return;
 
-  const hareketlilikSayisi = Math.max(1, Math.min(20, Number(formData.get("hareketlilikSayisi")) || 1));
+  const ulusotesiSayisi = Math.max(0, Math.min(20, Number(formData.get("ulusotesiSayisi")) || 0));
+  const yerelSayisi = Math.max(0, Math.min(20, Number(formData.get("yerelSayisi")) || 0));
+  const yonetimYayginSayisi = Math.max(0, Math.min(1, Number(formData.get("yonetimYayginSayisi")) || 0));
   const kurulusSayisi = Math.max(1, Math.min(20, Number(formData.get("kurulusSayisi")) || 1));
 
   const session = await prisma.applicationFormSession.create({
     data: {
       userId: user.id,
       ideaWizardSessionId,
-      hareketlilikSayisi,
+      ulusotesiSayisi,
+      yerelSayisi,
+      yonetimYayginSayisi,
       kurulusSayisi,
       title: ideaSession.title,
     },
