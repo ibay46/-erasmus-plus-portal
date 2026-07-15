@@ -37,6 +37,11 @@ export const CONSULTING_SERVICES: ConsultingService[] = [
     title: "AI Destekli Proje Geliştirme",
     description: "Yapay zeka destekli araçlarla proje fikrinden iş paketlerine kadar hızlandırılmış geliştirme süreci.",
   },
+  {
+    slug: "ka210-sch-proje-yazma-sihirbazi",
+    title: "KA210-SCH Proje Yazma Sihirbazı (ChatGPT Asistanı)",
+    description: "Haftalık erişimli, özel eğitilmiş ChatGPT asistanıyla KA210-SCH başvurunuzu soru soru doldurma desteği.",
+  },
 ];
 
 export interface PricingPackage {

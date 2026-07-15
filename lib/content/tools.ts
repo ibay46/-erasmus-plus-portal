@@ -27,6 +27,13 @@ export const TOOL_CATEGORIES: { key: ToolCategoryKey; title: string; description
 
 export const TOOLS: ToolContent[] = [
   {
+    href: "/araclar/ka210-sch-proje-yazma-sihirbazi",
+    title: "KA210-SCH Proje Yazma Sihirbazı (ChatGPT Asistanı)",
+    description:
+      "Özel eğitilmiş bir ChatGPT asistanı; fikrinizden başvurunuzu resmi kriterlere göre puanlayıp iyileştirme önerisi sunmasına kadar, KA210-SCH başvuru formunu soru soru sizinle birlikte doldurur.",
+    category: "proje-oncesi",
+  },
+  {
     href: "/araclar/proje-fikri-uretici",
     title: "AI Destekli Proje Fikri Üretici",
     description:
