@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isToolPublished } from "@/lib/toolVisibility";
 import { Card } from "@/components/ui/Card";
+import { Ka210SihirbaziFaq } from "@/components/tools/Ka210SihirbaziFaq";
 
 const TOOL_HREF = "/araclar/ka210-sch-proje-yazma-sihirbazi";
 
@@ -13,40 +14,41 @@ export const metadata = {
 
 const STAGES = [
   {
-    title: "Aşama 0 — Fikir Geliştirme",
+    title: "Fikir Geliştirme",
     body: "Henüz taslak hâlindeki fikriniz alınır: çözülecek problem, önerilen çözüm, doğrudan ve dolaylı hedef kitle, ulusötesi ortaklık gerekçesi netleştirilir. Sihirbaz, projenize en uygun resmi önceliği ve konuyu (2026 çağrı dönemi güncel listesinden) önerir. Ardından genel hedef, özel hedefler ve bir mantıksal çerçeve tablosu (iş paketi → hedef → faaliyet → hedef grubu → çıktı → gösterge → etki) birlikte kurulur — bu tablo, sonraki tüm cevapların omurgasını oluşturur.",
   },
   {
-    title: "Aşama 1 — Bağlam, Ortaklar ve Hareketlilik Planı",
+    title: "Bağlam, Ortaklar ve Hareketlilik Planı",
     body: "Proje başlığı, kısaltması, süresi (6-24 ay), ortak kuruluşlar, kaç ulusötesi (gün bazlı), kaç yerel (saat bazlı) ve bir yönetim/yaygınlaştırma faaliyeti olacağı, toplam hibe tutarı (30.000 € veya 60.000 €) ve bunun faaliyetlere dağılımı netleştirilir.",
   },
   {
-    title: "Aşama 2 — Katılımcı Kuruluşlar",
+    title: "Katılımcı Kuruluşlar",
     body: "Başvuran ve her ortak kuruluş için: kuruluş türü, ana faaliyetler, başvuru alanındaki faaliyetler, hedef öğrenen profilleri, deneyim yılı ve geçmiş Erasmus+ katılım özeti — resmi formun tüm profil soruları tek tek doldurulur.",
   },
   {
-    title: "Aşama 3 — Proje Tanımı",
+    title: "Proje Tanımı",
     body: "Somut hedefler, hedef gruplar ve ihtiyaçları, motivasyon, yatay boyutlar (kapsayıcılık, çevre, dijital, katılım), ulusötesi işbirliğinin faydaları ve seçilen resmi önceliğin nasıl ele alındığı.",
   },
   {
-    title: "Aşama 4 — Ortaklık Düzenlemeleri",
+    title: "Ortaklık Düzenlemeleri",
     body: "Ortaklığın gerçek kuruluş öyküsü, proje yönetimi ve iletişim mekanizmaları, Erasmus+ platformlarının kullanımı, her ortağın görev ve sorumlulukları.",
   },
   {
-    title: "Aşama 5 — Faaliyetler",
+    title: "Faaliyetler",
     body: "Her ulusötesi, yerel ve yönetim faaliyeti için: içerik (ulusötesi faaliyetlerde gün gün program — tanışma/buz kırma, kültürel gezi, sertifika günü dahil), hedef grup, hedeflere katkı, beklenen sonuçlar ve bütçe gerekçesi (maliyet-etkinlik kanıtlı).",
   },
   {
-    title: "Aşama 6 — Etki ve Sürdürülebilirlik",
+    title: "Etki ve Sürdürülebilirlik",
     body: "Hedeflere ulaşımın nasıl ölçüleceği, kuruluşların uzun vadeli gelişimine katkısı, sonuçların paylaşılma ve kullanılma planı.",
   },
   {
-    title: "Aşama 7 — Proje Özeti",
+    title: "Proje Özeti",
     body: "Kısa bir yönetici özeti — önce Türkçe, sonra otomatik İngilizce çeviri (Erasmus+ Proje Sonuçları Platformu'nda yayınlanacak metin).",
   },
   {
-    title: "Aşama 8 — KA210 Değerlendirmesi (en değerli aşama)",
+    title: "KA210 Değerlendirmesi",
     body: "Başvurunuz tamamlandığında sihirbaz, Avrupa Komisyonu Programme Guide'ındaki resmi 4 kritere (Relevance 30p, Proje Tasarımı ve Uygulaması 30p, Ortaklık Kalitesi 20p, Etki 20p — toplam 100 puan, kabul eşiği 60/100) göre başvurunuzu gerçek bir değerlendirici gibi eleştirel olarak puanlar: her kritere tahmini puan ve gerekçe verir, somut güçlü ve zayıf yönleri açıkça söyler, ve \"şu soruya şunu eklerseniz puanınız şuna çıkar\" formatında somut, uygulanabilir iyileştirme önerileri sunar.",
+    highlight: true,
   },
 ];
 
@@ -65,11 +67,11 @@ const FEATURES = [
   },
   {
     title: "Puan odaklı yazım",
-    body: "Resmi değerlendirme kriterlerini karşılayacak somutluk (gerçek ihtiyaç verisi, katılımcı matematiği, maliyet-etkinlik kanıtı, kurumsal entegrasyon taahhüdü) her ilgili soruda otomatik hatırlatılır ve işlenir.",
+    body: "Gerçek ihtiyaç verisi, katılımcı matematiği, maliyet-etkinlik kanıtı ve kurumsal entegrasyon taahhüdü gibi somutluklar her ilgili soruda otomatik işlenir.",
   },
   {
     title: "Canlı, biriken taslak",
-    body: "Onaylanan her cevap otomatik olarak tek bir belgede toplanır; süreç sonunda başvuru sistemine kopyalanmaya hazır tam metin elinizde olur.",
+    body: "Onaylanan her cevap tek bir belgede toplanır; süreç sonunda başvuru sistemine kopyalanmaya hazır tam metin elinizde olur.",
   },
   {
     title: "Güncel sorular",
@@ -108,6 +110,12 @@ const FAQ = [
   },
 ];
 
+function Eyebrow({ children }: { children: string }) {
+  return (
+    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-accent">{children}</p>
+  );
+}
+
 function CtaButton({ className = "" }: { className?: string }) {
   return (
     <Link
@@ -123,17 +131,24 @@ export default async function KA210SihirbaziPage() {
   if (!(await isToolPublished(TOOL_HREF))) notFound();
 
   return (
-    <div>
-      <h1 className="text-3xl font-semibold mb-2 text-foreground">
-        KA210-SCH Proje Yazma Sihirbazı
-      </h1>
-      <p className="text-lg text-muted-foreground mb-6 max-w-2xl">
+    <div className="mx-auto max-w-3xl">
+      {/* Hero */}
+      <Eyebrow>Özel Eğitilmiş ChatGPT Asistanı</Eyebrow>
+      <h1 className="text-3xl font-semibold mb-2 text-foreground">KA210-SCH Proje Yazma Sihirbazı</h1>
+      <p className="text-lg text-muted-foreground mb-5">
         Erasmus+ başvurunuzu, fikirden puanlı bir başvuru metnine, yapay zeka rehberliğinde adım adım
         tamamlayın.
       </p>
-      <CtaButton className="mb-10" />
+      <div className="flex flex-wrap gap-x-6 gap-y-1 mb-6 text-sm text-muted-foreground">
+        <span><strong className="text-foreground">29</strong> resmi soru</span>
+        <span><strong className="text-foreground">9</strong> aşamalı süreç</span>
+        <span><strong className="text-foreground">100</strong> puan üzerinden resmi puanlama</span>
+      </div>
+      <CtaButton className="mb-14" />
 
-      <section className="mb-10 max-w-2xl">
+      {/* Problem */}
+      <section className="mb-12">
+        <Eyebrow>Sorun</Eyebrow>
         <h2 className="text-2xl font-semibold mb-3 text-foreground">
           Erasmus+ KA210-SCH başvurusu neden zor?
         </h2>
@@ -145,23 +160,27 @@ export default async function KA210SihirbaziPage() {
           kendi katı karakter sınırı içinde, birbiriyle çelişmeden ve gerçek bir Avrupa Komisyonu
           değerlendiricisinin gözünden ikna edici şekilde yazmayı gerektirir.
         </p>
-        <p className="text-muted-foreground mb-2">Çoğu başvuru sahibi bu noktada iki sorunla karşılaşır:</p>
-        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-          <li>
-            <strong className="text-foreground">Nereden başlayacağını bilememe</strong> — fikir var ama
-            resmi dile, resmi yapıya nasıl dönüştürüleceği belirsiz.
-          </li>
-          <li>
-            <strong className="text-foreground">Puan kaybettiren eksikler</strong> — gerçek ihtiyaç
-            verisi yerine genel ifadeler, katılımcı sayılarında tutarsızlık, bütçenin sadece dağıtılıp
-            gerekçelendirilmemesi gibi, deneyimsiz gözle fark edilmeyen ama değerlendiricinin hemen
-            yakaladığı zayıflıklar.
-          </li>
-        </ul>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Card>
+            <h3 className="font-medium mb-1 text-foreground">Nereden başlayacağını bilememe</h3>
+            <p className="text-sm text-muted-foreground">
+              Fikir var ama resmi dile, resmi yapıya nasıl dönüştürüleceği belirsiz.
+            </p>
+          </Card>
+          <Card>
+            <h3 className="font-medium mb-1 text-foreground">Puan kaybettiren eksikler</h3>
+            <p className="text-sm text-muted-foreground">
+              Genel ifadeler, katılımcı sayılarında tutarsızlık, sadece dağıtılıp gerekçelendirilmemiş
+              bütçe — deneyimsiz gözle fark edilmeyen ama değerlendiricinin hemen yakaladığı zayıflıklar.
+            </p>
+          </Card>
+        </div>
       </section>
 
-      <section className="mb-10 max-w-2xl">
-        <h2 className="text-2xl font-semibold mb-3 text-foreground">Çözüm: KA210-SCH Proje Yazma Sihirbazı</h2>
+      {/* Solution */}
+      <section className="mb-12">
+        <Eyebrow>Çözüm</Eyebrow>
+        <h2 className="text-2xl font-semibold mb-3 text-foreground">KA210-SCH Proje Yazma Sihirbazı</h2>
         <p className="text-muted-foreground">
           Bu araç, özel olarak eğitilmiş bir ChatGPT asistanıdır (Custom GPT). Sizinle tek seferde her
           şeyi sormaz — bir proje danışmanı gibi, sırayla, tek tek soru sorar; siz kısa notlar
@@ -171,60 +190,77 @@ export default async function KA210SihirbaziPage() {
         </p>
       </section>
 
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4 text-foreground">Süreç nasıl işler? (9 Aşama)</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {STAGES.map((stage) => (
-            <Card key={stage.title}>
-              <h3 className="font-medium mb-1.5 text-foreground">{stage.title}</h3>
+      {/* Process timeline */}
+      <section className="mb-12">
+        <Eyebrow>Süreç</Eyebrow>
+        <h2 className="text-2xl font-semibold mb-6 text-foreground">9 aşamada nasıl işler?</h2>
+        <ol className="relative border-l border-border pl-6 space-y-7">
+          {STAGES.map((stage, i) => (
+            <li key={stage.title} className="relative">
+              <span
+                className={`absolute -left-[calc(1.5rem+5px)] top-0.5 flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-semibold ${
+                  stage.highlight ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {i}
+              </span>
+              <h3 className="font-medium mb-1 text-foreground">{stage.title}</h3>
               <p className="text-sm text-muted-foreground">{stage.body}</p>
-            </Card>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
-      <section className="mb-10">
-        <h2 className="text-2xl font-semibold mb-4 text-foreground">Bu aracı farklı kılan özellikler</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Features */}
+      <section className="mb-12">
+        <Eyebrow>Neden Bu Araç</Eyebrow>
+        <h2 className="text-2xl font-semibold mb-4 text-foreground">Farklı kılan özellikler</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
           {FEATURES.map((f) => (
             <Card key={f.title}>
-              <h3 className="font-medium mb-1.5 text-foreground">{f.title}</h3>
+              <h3 className="font-medium mb-1 text-foreground">{f.title}</h3>
               <p className="text-sm text-muted-foreground">{f.body}</p>
             </Card>
           ))}
         </div>
       </section>
 
-      <section className="mb-10 max-w-2xl">
-        <h2 className="text-2xl font-semibold mb-3 text-foreground">Kimler için uygun?</h2>
-        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-          <li>KA210-SCH başvurusu hazırlayan okullar, öğretmenler, okul yöneticileri ve proje koordinatörleri</li>
-          <li>Erasmus+ proje yazımına yeni başlayan, süreç konusunda adım adım rehberliğe ihtiyaç duyan kurumlar</li>
-          <li>Zaman baskısı altında hızlı ama kaliteli, puan kazandıracak bir taslak arayan proje ekipleri</li>
-          <li>Önceki başvurularında düşük puan almış ve nedenini anlamak isteyen kurumlar</li>
-        </ul>
+      {/* Who it's for + user flow, side by side */}
+      <section className="mb-12 grid gap-8 sm:grid-cols-2">
+        <div>
+          <Eyebrow>Kimler İçin</Eyebrow>
+          <h2 className="text-xl font-semibold mb-3 text-foreground">Kimler için uygun?</h2>
+          <ul className="list-disc pl-5 space-y-1.5 text-sm text-muted-foreground">
+            <li>KA210-SCH başvurusu hazırlayan okullar, öğretmenler, okul yöneticileri ve proje koordinatörleri</li>
+            <li>Erasmus+ proje yazımına yeni başlayan, adım adım rehberliğe ihtiyaç duyan kurumlar</li>
+            <li>Zaman baskısı altında hızlı ama puan kazandıracak bir taslak arayan proje ekipleri</li>
+            <li>Önceki başvurularında düşük puan almış ve nedenini anlamak isteyen kurumlar</li>
+          </ul>
+        </div>
+        <div>
+          <Eyebrow>Deneyim</Eyebrow>
+          <h2 className="text-xl font-semibold mb-3 text-foreground">Nasıl çalışır?</h2>
+          <ol className="list-decimal pl-5 space-y-1.5 text-sm text-muted-foreground">
+            <li>Size özel sihirbaz linkiyle yeni bir sohbet başlatırsınız.</li>
+            <li>Fikrinizi birkaç cümleyle anlatırsınız — sihirbaz geri kalanını sorar.</li>
+            <li>Her taslağı okur, onaylar, düzelttirir veya yeniden ürettirirsiniz.</li>
+            <li>Başvurunuzun tam metni kendiliğinden birikir.</li>
+            <li>Son aşamada tahmini puanınızı ve iyileştirme önerilerini görürsünüz.</li>
+            <li>Metni doğrudan resmi Erasmus+ Web Uygulaması&apos;na kopyalarsınız.</li>
+          </ol>
+          <p className="text-xs text-muted-foreground mt-2">
+            Ortalama tamamlanma süresi bir oturumda 1-2,5 saat arasındadır.
+          </p>
+        </div>
       </section>
 
-      <section className="mb-10 max-w-2xl">
-        <h2 className="text-2xl font-semibold mb-3 text-foreground">Kullanıcı deneyimi</h2>
-        <ol className="list-decimal pl-5 space-y-1.5 text-muted-foreground">
-          <li>Size özel oluşturulan sihirbaz linkine tıklayıp yeni bir sohbet başlatırsınız.</li>
-          <li>Projenizin fikrini birkaç cümleyle anlatırsınız — sihirbaz geri kalan her şeyi sorar.</li>
-          <li>Her adımda önerilen taslağı okur, onaylar, düzelttirir veya yeniden ürettirirsiniz.</li>
-          <li>Süreç ilerledikçe başvurunuzun tam metni kendiliğinden birikir.</li>
-          <li>Son aşamada başvurunuzun tahmini puanını, güçlü/zayıf yönlerini ve iyileştirme önerilerini görürsünüz.</li>
-          <li>Ortaya çıkan metni doğrudan resmi Erasmus+ Web Uygulaması&apos;na kopyalarsınız.</li>
-        </ol>
-        <p className="text-sm text-muted-foreground mt-3">
-          Ortalama tamamlanma süresi, projenizin karmaşıklığına ve faaliyet sayısına bağlı olarak bir
-          oturumda 1-2,5 saat arasındadır.
-        </p>
-      </section>
-
-      <section className="mb-10 max-w-2xl">
-        <h2 className="text-2xl font-semibold mb-4 text-foreground">Fiyatlandırma</h2>
+      {/* Pricing */}
+      <section className="mb-12">
+        <Eyebrow>Fiyatlandırma</Eyebrow>
         <Card className="border-accent/40">
-          <p className="text-3xl font-semibold text-foreground mb-1">100 € <span className="text-base font-normal text-muted-foreground">/ hafta</span></p>
+          <p className="text-3xl font-semibold text-foreground mb-1">
+            100 € <span className="text-base font-normal text-muted-foreground">/ hafta</span>
+          </p>
           <p className="text-sm text-muted-foreground mb-4">
             Sihirbaza haftalık erişim hakkı. Süreniz dolduğunda dilerseniz yeniden erişim talep
             edebilirsiniz.
@@ -241,16 +277,11 @@ export default async function KA210SihirbaziPage() {
         </Card>
       </section>
 
-      <section className="mb-10 max-w-2xl">
+      {/* FAQ */}
+      <section className="mb-12">
+        <Eyebrow>SSS</Eyebrow>
         <h2 className="text-2xl font-semibold mb-4 text-foreground">Sıkça Sorulan Sorular</h2>
-        <div className="space-y-4">
-          {FAQ.map((item) => (
-            <div key={item.q}>
-              <p className="font-medium text-foreground">{item.q}</p>
-              <p className="text-sm text-muted-foreground">{item.a}</p>
-            </div>
-          ))}
-        </div>
+        <Ka210SihirbaziFaq items={FAQ} />
       </section>
 
       <CtaButton />
