@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { tlToWordsTr, euroToWordsTr } from "@/lib/numberToWordsTr";
+import { useAutosave } from "@/lib/hooks/useAutosave";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -28,19 +29,41 @@ function formatTl(value: number) {
   return value.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-export function AvansHarcamaFormu() {
+export interface AvansHarcamaFormuData {
+  projeKodu: string;
+  alinanAvans: number;
+  alinanTarih: string;
+  mahsupTarihi: string;
+  mahsubuYapan: string;
+  rows: ExpenseRow[];
+  projeYurutucusu: string;
+  imzaTarihi: string;
+}
+
+export function AvansHarcamaFormu({
+  initialData,
+  onDataChange,
+}: {
+  initialData?: Partial<AvansHarcamaFormuData>;
+  onDataChange?: (data: AvansHarcamaFormuData) => void;
+} = {}) {
   const reactId = useId();
 
-  const [projeKodu, setProjeKodu] = useState("");
-  const [alinanAvans, setAlinanAvans] = useState(0);
-  const [alinanTarih, setAlinanTarih] = useState("");
-  const [mahsupTarihi, setMahsupTarihi] = useState("");
-  const [mahsubuYapan, setMahsubuYapan] = useState("");
+  const [projeKodu, setProjeKodu] = useState(initialData?.projeKodu ?? "");
+  const [alinanAvans, setAlinanAvans] = useState(initialData?.alinanAvans ?? 0);
+  const [alinanTarih, setAlinanTarih] = useState(initialData?.alinanTarih ?? "");
+  const [mahsupTarihi, setMahsupTarihi] = useState(initialData?.mahsupTarihi ?? "");
+  const [mahsubuYapan, setMahsubuYapan] = useState(initialData?.mahsubuYapan ?? "");
 
-  const [rows, setRows] = useState<ExpenseRow[]>([emptyRow(`${reactId}-r1`)]);
+  const [rows, setRows] = useState<ExpenseRow[]>(initialData?.rows ?? [emptyRow(`${reactId}-r1`)]);
 
-  const [projeYurutucusu, setProjeYurutucusu] = useState("");
-  const [imzaTarihi, setImzaTarihi] = useState("");
+  const [projeYurutucusu, setProjeYurutucusu] = useState(initialData?.projeYurutucusu ?? "");
+  const [imzaTarihi, setImzaTarihi] = useState(initialData?.imzaTarihi ?? "");
+
+  useAutosave(
+    { projeKodu, alinanAvans, alinanTarih, mahsupTarihi, mahsubuYapan, rows, projeYurutucusu, imzaTarihi },
+    onDataChange
+  );
 
   function addRow() {
     setRows((prev) => [...prev, emptyRow(`${reactId}-r${Date.now()}`)]);

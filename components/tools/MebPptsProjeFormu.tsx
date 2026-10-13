@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
+import { useAutosave } from "@/lib/hooks/useAutosave";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -35,38 +36,83 @@ function Field({
   );
 }
 
-export function MebPptsProjeFormu() {
-  const [kurumAdi, setKurumAdi] = useState("");
-  const [kurumKodu, setKurumKodu] = useState("");
+export interface MebPptsProjeFormuData {
+  kurumAdi: string;
+  kurumKodu: string;
+  projeDurumu: string;
+  katilimDurumu: string;
+  projeninAdi: string;
+  fonKaynagi: string;
+  fonSekli: string;
+  fonSaglayici: string;
+  digerFonSaglayici: string;
+  temalar: string[];
+  digerTemalar: string;
+  baslamaTarihi: string;
+  bitisTarihi: string;
+  projeTuru: string;
+  projeTuruDiger: string;
+  projeNumarasi: string;
+  konu: string;
+  toplamButce: string;
+  harcananButce: string;
+  paraBirimi: string;
+  bakanlikBirimleri: string;
+  digerOrtakPaydaslar: string;
+  irtibatAd: string;
+  irtibatSoyad: string;
+  irtibatTelefon: string;
+  irtibatEposta: string;
+}
 
-  const [projeDurumu, setProjeDurumu] = useState("Devam Eden Proje");
-  const [katilimDurumu, setKatilimDurumu] = useState("Koordinatör");
-  const [projeninAdi, setProjeninAdi] = useState("");
-  const [fonKaynagi, setFonKaynagi] = useState("");
-  const [fonSekli, setFonSekli] = useState("");
-  const [fonSaglayici, setFonSaglayici] = useState("");
-  const [digerFonSaglayici, setDigerFonSaglayici] = useState("");
-  const [temalar, setTemalar] = useState<string[]>([]);
-  const [digerTemalar, setDigerTemalar] = useState("");
-  const [baslamaTarihi, setBaslamaTarihi] = useState("");
-  const [bitisTarihi, setBitisTarihi] = useState("");
+export function MebPptsProjeFormu({
+  initialData,
+  onDataChange,
+}: {
+  initialData?: Partial<MebPptsProjeFormuData>;
+  onDataChange?: (data: MebPptsProjeFormuData) => void;
+} = {}) {
+  const [kurumAdi, setKurumAdi] = useState(initialData?.kurumAdi ?? "");
+  const [kurumKodu, setKurumKodu] = useState(initialData?.kurumKodu ?? "");
 
-  const [projeTuru, setProjeTuru] = useState("");
-  const [projeTuruDiger, setProjeTuruDiger] = useState("");
-  const [projeNumarasi, setProjeNumarasi] = useState("");
-  const [konu, setKonu] = useState("");
+  const [projeDurumu, setProjeDurumu] = useState(initialData?.projeDurumu ?? "Devam Eden Proje");
+  const [katilimDurumu, setKatilimDurumu] = useState(initialData?.katilimDurumu ?? "Koordinatör");
+  const [projeninAdi, setProjeninAdi] = useState(initialData?.projeninAdi ?? "");
+  const [fonKaynagi, setFonKaynagi] = useState(initialData?.fonKaynagi ?? "");
+  const [fonSekli, setFonSekli] = useState(initialData?.fonSekli ?? "");
+  const [fonSaglayici, setFonSaglayici] = useState(initialData?.fonSaglayici ?? "");
+  const [digerFonSaglayici, setDigerFonSaglayici] = useState(initialData?.digerFonSaglayici ?? "");
+  const [temalar, setTemalar] = useState<string[]>(initialData?.temalar ?? []);
+  const [digerTemalar, setDigerTemalar] = useState(initialData?.digerTemalar ?? "");
+  const [baslamaTarihi, setBaslamaTarihi] = useState(initialData?.baslamaTarihi ?? "");
+  const [bitisTarihi, setBitisTarihi] = useState(initialData?.bitisTarihi ?? "");
 
-  const [toplamButce, setToplamButce] = useState("");
-  const [harcananButce, setHarcananButce] = useState("");
-  const [paraBirimi, setParaBirimi] = useState("Euro");
+  const [projeTuru, setProjeTuru] = useState(initialData?.projeTuru ?? "");
+  const [projeTuruDiger, setProjeTuruDiger] = useState(initialData?.projeTuruDiger ?? "");
+  const [projeNumarasi, setProjeNumarasi] = useState(initialData?.projeNumarasi ?? "");
+  const [konu, setKonu] = useState(initialData?.konu ?? "");
 
-  const [bakanlikBirimleri, setBakanlikBirimleri] = useState("");
-  const [digerOrtakPaydaslar, setDigerOrtakPaydaslar] = useState("");
+  const [toplamButce, setToplamButce] = useState(initialData?.toplamButce ?? "");
+  const [harcananButce, setHarcananButce] = useState(initialData?.harcananButce ?? "");
+  const [paraBirimi, setParaBirimi] = useState(initialData?.paraBirimi ?? "Euro");
 
-  const [irtibatAd, setIrtibatAd] = useState("");
-  const [irtibatSoyad, setIrtibatSoyad] = useState("");
-  const [irtibatTelefon, setIrtibatTelefon] = useState("");
-  const [irtibatEposta, setIrtibatEposta] = useState("");
+  const [bakanlikBirimleri, setBakanlikBirimleri] = useState(initialData?.bakanlikBirimleri ?? "");
+  const [digerOrtakPaydaslar, setDigerOrtakPaydaslar] = useState(initialData?.digerOrtakPaydaslar ?? "");
+
+  const [irtibatAd, setIrtibatAd] = useState(initialData?.irtibatAd ?? "");
+  const [irtibatSoyad, setIrtibatSoyad] = useState(initialData?.irtibatSoyad ?? "");
+  const [irtibatTelefon, setIrtibatTelefon] = useState(initialData?.irtibatTelefon ?? "");
+  const [irtibatEposta, setIrtibatEposta] = useState(initialData?.irtibatEposta ?? "");
+
+  useAutosave(
+    {
+      kurumAdi, kurumKodu, projeDurumu, katilimDurumu, projeninAdi, fonKaynagi, fonSekli,
+      fonSaglayici, digerFonSaglayici, temalar, digerTemalar, baslamaTarihi, bitisTarihi,
+      projeTuru, projeTuruDiger, projeNumarasi, konu, toplamButce, harcananButce, paraBirimi,
+      bakanlikBirimleri, digerOrtakPaydaslar, irtibatAd, irtibatSoyad, irtibatTelefon, irtibatEposta,
+    },
+    onDataChange
+  );
 
   function toggleTema(tema: string) {
     setTemalar((prev) => (prev.includes(tema) ? prev.filter((t) => t !== tema) : [...prev, tema]));

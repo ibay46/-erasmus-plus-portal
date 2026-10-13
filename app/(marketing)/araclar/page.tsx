@@ -15,10 +15,17 @@ export default async function AraclarPage() {
   return (
     <div>
       <h1 className="text-3xl font-semibold mb-2 text-foreground">Araçlar</h1>
-      <p className="text-muted-foreground mb-8 max-w-2xl">
+      <p className="text-muted-foreground mb-4 max-w-2xl">
         Erasmus+ başvurularınızı hazırlarken kullanabileceğiniz hesaplama ve hazırlık araçları. Bazı
         araçlar PREMIUM üyelik gerektirir.
       </p>
+
+      <Link
+        href="/araclar/projelerim"
+        className="cursor-pointer mb-8 inline-flex items-center rounded-lg border border-accent/40 bg-accent/[0.04] px-4 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/70"
+      >
+        Projelerim — proje bilgilerinizi bir kez girin, araçlar otomatik dolsun →
+      </Link>
 
       <div className="space-y-10">
         {TOOL_CATEGORIES.map((category) => {

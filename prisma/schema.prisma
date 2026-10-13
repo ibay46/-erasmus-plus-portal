@@ -37,6 +37,7 @@ model User {
   toolSubmissions   ToolSubmission[]
   ideaWizardSessions IdeaWizardSession[]
   applicationFormSessions ApplicationFormSession[]
+  projeler Proje[]
 }
 
 // NextAuth (Auth.js) Prisma adapter şeması
@@ -371,4 +372,60 @@ model ApplicationFormAnswer {
   updatedAt     DateTime @updatedAt
 
   @@unique([sessionId, questionId, instanceIndex])
+}
+
+// Kalıcı "Proje" profili: kullanıcı proje kimlik bilgilerini (ad, numara, KA
+// eylemi, tarihler, bütçe, koordinatör/ortak kuruluşlar, proje yürütücüsü) BİR
+// KEZ girer; /araclar altındaki uygulama/mali araçlar (proje-sozlesmesi,
+// proje-dosyasi-acilmasi, meb-ppts-proje-formu, yolluk-bildirimi,
+// on-mali-kontrol-listesi, avans-harcama-formu) bu bilgilerle otomatik
+// doldurulur ve her aracın kendi girdisi ProjeToolData'da kalıcı saklanır —
+// artık sekme kapanınca bilgi kaybolmuyor. coordinator/partners alanları
+// PartnerInfo şeklini kullanır (bkz. lib/content/partnerInfo.ts).
+model Proje {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title           String    @default("Adsız Proje")
+  projeAdi        String    @default("")
+  projeNumarasi   String    @default("")
+  kaAction        String    @default("")
+  baslangicTarihi DateTime?
+  bitisTarihi     DateTime?
+  durationMonths  Int?
+  toplamButce     Float?
+
+  // -1 = kullanıcının kendi kuruluşu koordinatör; 0+ = partners dizisindeki index
+  benimKurulusum  Int       @default(-1)
+
+  coordinator     Json      @default("{}")
+  partners        Json      @default("[]")
+
+  yurutucuAd      String    @default("")
+  yurutucuSoyad   String    @default("")
+  yurutucuTelefon String    @default("")
+  yurutucuEposta  String    @default("")
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  toolData ProjeToolData[]
+
+  @@index([userId])
+}
+
+model ProjeToolData {
+  id        String   @id @default(cuid())
+  projeId   String
+  proje     Proje    @relation(fields: [projeId], references: [id], onDelete: Cascade)
+  toolKey   String
+  // Çoğu araç için boş string; proje-sozlesmesi gibi aynı proje için birden
+  // fazla kayıt üretebilen araçlarda (ör. her ortak için ayrı sözleşme)
+  // hangi örneğe ait olduğunu ayırt eder (ör. ortak index'i).
+  variant   String   @default("")
+  data      Json      @default("{}")
+  updatedAt DateTime @updatedAt
+
+  @@unique([projeId, toolKey, variant])
 }

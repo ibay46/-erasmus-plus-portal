@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
+import { useAutosave } from "@/lib/hooks/useAutosave";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -71,66 +72,117 @@ function Inline({
   );
 }
 
-export function ProjeSozlesmesi() {
+export interface ProjeSozlesmesiData {
+  protNo: string;
+  protDate: string;
+  projectNumber: string;
+  projectTitle: string;
+  coordinator: PartnerInfo;
+  beneficiary: PartnerInfo;
+  maxAmount: number;
+  durationMonths: number;
+  startDate: string;
+  endDate: string;
+  payment1Period: string;
+  payment2Period: string;
+  bankName: string;
+  bankAddress: string;
+  accountHolder: string;
+  iban: string;
+  bic: string;
+  budgetRows: BudgetRow[];
+  annexIIDescription: string;
+  annexIIBudget: number;
+  coordinatorPlace: string;
+  beneficiaryPlace: string;
+  signDate: string;
+}
+
+const emptyLocalPartner: PartnerInfo = {
+  officialName: "",
+  institutionCode: "",
+  address: "",
+  country: "",
+  vat: "",
+  pic: "",
+  legalRep: "",
+};
+
+export function ProjeSozlesmesi({
+  initialData,
+  onDataChange,
+}: {
+  initialData?: Partial<ProjeSozlesmesiData>;
+  onDataChange?: (data: ProjeSozlesmesiData) => void;
+} = {}) {
   const reactId = useId();
 
-  const [protNo, setProtNo] = useState("");
-  const [protDate, setProtDate] = useState("");
-  const [projectNumber, setProjectNumber] = useState("");
-  const [projectTitle, setProjectTitle] = useState("");
+  const [protNo, setProtNo] = useState(initialData?.protNo ?? "");
+  const [protDate, setProtDate] = useState(initialData?.protDate ?? "");
+  const [projectNumber, setProjectNumber] = useState(initialData?.projectNumber ?? "");
+  const [projectTitle, setProjectTitle] = useState(initialData?.projectTitle ?? "");
 
-  const [coordinator, setCoordinator] = useState<PartnerInfo>({
-    officialName: "",
-    institutionCode: "",
-    address: "",
-    country: "",
-    vat: "",
-    pic: "",
-    legalRep: "",
-  });
-  const [beneficiary, setBeneficiary] = useState<PartnerInfo>({
-    officialName: "",
-    institutionCode: "",
-    address: "",
-    country: "",
-    vat: "",
-    pic: "",
-    legalRep: "",
-  });
+  const [coordinator, setCoordinator] = useState<PartnerInfo>(initialData?.coordinator ?? emptyLocalPartner);
+  const [beneficiary, setBeneficiary] = useState<PartnerInfo>(initialData?.beneficiary ?? emptyLocalPartner);
 
-  const [maxAmount, setMaxAmount] = useState(0);
-  const [durationMonths, setDurationMonths] = useState(0);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [payment1Period, setPayment1Period] = useState("");
-  const [payment2Period, setPayment2Period] = useState("");
+  const [maxAmount, setMaxAmount] = useState(initialData?.maxAmount ?? 0);
+  const [durationMonths, setDurationMonths] = useState(initialData?.durationMonths ?? 0);
+  const [startDate, setStartDate] = useState(initialData?.startDate ?? "");
+  const [endDate, setEndDate] = useState(initialData?.endDate ?? "");
+  const [payment1Period, setPayment1Period] = useState(initialData?.payment1Period ?? "");
+  const [payment2Period, setPayment2Period] = useState(initialData?.payment2Period ?? "");
 
-  const [bankName, setBankName] = useState("");
-  const [bankAddress, setBankAddress] = useState("");
-  const [accountHolder, setAccountHolder] = useState("");
-  const [iban, setIban] = useState("");
-  const [bic, setBic] = useState("");
+  const [bankName, setBankName] = useState(initialData?.bankName ?? "");
+  const [bankAddress, setBankAddress] = useState(initialData?.bankAddress ?? "");
+  const [accountHolder, setAccountHolder] = useState(initialData?.accountHolder ?? "");
+  const [iban, setIban] = useState(initialData?.iban ?? "");
+  const [bic, setBic] = useState(initialData?.bic ?? "");
 
-  const [budgetRows, setBudgetRows] = useState<BudgetRow[]>([
-    { id: `${reactId}-b1`, activity: "", participants: "", dates: "", budget: 0 },
-  ]);
+  const [budgetRows, setBudgetRows] = useState<BudgetRow[]>(
+    initialData?.budgetRows ?? [{ id: `${reactId}-b1`, activity: "", participants: "", dates: "", budget: 0 }]
+  );
 
   const [annexIIDescription, setAnnexIIDescription] = useState(
-    "This activity will be carried out at the local level for project quality management, visibility, dissemination, institutional supports for such studies. It includes: uploading the contents to the website, poster, brochure, roll up, seminars, workshops, meeting organizations, workshops organized by partner institutions, trainings, reports, final report, dissemination of the concrete outputs of the project."
+    initialData?.annexIIDescription ??
+      "This activity will be carried out at the local level for project quality management, visibility, dissemination, institutional supports for such studies. It includes: uploading the contents to the website, poster, brochure, roll up, seminars, workshops, meeting organizations, workshops organized by partner institutions, trainings, reports, final report, dissemination of the concrete outputs of the project."
   );
-  const [annexIIBudget, setAnnexIIBudget] = useState(0);
+  const [annexIIBudget, setAnnexIIBudget] = useState(initialData?.annexIIBudget ?? 0);
 
-  useEffect(() => {
-    if (!startDate || !durationMonths) return;
-    const d = new Date(startDate);
-    d.setMonth(d.getMonth() + durationMonths);
+  // Bitiş tarihi, başlangıç + süreden türetilir ama kullanıcı elle de
+  // değiştirebilir — bu yüzden bir effect yerine, başlangıç/süreyi değiştiren
+  // event handler'ların içinde hesaplanır (React'ın "effect içinde senkron
+  // setState çağırma" uyarısını doğru şekilde önler).
+  function recalcEndDate(nextStartDate: string, nextDurationMonths: number) {
+    if (!nextStartDate || !nextDurationMonths) return;
+    const d = new Date(nextStartDate);
+    d.setMonth(d.getMonth() + nextDurationMonths);
     d.setDate(d.getDate() - 1);
     setEndDate(d.toISOString().slice(0, 10));
-  }, [startDate, durationMonths]);
+  }
 
-  const [coordinatorPlace, setCoordinatorPlace] = useState("");
-  const [beneficiaryPlace, setBeneficiaryPlace] = useState("");
-  const [signDate, setSignDate] = useState("");
+  function handleStartDateChange(v: string) {
+    setStartDate(v);
+    recalcEndDate(v, durationMonths);
+  }
+
+  function handleDurationMonthsChange(v: number) {
+    setDurationMonths(v);
+    recalcEndDate(startDate, v);
+  }
+
+  const [coordinatorPlace, setCoordinatorPlace] = useState(initialData?.coordinatorPlace ?? "");
+  const [beneficiaryPlace, setBeneficiaryPlace] = useState(initialData?.beneficiaryPlace ?? "");
+  const [signDate, setSignDate] = useState(initialData?.signDate ?? "");
+
+  useAutosave(
+    {
+      protNo, protDate, projectNumber, projectTitle, coordinator, beneficiary, maxAmount,
+      durationMonths, startDate, endDate, payment1Period, payment2Period, bankName, bankAddress,
+      accountHolder, iban, bic, budgetRows, annexIIDescription, annexIIBudget, coordinatorPlace,
+      beneficiaryPlace, signDate,
+    },
+    onDataChange
+  );
 
   const totalBudget = budgetRows.reduce((sum, r) => sum + (r.budget || 0), 0);
   const eighty = totalBudget * 0.8;
@@ -240,10 +292,10 @@ export function ProjeSozlesmesi() {
           <input value={projectNumber} onChange={(e) => setProjectNumber(e.target.value)} placeholder="Proje No (örn. 2025-1-TR01-KA210-SCH-000000)" className={inputClass} />
           <input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder="Proje Başlığı" className={inputClass} />
           <input type="number" min={0} value={maxAmount || ""} onChange={(e) => setMaxAmount(Number(e.target.value) || 0)} placeholder="Maksimum hibe tutarı (EUR)" className={inputClass} />
-          <input type="number" min={0} value={durationMonths || ""} onChange={(e) => setDurationMonths(Number(e.target.value) || 0)} placeholder="Süre (ay)" className={inputClass} />
+          <input type="number" min={0} value={durationMonths || ""} onChange={(e) => handleDurationMonthsChange(Number(e.target.value) || 0)} placeholder="Süre (ay)" className={inputClass} />
           <label className="block">
             <span className="block text-xs text-muted-foreground mb-1">Proje Başlangıç Tarihi</span>
-            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
+            <input type="date" value={startDate} onChange={(e) => handleStartDateChange(e.target.value)} className={inputClass} />
           </label>
           <label className="block">
             <span className="block text-xs text-muted-foreground mb-1">
@@ -349,7 +401,7 @@ export function ProjeSozlesmesi() {
           <ol className="list-decimal pl-5 text-sm text-foreground space-y-2">
             <li>
               The project referred to the Article I has duration of{" "}
-              <Inline value={durationMonths ? String(durationMonths) : ""} onChange={(v) => setDurationMonths(Number(v) || 0)} widthClass="w-16" /> months. It
+              <Inline value={durationMonths ? String(durationMonths) : ""} onChange={(v) => handleDurationMonthsChange(Number(v) || 0)} widthClass="w-16" /> months. It
               starts on <Inline value={fmtDate(startDate)} onChange={() => {}} widthClass="w-28" /> and ends on{" "}
               <Inline value={fmtDate(endDate)} onChange={() => {}} widthClass="w-28" />.
             </li>

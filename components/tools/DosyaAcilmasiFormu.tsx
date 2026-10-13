@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
+import { useAutosave } from "@/lib/hooks/useAutosave";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -82,10 +83,18 @@ const initialFields = {
   muhasebeDayanagi: "AB ve Uluslararası Kuruluş Hibeleri Yönetmeliği",
 };
 
-type Fields = typeof initialFields;
+export type Fields = typeof initialFields;
 
-export function DosyaAcilmasiFormu() {
-  const [fields, setFields] = useState<Fields>(initialFields);
+export function DosyaAcilmasiFormu({
+  initialData,
+  onDataChange,
+}: {
+  initialData?: Partial<Fields>;
+  onDataChange?: (data: Fields) => void;
+} = {}) {
+  const [fields, setFields] = useState<Fields>({ ...initialFields, ...initialData });
+
+  useAutosave(fields, onDataChange);
 
   function set<K extends keyof Fields>(key: K) {
     return (value: string) => setFields((prev) => ({ ...prev, [key]: value }));

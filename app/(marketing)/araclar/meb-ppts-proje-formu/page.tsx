@@ -1,7 +1,13 @@
 import { notFound } from "next/navigation";
-import { MebPptsProjeFormu } from "@/components/tools/MebPptsProjeFormu";
+import { MebPptsProjeFormu, type MebPptsProjeFormuData } from "@/components/tools/MebPptsProjeFormu";
+import { ProjeBanner } from "@/components/tools/ProjeBanner";
 import { isToolPublished, isToolPremium } from "@/lib/toolVisibility";
-import { requireTier } from "@/lib/auth";
+import { requireTier, getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { saveProjeToolData } from "@/lib/actions/proje";
+import { benimKurulusumBilgisi } from "@/lib/projeMapping";
+
+const TOOL_KEY = "meb-ppts-proje-formu";
 
 export const metadata = {
   title: "MEB Proje ve Protokol Takip Sistemi (PPTS) Formu | Erasmus+ Portal",
@@ -9,9 +15,55 @@ export const metadata = {
     "PPTS'ye veri girişi il/ilçe millî eğitim müdürlüklerinin yetkisinde olduğu için, okulunuzun proje bilgileri, künye, bütçe, ortaklar ve irtibat kişisi bilgilerini tek formda toplayıp PDF çıktısını il/ilçe MEB'inize iletmek üzere hazırlayın.",
 };
 
-export default async function MebPptsProjeFormuPage() {
-  if (!(await isToolPublished("/araclar/meb-ppts-proje-formu"))) notFound();
-  if (await isToolPremium("/araclar/meb-ppts-proje-formu")) await requireTier("PREMIUM");
+export default async function MebPptsProjeFormuPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ proje?: string }>;
+}) {
+  if (!(await isToolPublished(`/araclar/${TOOL_KEY}`))) notFound();
+  if (await isToolPremium(`/araclar/${TOOL_KEY}`)) await requireTier("PREMIUM");
+
+  const { proje: projeId } = await searchParams;
+  const user = await getCurrentUser();
+
+  let initialData: Partial<MebPptsProjeFormuData> | undefined;
+  let projeTitle: string | undefined;
+
+  if (projeId && user) {
+    const proje = await prisma.proje.findUnique({ where: { id: projeId } });
+    if (proje && proje.userId === user.id) {
+      projeTitle = proje.title;
+      const saved = await prisma.projeToolData.findUnique({
+        where: { projeId_toolKey_variant: { projeId, toolKey: TOOL_KEY, variant: "" } },
+      });
+      if (saved) {
+        initialData = saved.data as unknown as MebPptsProjeFormuData;
+      } else {
+        const kurulus = benimKurulusumBilgisi(proje);
+        initialData = {
+          kurumAdi: kurulus.officialName,
+          kurumKodu: kurulus.institutionCode,
+          katilimDurumu: proje.benimKurulusum === -1 ? "Koordinatör" : "Ortak",
+          projeninAdi: [proje.projeNumarasi, proje.projeAdi].filter(Boolean).join(" - "),
+          projeNumarasi: proje.projeNumarasi,
+          projeTuru: proje.kaAction,
+          baslamaTarihi: proje.baslangicTarihi ? proje.baslangicTarihi.toISOString().slice(0, 10) : "",
+          bitisTarihi: proje.bitisTarihi ? proje.bitisTarihi.toISOString().slice(0, 10) : "",
+          toplamButce: proje.toplamButce?.toString() ?? "",
+          irtibatAd: proje.yurutucuAd,
+          irtibatSoyad: proje.yurutucuSoyad,
+          irtibatTelefon: proje.yurutucuTelefon,
+          irtibatEposta: proje.yurutucuEposta,
+        };
+      }
+    }
+  }
+
+  async function handleSave(data: MebPptsProjeFormuData) {
+    "use server";
+    if (!projeId) return;
+    await saveProjeToolData(projeId, TOOL_KEY, data as unknown as Record<string, unknown>);
+  }
 
   return (
     <div>
@@ -29,7 +81,8 @@ export default async function MebPptsProjeFormuPage() {
         temadan bağımsız, sabit açık renkli görünüm) ve tarayıcının ekleyeceği üst/alt bilgiler
         (URL, tarih vb.) olmadan indirilir.
       </p>
-      <MebPptsProjeFormu />
+      {projeTitle && <ProjeBanner projeTitle={projeTitle} />}
+      <MebPptsProjeFormu initialData={initialData} onDataChange={projeId ? handleSave : undefined} />
     </div>
   );
 }

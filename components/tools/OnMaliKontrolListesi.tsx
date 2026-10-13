@@ -2,9 +2,7 @@
 
 import { useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
-
-const inputClass =
-  "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
+import { useAutosave } from "@/lib/hooks/useAutosave";
 
 const plainCellInputClass = "w-full bg-transparent outline-none text-foreground text-sm print:border-none";
 
@@ -42,18 +40,39 @@ function emptyRow(id: string, husus = ""): ChecklistRow {
   return { id, husus, durum: "", aciklama: "" };
 }
 
-export function OnMaliKontrolListesi() {
+export interface OnMaliKontrolListesiData {
+  harcamaBirimi: string;
+  projeAdi: string;
+  projeNo: string;
+  rows: ChecklistRow[];
+  gorevliAdSoyad: string;
+  gorevliUnvan: string;
+  tarih: string;
+}
+
+export function OnMaliKontrolListesi({
+  initialData,
+  onDataChange,
+}: {
+  initialData?: Partial<OnMaliKontrolListesiData>;
+  onDataChange?: (data: OnMaliKontrolListesiData) => void;
+}) {
   const reactId = useId();
 
-  const [harcamaBirimi, setHarcamaBirimi] = useState("");
-  const [projeAdi, setProjeAdi] = useState("");
-  const [projeNo, setProjeNo] = useState("");
-  const [gorevliAdSoyad, setGorevliAdSoyad] = useState("");
-  const [gorevliUnvan, setGorevliUnvan] = useState("Gerçekleştirme Görevlisi");
-  const [tarih, setTarih] = useState(() => new Date().toISOString().slice(0, 10));
+  const [harcamaBirimi, setHarcamaBirimi] = useState(initialData?.harcamaBirimi ?? "");
+  const [projeAdi, setProjeAdi] = useState(initialData?.projeAdi ?? "");
+  const [projeNo, setProjeNo] = useState(initialData?.projeNo ?? "");
+  const [gorevliAdSoyad, setGorevliAdSoyad] = useState(initialData?.gorevliAdSoyad ?? "");
+  const [gorevliUnvan, setGorevliUnvan] = useState(initialData?.gorevliUnvan ?? "Gerçekleştirme Görevlisi");
+  const [tarih, setTarih] = useState(initialData?.tarih ?? (() => new Date().toISOString().slice(0, 10)));
 
   const [rows, setRows] = useState<ChecklistRow[]>(
-    DEFAULT_HUSUSLAR.map((husus, i) => emptyRow(`${reactId}-r${i}`, husus))
+    initialData?.rows ?? DEFAULT_HUSUSLAR.map((husus, i) => emptyRow(`${reactId}-r${i}`, husus))
+  );
+
+  useAutosave(
+    { harcamaBirimi, projeAdi, projeNo, rows, gorevliAdSoyad, gorevliUnvan, tarih },
+    onDataChange
   );
 
   function addRow() {

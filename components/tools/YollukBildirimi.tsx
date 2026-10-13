@@ -4,6 +4,7 @@ import { useId, useMemo, useState } from "react";
 import type ExcelJS from "exceljs";
 import { amountToTurkishWords } from "@/lib/content/turkishNumberToWords";
 import { Card } from "@/components/ui/Card";
+import { useAutosave } from "@/lib/hooks/useAutosave";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -50,23 +51,52 @@ function calcRowTotal(row: YollukRow, kur: number) {
   return { gundelikTutari, toplamTL };
 }
 
-export function YollukBildirimi() {
+export interface YollukBildirimiData {
+  adSoyad: string;
+  unvan: string;
+  kadroDerecesi: string;
+  gundeligi: string;
+  dairesi: string;
+  butceYili: number;
+  kurTarihi: string;
+  dovizCinsi: string;
+  dovizKuru: number;
+  gorevYeri: string;
+  yetkiliAdSoyad: string;
+  yetkiliUnvan: string;
+  rows: YollukRow[];
+}
+
+export function YollukBildirimi({
+  initialData,
+  onDataChange,
+}: {
+  initialData?: Partial<YollukBildirimiData>;
+  onDataChange?: (data: YollukBildirimiData) => void;
+} = {}) {
   const reactId = useId();
 
-  const [adSoyad, setAdSoyad] = useState("");
-  const [unvan, setUnvan] = useState("");
-  const [kadroDerecesi, setKadroDerecesi] = useState("");
-  const [gundeligi, setGundeligi] = useState("");
-  const [dairesi, setDairesi] = useState("");
-  const [butceYili, setButceYili] = useState(new Date().getFullYear());
-  const [kurTarihi, setKurTarihi] = useState("");
-  const [dovizCinsi, setDovizCinsi] = useState("Euro");
-  const [dovizKuru, setDovizKuru] = useState(0);
-  const [gorevYeri, setGorevYeri] = useState("");
-  const [yetkiliAdSoyad, setYetkiliAdSoyad] = useState("");
-  const [yetkiliUnvan, setYetkiliUnvan] = useState("");
+  const [adSoyad, setAdSoyad] = useState(initialData?.adSoyad ?? "");
+  const [unvan, setUnvan] = useState(initialData?.unvan ?? "");
+  const [kadroDerecesi, setKadroDerecesi] = useState(initialData?.kadroDerecesi ?? "");
+  const [gundeligi, setGundeligi] = useState(initialData?.gundeligi ?? "");
+  const [dairesi, setDairesi] = useState(initialData?.dairesi ?? "");
+  const [butceYili, setButceYili] = useState(initialData?.butceYili ?? new Date().getFullYear());
+  const [kurTarihi, setKurTarihi] = useState(initialData?.kurTarihi ?? "");
+  const [dovizCinsi, setDovizCinsi] = useState(initialData?.dovizCinsi ?? "Euro");
+  const [dovizKuru, setDovizKuru] = useState(initialData?.dovizKuru ?? 0);
+  const [gorevYeri, setGorevYeri] = useState(initialData?.gorevYeri ?? "");
+  const [yetkiliAdSoyad, setYetkiliAdSoyad] = useState(initialData?.yetkiliAdSoyad ?? "");
+  const [yetkiliUnvan, setYetkiliUnvan] = useState(initialData?.yetkiliUnvan ?? "");
 
-  const [rows, setRows] = useState<YollukRow[]>([emptyRow(`${reactId}-r1`), emptyRow(`${reactId}-r2`)]);
+  const [rows, setRows] = useState<YollukRow[]>(
+    initialData?.rows ?? [emptyRow(`${reactId}-r1`), emptyRow(`${reactId}-r2`)]
+  );
+
+  useAutosave(
+    { adSoyad, unvan, kadroDerecesi, gundeligi, dairesi, butceYili, kurTarihi, dovizCinsi, dovizKuru, gorevYeri, yetkiliAdSoyad, yetkiliUnvan, rows },
+    onDataChange
+  );
 
   function addRow() {
     setRows((prev) => [...prev, emptyRow(`${reactId}-r${Date.now()}`)]);
