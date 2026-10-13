@@ -47,6 +47,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       allowDangerousEmailAccountLinking: true,
     }),
   ],
+  events: {
+    // Google ile ilk kez giriş yapıldığında PrismaAdapter kullanıcıyı otomatik
+    // oluşturur (registerUser akışının dışında) — KVKK onay zamanını burada
+    // kaydederiz; kayıt sayfasındaki onay kutusu Google butonunu zaten
+    // işaretlenene kadar devre dışı bırakır.
+    async createUser({ user }) {
+      if (user.id) {
+        await prisma.user.update({ where: { id: user.id }, data: { kvkkOnayTarihi: new Date() } });
+      }
+    },
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user?.email) {

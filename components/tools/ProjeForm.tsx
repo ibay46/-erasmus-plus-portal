@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { emptyPartnerInfo, KA_ACTION_OPTIONS, type PartnerInfo } from "@/lib/content/partnerInfo";
 import type { ProjeIdentityInput } from "@/lib/actions/proje";
@@ -149,6 +150,15 @@ export function ProjeForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+        Aşağıda ortak kuruluşların yasal temsilcisi ve proje yürütücüsü gibi üçüncü kişilere ait
+        kişisel bilgiler girebilirsiniz. Bu bilgileri girerek, bunu yapmaya yetkili olduğunuzu ve ilgili
+        kişileri{" "}
+        <Link href="/gizlilik-politikasi" target="_blank" className="cursor-pointer text-accent hover:underline">
+          Gizlilik Politikası ve KVKK Aydınlatma Metni
+        </Link>{" "}
+        kapsamında bilgilendirmekle yükümlü olduğunuzu kabul etmiş olursunuz.
+      </div>
       <Card>
         <h2 className="mb-4 font-medium text-foreground">Proje Kimliği</h2>
         <div className="grid gap-4 sm:grid-cols-2">

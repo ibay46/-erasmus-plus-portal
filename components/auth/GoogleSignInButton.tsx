@@ -1,11 +1,12 @@
 ﻿import { loginWithGoogle } from "@/lib/actions/auth";
 
-export function GoogleSignInButton() {
+export function GoogleSignInButton({ disabled = false }: { disabled?: boolean }) {
   return (
     <form action={loginWithGoogle}>
       <button
         type="submit"
-        className="cursor-pointer w-full inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/50"
+        disabled={disabled}
+        className="cursor-pointer w-full inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/50 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
           <path

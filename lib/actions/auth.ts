@@ -10,6 +10,7 @@ const registerSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(8),
+  kvkkOnay: z.literal("on"),
 });
 
 export type RegisterFormState = { success: boolean; error?: string };
@@ -22,10 +23,17 @@ export async function registerUser(
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
+    kvkkOnay: formData.get("kvkkOnay"),
   });
 
   if (!parsed.success) {
-    return { success: false, error: "Lütfen ad, geçerli bir e-posta ve en az 8 karakterlik bir şifre girin." };
+    const kvkkMissing = parsed.error.issues.some((i) => i.path[0] === "kvkkOnay");
+    return {
+      success: false,
+      error: kvkkMissing
+        ? "Devam etmek için KVKK Aydınlatma Metni'ni kabul etmeniz gerekiyor."
+        : "Lütfen ad, geçerli bir e-posta ve en az 8 karakterlik bir şifre girin.",
+    };
   }
 
   const { name, email, password } = parsed.data;
@@ -36,7 +44,7 @@ export async function registerUser(
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  await prisma.user.create({ data: { name, email, passwordHash } });
+  await prisma.user.create({ data: { name, email, passwordHash, kvkkOnayTarihi: new Date() } });
 
   await signIn("credentials", { email, password, redirect: false });
 

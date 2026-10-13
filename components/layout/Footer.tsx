@@ -104,6 +104,11 @@ export function Footer() {
             Bu site bağımsız bir bilgi ve danışmanlık platformudur; Avrupa Komisyonu veya bir
             Ulusal Ajans tarafından desteklenmemektedir.
           </p>
+          <p>
+            <Link href="/gizlilik-politikasi" className="cursor-pointer hover:text-foreground hover:underline">
+              Gizlilik Politikası ve KVKK Aydınlatma Metni
+            </Link>
+          </p>
         </div>
       </div>
     </footer>

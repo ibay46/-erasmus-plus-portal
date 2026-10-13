@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -15,6 +15,7 @@ const inputClass =
 
 export default function KayitPage() {
   const [state, formAction, isPending] = useActionState(registerUser, initialState);
+  const [kvkkOnay, setKvkkOnay] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -50,10 +51,25 @@ export default function KayitPage() {
             className={inputClass}
           />
         </div>
+        <label className="flex items-start gap-2.5 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            name="kvkkOnay"
+            checked={kvkkOnay}
+            onChange={(e) => setKvkkOnay(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-accent cursor-pointer"
+          />
+          <span>
+            <Link href="/gizlilik-politikasi" target="_blank" className="cursor-pointer text-accent hover:underline">
+              KVKK Aydınlatma Metni ve Gizlilik Politikası
+            </Link>
+            &apos;nı okudum, kabul ediyorum.
+          </span>
+        </label>
         {state.error && <p className="text-sm text-red-600">{state.error}</p>}
         <button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || !kvkkOnay}
           className="cursor-pointer w-full inline-flex justify-center items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? "Hesap oluşturuluyor..." : "Hesap Oluştur"}
@@ -65,7 +81,7 @@ export default function KayitPage() {
         veya
         <span className="h-px flex-1 bg-border" />
       </div>
-      <GoogleSignInButton />
+      <GoogleSignInButton disabled={!kvkkOnay} />
 
       <p className="mt-4 text-sm text-muted-foreground">
         Zaten hesabınız var mı?{" "}
