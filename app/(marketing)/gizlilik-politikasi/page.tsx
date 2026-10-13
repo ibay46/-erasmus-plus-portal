@@ -1,10 +1,12 @@
+import type { ReactNode } from "react";
+
 export const metadata = {
   title: "Gizlilik Politikası ve KVKK Aydınlatma Metni | Erasmus+ Portal",
   description:
     "Erasmus+ Portal'ın kişisel verilerinizi hangi amaçlarla, hangi hukuki sebeple işlediğini ve haklarınızı açıklayan KVKK Aydınlatma Metni.",
 };
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mb-8">
       <h2 className="text-xl font-semibold mb-3 text-foreground">{title}</h2>
