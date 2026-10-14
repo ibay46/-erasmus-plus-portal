@@ -2,18 +2,15 @@ export type Locale = "tr" | "en";
 
 export const DEFAULT_LOCALE: Locale = "tr";
 
-export function getLocaleFromPathname(pathname: string): Locale {
-  return pathname === "/en" || pathname.startsWith("/en/") ? "en" : "tr";
+// Host "en." ile başlıyorsa İngilizce, aksi halde (tr. veya çıplak/yerel geliştirme) Türkçe kabul edilir.
+export function getLocaleFromHost(host: string): Locale {
+  return host.startsWith("en.") ? "en" : "tr";
 }
 
-export function stripLocalePrefix(pathname: string): string {
-  if (pathname === "/en") return "/";
-  if (pathname.startsWith("/en/")) return pathname.slice(3);
-  return pathname;
-}
-
-export function toLocalePath(pathname: string, targetLocale: Locale): string {
-  const bare = stripLocalePrefix(pathname);
-  if (targetLocale === "tr") return bare;
-  return bare === "/" ? "/en" : `/en${bare}`;
+// Dil değiştirici için: verilen host'un tr./en. önekini hedef dile göre değiştirir.
+// "en.erasmusportal.com" -> tr -> "tr.erasmusportal.com"
+// "localhost:3000" (önek yok) -> en -> "en.localhost:3000"
+export function localeHostFor(host: string, targetLocale: Locale): string {
+  const bareHost = host.replace(/^(en|tr)\./, "");
+  return `${targetLocale}.${bareHost}`;
 }

@@ -119,7 +119,7 @@ function Eyebrow({ children }: { children: string }) {
 function CtaButton({ className = "" }: { className?: string }) {
   return (
     <Link
-      href="/en/danismanlik/talep"
+      href="/danismanlik/talep"
       className={`cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90 ${className}`}
     >
       Send a Consulting Request

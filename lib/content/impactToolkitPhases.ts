@@ -158,7 +158,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Define the change you want to see as a result of your project.",
         tool: {
           title: "Problem Tree Analysis",
-          href: "/en/akademi/etki-yonetimi/problem-agaci",
+          href: "/akademi/etki-yonetimi/problem-agaci",
           description: "Map the root problem, its causes and effects with a tree diagram.",
         },
       },
@@ -167,7 +167,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Turn how you will reach your impact goal into something concrete.",
         tool: {
           title: "Project Plan Canvas",
-          href: "/en/akademi/etki-yonetimi/proje-plani-canvas",
+          href: "/akademi/etki-yonetimi/proje-plani-canvas",
           description: "Plan milestones, activities, resources and the timeline on a single page.",
         },
       },
@@ -176,7 +176,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Instead of assuming impact will happen on its own, test in advance the barriers to behaviour change.",
         tool: {
           title: "Behaviour Change Design",
-          href: "/en/akademi/etki-yonetimi/davranis-degisimi-tasarimi",
+          href: "/akademi/etki-yonetimi/davranis-degisimi-tasarimi",
           description: "Use the COM-B framework (Capability, Opportunity, Motivation) to map barriers to the target behaviour and the intervention logic.",
         },
       },
@@ -185,7 +185,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Instead of disseminating broadly, segment your target audience and design a tailored message for each group.",
         tool: {
           title: "Adopter Segmentation",
-          href: "/en/akademi/etki-yonetimi/benimseyen-segmentasyonu",
+          href: "/akademi/etki-yonetimi/benimseyen-segmentasyonu",
           description: "Identify the five adopter groups using Rogers' Diffusion model and plan transfer messages.",
         },
       },
@@ -194,7 +194,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Instead of just explaining the cost of implementation, show the broad social value delivered in return for the budget.",
         tool: {
           title: "Social Value Case",
-          href: "/en/akademi/etki-yonetimi/sosyal-deger-gerekcesi",
+          href: "/akademi/etki-yonetimi/sosyal-deger-gerekcesi",
           description: "Define qualitative Key Value Indicators (KVIs) and build a business case for evaluators using SROI logic.",
         },
       },
@@ -210,7 +210,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Turn your broad impact goal into concrete, measurable targets.",
         tool: {
           title: "Impact Mind Map",
-          href: "/en/akademi/etki-yonetimi/etki-zihin-haritasi",
+          href: "/akademi/etki-yonetimi/etki-zihin-haritasi",
           description: "Map an activity's milestones, medium- and long-term impacts, and indicators.",
         },
       },
@@ -219,7 +219,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Regularly check whether you are progressing toward your goals.",
         tool: {
           title: "Micro Surveys",
-          href: "/en/akademi/etki-yonetimi/mikro-anketler",
+          href: "/akademi/etki-yonetimi/mikro-anketler",
           description: "Short surveys for collecting real-time feedback from participants.",
         },
       },
@@ -235,7 +235,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Assess how well you are progressing toward your impact goals.",
         tool: {
           title: "Most Significant Change (MSC)",
-          href: "/en/akademi/etki-yonetimi/en-onemli-degisim",
+          href: "/akademi/etki-yonetimi/en-onemli-degisim",
           description: "A storytelling method that evaluates impact through participant stories.",
         },
       },
@@ -244,7 +244,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Based on your review, adjust the project to better fit its goals.",
         tool: {
           title: "After Action Review (AAR)",
-          href: "/en/akademi/etki-yonetimi/eylem-sonrasi-inceleme",
+          href: "/akademi/etki-yonetimi/eylem-sonrasi-inceleme",
           description: "A structured discussion focused on what worked, what didn't, and how to improve.",
         },
       },
@@ -260,7 +260,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Prepare a comprehensive report describing your achievements, challenges and impact indicators.",
         tool: {
           title: "Focus Group Interview",
-          href: "/en/akademi/etki-yonetimi/odak-grup-gorusmesi",
+          href: "/akademi/etki-yonetimi/odak-grup-gorusmesi",
           description: "A structured, in-depth interview with a small group of participants.",
         },
       },
@@ -269,7 +269,7 @@ export const IMPACT_PHASES_EN: ImpactPhase[] = [
         description: "Evaluate the project within the team; what went well, what could be improved?",
         tool: {
           title: "Living Learnings Document",
-          href: "/en/akademi/etki-yonetimi/yasayan-ogrenimler-belgesi",
+          href: "/akademi/etki-yonetimi/yasayan-ogrenimler-belgesi",
           description: "A continuously updated, shared document recording the team's reflections and good practices.",
         },
       },

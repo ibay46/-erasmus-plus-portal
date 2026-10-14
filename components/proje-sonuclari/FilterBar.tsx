@@ -21,7 +21,7 @@ interface FilterBarProps {
   locale?: "tr" | "en";
 }
 
-function buildHref(current: QueryState, next: Partial<QueryState>, locale: "tr" | "en" = "tr"): string {
+function buildHref(current: QueryState, next: Partial<QueryState>): string {
   const merged = { ...current, ...next };
   const params = new URLSearchParams();
   // FilterBar sadece Liste görünümünde kullanılır; aksi halde /proje-sonuclari
@@ -31,8 +31,7 @@ function buildHref(current: QueryState, next: Partial<QueryState>, locale: "tr" 
   if (merged.sektor) params.set("sektor", merged.sektor);
   if (merged.yil) params.set("yil", merged.yil);
   if (merged.ulke) params.set("ulke", merged.ulke);
-  const base = locale === "en" ? "/en/proje-sonuclari" : "/proje-sonuclari";
-  return `${base}?${params.toString()}`;
+  return `/proje-sonuclari?${params.toString()}`;
 }
 
 function FilterPill({
@@ -106,7 +105,7 @@ export function FilterBar({
     : { year: "Yıl", country: "Ülke", kaAction: "KA Eylemi", sector: "Sektör", all: "Tümü" };
 
   function navigate(next: Partial<QueryState>) {
-    router.push(buildHref(current, next, locale));
+    router.push(buildHref(current, next));
   }
 
   return (
@@ -143,34 +142,34 @@ export function FilterBar({
       <div className="hidden space-y-3 sm:block">
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">{t.year}:</span>
-          <FilterPill href={buildHref(current, { yil: undefined }, locale)} active={!current.yil}>{t.all}</FilterPill>
+          <FilterPill href={buildHref(current, { yil: undefined })} active={!current.yil}>{t.all}</FilterPill>
           {years.map((y) => (
-            <FilterPill key={y} href={buildHref(current, { yil: String(y) }, locale)} active={current.yil === String(y)}>
+            <FilterPill key={y} href={buildHref(current, { yil: String(y) })} active={current.yil === String(y)}>
               {y}
             </FilterPill>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">{t.country}:</span>
-          <FilterPill href={buildHref(current, { ulke: undefined }, locale)} active={!current.ulke}>{t.all}</FilterPill>
+          <FilterPill href={buildHref(current, { ulke: undefined })} active={!current.ulke}>{t.all}</FilterPill>
           {countries.map((c) => (
-            <FilterPill key={c} href={buildHref(current, { ulke: c }, locale)} active={current.ulke === c}>{c}</FilterPill>
+            <FilterPill key={c} href={buildHref(current, { ulke: c })} active={current.ulke === c}>{c}</FilterPill>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">{t.kaAction}:</span>
-          <FilterPill href={buildHref(current, { ka: undefined }, locale)} active={!current.ka}>{t.all}</FilterPill>
+          <FilterPill href={buildHref(current, { ka: undefined })} active={!current.ka}>{t.all}</FilterPill>
           {kaActions.map((action) => (
-            <FilterPill key={action} href={buildHref(current, { ka: action }, locale)} active={current.ka === action}>
+            <FilterPill key={action} href={buildHref(current, { ka: action })} active={current.ka === action}>
               {kaActionLabels[action] ?? action}
             </FilterPill>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">{t.sector}:</span>
-          <FilterPill href={buildHref(current, { sektor: undefined }, locale)} active={!current.sektor}>{t.all}</FilterPill>
+          <FilterPill href={buildHref(current, { sektor: undefined })} active={!current.sektor}>{t.all}</FilterPill>
           {sectors.map((s) => (
-            <FilterPill key={s} href={buildHref(current, { sektor: s }, locale)} active={current.sektor === s}>
+            <FilterPill key={s} href={buildHref(current, { sektor: s })} active={current.sektor === s}>
               {s} · {sectorLabels[s]}
             </FilterPill>
           ))}

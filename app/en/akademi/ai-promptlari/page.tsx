@@ -94,7 +94,7 @@ export default async function AiPromptlariPage() {
         A 10-step prompt sequence following the application form's writing order, from needs
         analysis to budget justification. Based on the Erasmus+ Dutch National Agency&apos;s{" "}
         <a
-          href="https://www.erasmusplus.nl/en/impacttool-strategicpartnerships"
+          href="https://www.erasmusplus.nl/impacttool-strategicpartnerships"
           target="_blank"
           rel="noopener noreferrer"
           className="text-accent underline"

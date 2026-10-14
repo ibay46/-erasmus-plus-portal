@@ -69,7 +69,7 @@ export default async function EnglishProjeKutuphanesiPage({
         </button>
         {(tur || tema) && (
           <Link
-            href="/en/proje-kutuphanesi"
+            href="/proje-kutuphanesi"
             className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
           >
             Clear Filter
@@ -82,7 +82,7 @@ export default async function EnglishProjeKutuphanesiPage({
       ) : (
         <div className="grid lg:grid-cols-3 gap-4">
           <Link
-            href={`/en/proje-kutuphanesi/${entries[0].slug}`}
+            href={`/proje-kutuphanesi/${entries[0].slug}`}
             className="cursor-pointer lg:col-span-2 lg:row-span-2"
           >
             <Card className="h-full overflow-hidden hover:border-accent/50 bg-muted p-0">
@@ -110,7 +110,7 @@ export default async function EnglishProjeKutuphanesiPage({
           </Link>
 
           {entries.slice(1).map((entry) => (
-            <Link key={entry.slug} href={`/en/proje-kutuphanesi/${entry.slug}`} className="cursor-pointer">
+            <Link key={entry.slug} href={`/proje-kutuphanesi/${entry.slug}`} className="cursor-pointer">
               <Card className="h-full overflow-hidden hover:border-accent/50 p-0">
                 {entry.coverImage && (
                   <div className="relative aspect-[19/9] w-full">

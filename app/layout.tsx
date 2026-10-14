@@ -28,7 +28,7 @@ const SITE_DESCRIPTION =
   "Türkiye'deki Erasmus+ proje yazan öğretmenler, okullar, belediyeler ve STK'lar için haberler, rehberler, araçlar ve danışmanlık.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.erasmusportal.com"),
+  metadataBase: new URL("https://tr.erasmusportal.com"),
   title: "Erasmus+ Portal",
   description: SITE_DESCRIPTION,
   openGraph: {
@@ -55,9 +55,8 @@ export default async function RootLayout({
 }>) {
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") ?? "";
+  const locale = (headersList.get("x-locale") as "tr" | "en" | null) ?? "tr";
   const isAdmin = pathname.startsWith("/admin");
-  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
-  const locale = isEnglish ? "en" : "tr";
   const announcement = isAdmin ? null : await getAnnouncement();
 
   return (

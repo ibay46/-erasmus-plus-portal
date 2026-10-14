@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Compare the Erasmus+ KA210, KA220 and KA240 partnership actions by budget, project duration, number of partners and difficulty level.",
   alternates: {
-    canonical: "https://www.erasmusportal.com/en/proje-turleri/karsilastir",
+    canonical: "https://en.erasmusportal.com/proje-turleri/karsilastir",
   },
 };
 
@@ -87,7 +87,7 @@ export default function EnglishKaKarsilastirPage() {
               {KA_COMPARISON_ROWS_EN.map((row) => (
                 <td key={row.kaAction} className="border-t border-border px-4 py-3">
                   {row.guideSlug ? (
-                    <Link href={`/en/proje-turleri/${row.guideSlug}`} className="cursor-pointer text-accent underline underline-offset-2 hover:no-underline">
+                    <Link href={`/proje-turleri/${row.guideSlug}`} className="cursor-pointer text-accent underline underline-offset-2 hover:no-underline">
                       View guide →
                     </Link>
                   ) : (
@@ -103,7 +103,7 @@ export default function EnglishKaKarsilastirPage() {
       <p className="mt-6 max-w-2xl text-sm text-muted-foreground">
         The budget and duration figures in this table are a general framework and may be updated
         depending on the programme year. For exact figures, see our{" "}
-        <Link href="/en/proje-turleri" className="cursor-pointer text-accent underline underline-offset-2 hover:no-underline">
+        <Link href="/proje-turleri" className="cursor-pointer text-accent underline underline-offset-2 hover:no-underline">
           Project Types
         </Link>{" "}
         guides and the official Erasmus+ Programme Guide.
@@ -111,7 +111,7 @@ export default function EnglishKaKarsilastirPage() {
 
       <div className="mt-8">
         <Link
-          href="/en/acik-cagrilar"
+          href="/acik-cagrilar"
           className="cursor-pointer inline-flex items-center rounded-md border border-accent bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:opacity-90"
         >
           See the open calls currently available for these actions →

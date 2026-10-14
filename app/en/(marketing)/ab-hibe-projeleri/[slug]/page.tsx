@@ -36,7 +36,7 @@ export default async function EnglishAbHibeProjesiDetayPage({ params }: { params
     <div className="grid gap-8 lg:grid-cols-[1fr_18rem]">
       <div className="min-w-0">
         <Link
-          href="/en/ab-hibe-projeleri"
+          href="/ab-hibe-projeleri"
           className="cursor-pointer mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
         >
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
@@ -99,7 +99,7 @@ export default async function EnglishAbHibeProjesiDetayPage({ params }: { params
               {relatedItems.map((related) => (
                 <li key={related.id}>
                   <Link
-                    href={`/en/ab-hibe-projeleri/${related.slug}`}
+                    href={`/ab-hibe-projeleri/${related.slug}`}
                     className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
                   >
                     {related.title}

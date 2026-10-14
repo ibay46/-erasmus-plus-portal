@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     "Erasmus+ KA210, KA220 ve KA240 ortaklık eylemlerini bütçe, proje süresi, ortak sayısı ve zorluk seviyesine göre karşılaştırın.",
   alternates: {
-    canonical: "https://www.erasmusportal.com/proje-turleri/karsilastir",
+    canonical: "https://tr.erasmusportal.com/proje-turleri/karsilastir",
   },
 };
 

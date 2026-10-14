@@ -1,10 +1,9 @@
 import type { MetadataRoute } from "next";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { PROJECT_TYPES } from "@/lib/content/projectTypes";
 import { CONSULTING_SERVICES } from "@/lib/content/consultingServices";
 import { HABERLER_CATEGORIES } from "@/lib/content/postCategories";
-
-const BASE_URL = "https://www.erasmusportal.com";
 
 const STATIC_PATHS = [
   "",
@@ -37,6 +36,9 @@ const STATIC_PATHS = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const host = (await headers()).get("host") ?? "tr.erasmusportal.com";
+  const BASE_URL = `https://${host}`;
+
   const [posts, libraryEntries, projectResults, grantProjects] = await Promise.all([
     prisma.post.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } }),
     prisma.projectLibraryEntry.findMany({ select: { slug: true, updatedAt: true } }),

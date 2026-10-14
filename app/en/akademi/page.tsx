@@ -80,7 +80,7 @@ export default async function AkademiPage() {
             </Link>
           ) : (
             <Link
-              href="/en/danismanlik/talep"
+              href="/danismanlik/talep"
               className="cursor-pointer mt-5 inline-flex items-center justify-center rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
             >
               Send Membership Request
@@ -116,7 +116,7 @@ export default async function AkademiPage() {
             </Link>
           ) : (
             <Link
-              href="/en/danismanlik/talep"
+              href="/danismanlik/talep"
               className="cursor-pointer mt-5 inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
             >
               Send Membership Request
@@ -131,7 +131,7 @@ export default async function AkademiPage() {
             Create an account to access Standard or Premium content.
           </p>
           <Link
-            href="/en/kayit"
+            href="/kayit"
             className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
           >
             Create Account
@@ -146,7 +146,7 @@ export default async function AkademiPage() {
             contact our consulting team — membership upgrades are currently approved manually.
           </p>
           <Link
-            href="/en/danismanlik/talep"
+            href="/danismanlik/talep"
             className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
           >
             Send Membership Request

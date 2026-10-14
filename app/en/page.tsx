@@ -97,7 +97,7 @@ function IconDanismanlik() {
 
 const SECTIONS: HomeSection[] = [
   {
-    href: "/en/akademi",
+    href: "/akademi",
     title: "Erasmus Academy",
     description: "Access sample projects, training, impact-management tools and AI prompts with a Standard or Premium membership.",
     icon: <IconAkademi />,
@@ -105,56 +105,56 @@ const SECTIONS: HomeSection[] = [
     levels: ["orta", "uzman"],
   },
   {
-    href: "/en/haberler",
+    href: "/haberler",
     title: "Erasmus+ News",
     description: "New calls, National Agency, European Commission and SALTO news.",
     icon: <IconHaberler />,
     levels: ["baslangic", "orta", "uzman"],
   },
   {
-    href: "/en/proje-turleri",
+    href: "/proje-turleri",
     title: "Project Types",
     description: "Detailed guides for every action type, from KA120 to Jean Monnet and Erasmus Sport.",
     icon: <IconProjeTurleri />,
     levels: ["baslangic"],
   },
   {
-    href: "/en/proje-kutuphanesi",
+    href: "/proje-kutuphanesi",
     title: "Project Library",
     description: "A sample-project archive you can filter by theme and action type.",
     icon: <IconKutuphane />,
     levels: ["orta"],
   },
   {
-    href: "/en/proje-sonuclari",
+    href: "/proje-sonuclari",
     title: "Project Results",
     description: "Funded project results filterable by year, country, KA action and sector.",
     icon: <IconSonuclar />,
     levels: ["orta", "uzman"],
   },
   {
-    href: "/en/ab-hibe-projeleri",
+    href: "/ab-hibe-projeleri",
     title: "Grant Projects",
     description: "News and announcements about EU grant-funded projects.",
     icon: <IconGlobe />,
     levels: ["baslangic", "orta"],
   },
   {
-    href: "/en/araclar",
+    href: "/araclar",
     title: "Tools",
     description: "Practical tools such as a budget calculator, project timeline and travel-expense notification.",
     icon: <IconAraclar />,
     levels: ["orta", "uzman"],
   },
   {
-    href: "/en/yararli-linkler",
+    href: "/yararli-linkler",
     title: "Useful Links",
     description: "Quick access to official sources, application systems and useful tools.",
     icon: <IconLink />,
     levels: ["baslangic"],
   },
   {
-    href: "/en/danismanlik",
+    href: "/danismanlik",
     title: "Consulting",
     description: "Support for project writing, budget preparation, partner search and dissemination planning.",
     icon: <IconDanismanlik />,
@@ -164,11 +164,11 @@ const SECTIONS: HomeSection[] = [
 ];
 
 const QUICK_LINKS = [
-  { href: "/en/danismanlik", label: "Consulting Services" },
-  { href: "/en/salto-youth", label: "SALTO Youth" },
-  { href: "/en/salto-egitim", label: "SALTO E&T" },
-  { href: "/en/esc", label: "ESC" },
-  { href: "/en/ab-hibe-projeleri", label: "Grants" },
+  { href: "/danismanlik", label: "Consulting Services" },
+  { href: "/salto-youth", label: "SALTO Youth" },
+  { href: "/salto-egitim", label: "SALTO E&T" },
+  { href: "/esc", label: "ESC" },
+  { href: "/ab-hibe-projeleri", label: "Grants" },
 ];
 
 // ─── Erasmus+ illustration (identical to the Turkish homepage) ────────────────
@@ -243,10 +243,10 @@ export default async function EnglishHome() {
       key: "haberler",
       label: "News",
       accentClass: "text-accent",
-      seeAllHref: "/en/haberler",
+      seeAllHref: "/haberler",
       seeAllLabel: "All News",
       items: recentPosts.map(lp).map((post) => ({
-        href: `/en/haberler/${post.slug}`,
+        href: `/haberler/${post.slug}`,
         title: post.title,
         dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("en-GB") : null,
         badge: POST_CATEGORY_LABELS_EN[post.category] ?? post.category,
@@ -257,11 +257,11 @@ export default async function EnglishHome() {
       key: "salto-youth",
       label: "SALTO Youth",
       accentClass: "text-accent",
-      seeAllHref: "/en/salto-youth",
+      seeAllHref: "/salto-youth",
       seeAllLabel: "All SALTO Youth",
       fallbackCover: { light: "/covers/salto-youth-light.jpg", dark: "/covers/salto-youth-dark.jpg" },
       items: recentSaltoYouth.map(lp).map((post) => ({
-        href: `/en/haberler/${post.slug}`,
+        href: `/haberler/${post.slug}`,
         title: post.title,
         dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("en-GB") : null,
         coverImage: post.coverImage,
@@ -272,11 +272,11 @@ export default async function EnglishHome() {
       key: "salto-egitim",
       label: "SALTO E&T",
       accentClass: "text-accent-warm",
-      seeAllHref: "/en/salto-egitim",
+      seeAllHref: "/salto-egitim",
       seeAllLabel: "All SALTO E&T",
       fallbackCover: { light: "/covers/salto-egitim.jpg" },
       items: recentSaltoEgitim.map(lp).map((post) => ({
-        href: `/en/haberler/${post.slug}`,
+        href: `/haberler/${post.slug}`,
         title: post.title,
         dateStr: post.publishedAt ? post.publishedAt.toLocaleDateString("en-GB") : null,
         coverImage: post.coverImage,
@@ -287,10 +287,10 @@ export default async function EnglishHome() {
       key: "proje-sonuclari",
       label: "Project Results",
       accentClass: "text-accent-warm",
-      seeAllHref: "/en/proje-sonuclari",
+      seeAllHref: "/proje-sonuclari",
       seeAllLabel: "All Project Results",
       items: recentResults.map(lr).map((result) => ({
-        href: `/en/proje-sonuclari/${result.slug}`,
+        href: `/proje-sonuclari/${result.slug}`,
         title: result.title,
         dateStr: null,
         badge: "Project Result",
@@ -301,10 +301,10 @@ export default async function EnglishHome() {
       key: "ab-hibe",
       label: "Grant Projects",
       accentClass: "text-accent",
-      seeAllHref: "/en/ab-hibe-projeleri",
+      seeAllHref: "/ab-hibe-projeleri",
       seeAllLabel: "All Grant Projects",
       items: recentGrantProjects.map(lg).map((item) => ({
-        href: `/en/ab-hibe-projeleri/${item.slug}`,
+        href: `/ab-hibe-projeleri/${item.slug}`,
         title: item.title,
         dateStr: item.publishedAt ? item.publishedAt.toLocaleDateString("en-GB") : null,
         badge: "Grant Project",
@@ -318,15 +318,15 @@ export default async function EnglishHome() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Erasmus+ Portal",
-    url: "https://www.erasmusportal.com/en",
+    url: "https://en.erasmusportal.com",
     description:
       "News, guides, automated tools and consulting for teachers, schools, municipalities and NGOs writing Erasmus+ projects.",
     inLanguage: "en",
     publisher: {
       "@type": "Organization",
       name: "Erasmus+ Portal",
-      url: "https://www.erasmusportal.com",
-      logo: { "@type": "ImageObject", url: "https://www.erasmusportal.com/logo-icon.png" },
+      url: "https://en.erasmusportal.com",
+      logo: { "@type": "ImageObject", url: "https://en.erasmusportal.com/logo-icon.png" },
     },
   };
 
@@ -360,13 +360,13 @@ export default async function EnglishHome() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/en/araclar"
+                href="/araclar"
                 className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
               >
                 Explore the Tools
               </Link>
               <Link
-                href="/en/proje-sonuclari"
+                href="/proje-sonuclari"
                 className="cursor-pointer inline-flex items-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:bg-muted"
               >
                 Project Results

@@ -41,7 +41,7 @@ export default async function DanismanlikIndirimiPage() {
       </Card>
 
       <Link
-        href="/en/danismanlik/talep"
+        href="/danismanlik/talep"
         className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
       >
         Send Discounted Request

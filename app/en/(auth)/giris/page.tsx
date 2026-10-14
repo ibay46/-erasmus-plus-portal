@@ -17,7 +17,7 @@ export default function EnglishGirisPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (state.success) router.push("/en/hesap");
+    if (state.success) router.push("/hesap");
   }, [state.success, router]);
 
   return (
@@ -55,7 +55,7 @@ export default function EnglishGirisPage() {
 
       <p className="mt-4 text-sm text-muted-foreground">
         Don&apos;t have an account?{" "}
-        <Link href="/en/kayit" className="cursor-pointer text-accent hover:underline">
+        <Link href="/kayit" className="cursor-pointer text-accent hover:underline">
           Create an account
         </Link>
       </p>

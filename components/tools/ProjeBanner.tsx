@@ -12,7 +12,7 @@ export function ProjeBanner({ projeTitle, locale = "tr" }: { projeTitle: string;
         <span className="text-foreground">
           Linked to project <strong>{projeTitle}</strong> — your entries are saved automatically.
         </span>
-        <Link href="/en/araclar/projelerim" className="cursor-pointer text-accent hover:underline">
+        <Link href="/araclar/projelerim" className="cursor-pointer text-accent hover:underline">
           Back to My Projects
         </Link>
       </div>

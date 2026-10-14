@@ -56,7 +56,7 @@ export default async function EnglishProjeKutuphanesiDetayPage({
   return (
     <div>
       <Link
-        href="/en/proje-kutuphanesi"
+        href="/proje-kutuphanesi"
         className="cursor-pointer mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
       >
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
@@ -86,7 +86,7 @@ export default async function EnglishProjeKutuphanesiDetayPage({
                   {relatedEntries.map((related) => (
                     <li key={related.id}>
                       <Link
-                        href={`/en/proje-kutuphanesi/${related.slug}`}
+                        href={`/proje-kutuphanesi/${related.slug}`}
                         className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
                       >
                         {related.title}
@@ -120,7 +120,7 @@ export default async function EnglishProjeKutuphanesiDetayPage({
                 details are exclusive to Premium members.
               </p>
               <Link
-                href="/en/akademi"
+                href="/akademi"
                 className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
               >
                 See Membership Tiers
@@ -135,7 +135,7 @@ export default async function EnglishProjeKutuphanesiDetayPage({
                 {relatedEntries.map((related) => (
                   <li key={related.id}>
                     <Link
-                      href={`/en/proje-kutuphanesi/${related.slug}`}
+                      href={`/proje-kutuphanesi/${related.slug}`}
                       className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
                     >
                       {related.title}

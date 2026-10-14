@@ -33,7 +33,7 @@ export default async function ProjeFikriGelistirmePage() {
         text on top of that logic. When you enter your partner-organisation and activity counts in the final
         step,{" "}
         <Link
-          href="/en/akademi/proje-gelistirme/basvuru-formu-asistani"
+          href="/akademi/proje-gelistirme/basvuru-formu-asistani"
           className="cursor-pointer text-accent underline"
         >
           Application Form Assistant
@@ -90,7 +90,7 @@ export default async function ProjeFikriGelistirmePage() {
             return (
               <Card key={session.id} className="flex flex-col">
                 <Link
-                  href={`/en/akademi/proje-gelistirme/proje-fikri-gelistirme/${session.id}`}
+                  href={`/akademi/proje-gelistirme/proje-fikri-gelistirme/${session.id}`}
                   className="cursor-pointer group flex-1"
                 >
                   <h3 className="font-medium text-foreground group-hover:text-accent">{session.title}</h3>
@@ -108,7 +108,7 @@ export default async function ProjeFikriGelistirmePage() {
                 <div className="mt-3 flex items-center justify-between">
                   {session.applicationFormSessions[0] && (
                     <Link
-                      href={`/en/akademi/proje-gelistirme/basvuru-formu-asistani/${session.applicationFormSessions[0].id}`}
+                      href={`/akademi/proje-gelistirme/basvuru-formu-asistani/${session.applicationFormSessions[0].id}`}
                       className="cursor-pointer text-xs font-medium text-accent hover:underline"
                     >
                       Go to Application Form Assistant →

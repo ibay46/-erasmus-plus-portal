@@ -115,7 +115,7 @@ export function IdeaWizard({
       const data = await callApi("save", outputToSave);
       if (data.applicationFormSessionId) {
         router.push(
-          `${isEn ? "/en" : ""}/akademi/proje-gelistirme/basvuru-formu-asistani/${data.applicationFormSessionId}`
+          `/akademi/proje-gelistirme/basvuru-formu-asistani/${data.applicationFormSessionId}`
         );
       } else if (currentIndex < steps.length - 1) {
         setCurrentIndex(currentIndex + 1);

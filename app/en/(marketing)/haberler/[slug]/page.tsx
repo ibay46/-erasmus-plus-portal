@@ -17,13 +17,13 @@ const EVENT_FORMAT_LABELS_EN: Record<string, string> = {
 };
 
 const EN_CATEGORY_LIST_ROUTES: Record<string, { href: string; backLabel: string }> = {
-  SALTO_YOUTH: { href: "/en/salto-youth", backLabel: "Back to SALTO Youth" },
-  SALTO_EDUCATION_TRAINING: { href: "/en/salto-egitim", backLabel: "Back to SALTO Education & Training" },
-  ESC: { href: "/en/esc", backLabel: "Back to ESC" },
+  SALTO_YOUTH: { href: "/salto-youth", backLabel: "Back to SALTO Youth" },
+  SALTO_EDUCATION_TRAINING: { href: "/salto-egitim", backLabel: "Back to SALTO Education & Training" },
+  ESC: { href: "/esc", backLabel: "Back to ESC" },
 };
 
 function getEnCategoryListRoute(category: string) {
-  return EN_CATEGORY_LIST_ROUTES[category] ?? { href: "/en/haberler", backLabel: "Back to News" };
+  return EN_CATEGORY_LIST_ROUTES[category] ?? { href: "/haberler", backLabel: "Back to News" };
 }
 
 function formatDate(date: Date) {
@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${localized.title} | Erasmus+ News`,
     description: localized.excerpt ?? undefined,
-    alternates: { canonical: `https://www.erasmusportal.com/en/haberler/${post.slug}` },
+    alternates: { canonical: `https://en.erasmusportal.com/haberler/${post.slug}` },
     openGraph: {
       title: localized.title,
       description: localized.excerpt ?? undefined,
@@ -68,22 +68,22 @@ export default async function EnglishHaberDetayPage({ params }: { params: Promis
     datePublished: raw.publishedAt?.toISOString(),
     dateModified: raw.updatedAt.toISOString(),
     inLanguage: "en",
-    author: { "@type": "Organization", name: "Erasmus+ Portal", url: "https://www.erasmusportal.com" },
+    author: { "@type": "Organization", name: "Erasmus+ Portal", url: "https://en.erasmusportal.com" },
     publisher: {
       "@type": "Organization",
       name: "Erasmus+ Portal",
-      logo: { "@type": "ImageObject", url: "https://www.erasmusportal.com/logo-icon.png" },
+      logo: { "@type": "ImageObject", url: "https://en.erasmusportal.com/logo-icon.png" },
     },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.erasmusportal.com/en/haberler/${post.slug}` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://en.erasmusportal.com/haberler/${post.slug}` },
   };
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.erasmusportal.com/en" },
-      { "@type": "ListItem", position: 2, name: "News", item: "https://www.erasmusportal.com/en/haberler" },
-      { "@type": "ListItem", position: 3, name: post.title, item: `https://www.erasmusportal.com/en/haberler/${post.slug}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://en.erasmusportal.com" },
+      { "@type": "ListItem", position: 2, name: "News", item: "https://en.erasmusportal.com/haberler" },
+      { "@type": "ListItem", position: 3, name: post.title, item: `https://en.erasmusportal.com/haberler/${post.slug}` },
     ],
   };
 
@@ -288,7 +288,7 @@ export default async function EnglishHaberDetayPage({ params }: { params: Promis
               {relatedPosts.map((related) => (
                 <li key={related.id}>
                   <Link
-                    href={`/en/haberler/${related.slug}`}
+                    href={`/haberler/${related.slug}`}
                     className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
                   >
                     {related.title}

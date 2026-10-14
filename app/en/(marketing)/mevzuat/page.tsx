@@ -15,14 +15,14 @@ interface MevzuatEntry {
 
 const KAYNAKLAR: MevzuatEntry[] = [
   {
-    href: "/en/mevzuat/ab-hibeleri-yonetmeligi",
+    href: "/mevzuat/ab-hibeleri-yonetmeligi",
     baslik: "EU Grants Regulation",
     aciklama:
       "Full text of the Ministry of Treasury and Finance's circular on the spending and accounting of EU grants.",
     etiket: "Circular",
   },
   {
-    href: "/en/mevzuat/ka210-islem-adimlari",
+    href: "/mevzuat/ka210-islem-adimlari",
     baslik: "KA210 — Process Steps for Projects Accepted From Outside Turkey",
     aciklama:
       "For projects coordinated by a foreign institution, the contract, bank account, mobility and reporting steps the Turkish partner must follow.",

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: "Project Results | Erasmus+ Portal",
   description: "Funded Erasmus+ project results, filterable by year, country, KA action and sector.",
   alternates: {
-    canonical: "https://www.erasmusportal.com/en/proje-sonuclari",
+    canonical: "https://en.erasmusportal.com/proje-sonuclari",
   },
 };
 
@@ -89,15 +89,6 @@ export default async function EnglishProjeSonuclariPage({
 
   if (isTableView) {
     const { columns, rows } = await getProjectResultCoverageMatrix({ year, round });
-    const enRows = rows.map((row) => ({
-      ...row,
-      cells: Object.fromEntries(
-        Object.entries(row.cells).map(([key, cell]) => [
-          key,
-          cell.href ? { ...cell, href: cell.href.replace("/proje-sonuclari", "/en/proje-sonuclari") } : cell,
-        ])
-      ),
-    }));
 
     function tableHref(next: { yil?: string; round?: string }) {
       const params = new URLSearchParams();
@@ -106,7 +97,7 @@ export default async function EnglishProjeSonuclariPage({
       if (nextYil) params.set("yil", nextYil);
       if (nextRound) params.set("round", nextRound);
       const qs = params.toString();
-      return qs ? `/en/proje-sonuclari?${qs}` : "/en/proje-sonuclari";
+      return qs ? `/proje-sonuclari?${qs}` : "/proje-sonuclari";
     }
 
     return (
@@ -118,10 +109,10 @@ export default async function EnglishProjeSonuclariPage({
         </p>
 
         <div className="mb-6 inline-flex gap-1 rounded-lg border border-border p-1">
-          <ViewTab href="/en/proje-sonuclari?gorunum=liste" active={false}>
+          <ViewTab href="/proje-sonuclari?gorunum=liste" active={false}>
             List
           </ViewTab>
-          <ViewTab href="/en/proje-sonuclari" active={true}>
+          <ViewTab href="/proje-sonuclari" active={true}>
             Table
           </ViewTab>
         </div>
@@ -151,7 +142,7 @@ export default async function EnglishProjeSonuclariPage({
           </div>
         </div>
 
-        <CoverageMatrix columns={columns} rows={enRows} locale="en" />
+        <CoverageMatrix columns={columns} rows={rows} locale="en" />
       </div>
     );
   }
@@ -172,10 +163,10 @@ export default async function EnglishProjeSonuclariPage({
       </p>
 
       <div className="mb-6 inline-flex gap-1 rounded-lg border border-border p-1">
-        <ViewTab href="/en/proje-sonuclari?gorunum=liste" active={true}>
+        <ViewTab href="/proje-sonuclari?gorunum=liste" active={true}>
           List
         </ViewTab>
-        <ViewTab href="/en/proje-sonuclari" active={false}>
+        <ViewTab href="/proje-sonuclari" active={false}>
           Table
         </ViewTab>
       </div>
@@ -206,7 +197,7 @@ export default async function EnglishProjeSonuclariPage({
                     return (
                       <Link
                         key={item.slug}
-                        href={`/en/proje-sonuclari/${item.slug}`}
+                        href={`/proje-sonuclari/${item.slug}`}
                         className="group block bg-card px-4 py-3.5 transition-colors duration-200 hover:bg-accent/5 cursor-pointer sm:flex sm:items-center sm:gap-3 sm:py-3"
                       >
                         <div className="flex-1 min-w-0">

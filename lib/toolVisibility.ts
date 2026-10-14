@@ -27,12 +27,12 @@ export async function getPublishedTools(locale: Locale = "tr") {
   const visibility = await getToolVisibilityMap();
   const premium = await getToolPremiumMap();
   const source = locale === "en" ? TOOLS_EN : TOOLS;
-  // Visibility/premium rows are keyed by the Turkish (unprefixed) href regardless of locale.
-  const toTrHref = (href: string) => (locale === "en" ? href.replace(/^\/en/, "") : href);
+  // Both locale trees use identical (unprefixed) hrefs — tr./en. subdomain determines
+  // which file tree serves the request — so visibility/premium rows key directly off tool.href.
   return source
-    .filter((tool) => visibility[toTrHref(tool.href)] ?? true)
+    .filter((tool) => visibility[tool.href] ?? true)
     .map((tool) => ({
       ...tool,
-      isPremium: premium[toTrHref(tool.href)] ?? false,
+      isPremium: premium[tool.href] ?? false,
     }));
 }

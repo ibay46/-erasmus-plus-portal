@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${result.title} | Project Results`,
     description: result.summary,
-    alternates: { canonical: `https://www.erasmusportal.com/en/proje-sonuclari/${result.slug}` },
+    alternates: { canonical: `https://en.erasmusportal.com/proje-sonuclari/${result.slug}` },
     openGraph: {
       title: result.title,
       description: result.summary,
@@ -48,22 +48,22 @@ export default async function EnglishProjeSonucuDetayPage({ params }: { params: 
     datePublished: raw.createdAt.toISOString(),
     dateModified: raw.updatedAt.toISOString(),
     inLanguage: "en",
-    author: { "@type": "Organization", name: "Erasmus+ Portal", url: "https://www.erasmusportal.com" },
+    author: { "@type": "Organization", name: "Erasmus+ Portal", url: "https://en.erasmusportal.com" },
     publisher: {
       "@type": "Organization",
       name: "Erasmus+ Portal",
-      logo: { "@type": "ImageObject", url: "https://www.erasmusportal.com/logo-icon.png" },
+      logo: { "@type": "ImageObject", url: "https://en.erasmusportal.com/logo-icon.png" },
     },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.erasmusportal.com/en/proje-sonuclari/${result.slug}` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://en.erasmusportal.com/proje-sonuclari/${result.slug}` },
   };
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.erasmusportal.com/en" },
-      { "@type": "ListItem", position: 2, name: "Project Results", item: "https://www.erasmusportal.com/en/proje-sonuclari" },
-      { "@type": "ListItem", position: 3, name: result.title, item: `https://www.erasmusportal.com/en/proje-sonuclari/${result.slug}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://en.erasmusportal.com" },
+      { "@type": "ListItem", position: 2, name: "Project Results", item: "https://en.erasmusportal.com/proje-sonuclari" },
+      { "@type": "ListItem", position: 3, name: result.title, item: `https://en.erasmusportal.com/proje-sonuclari/${result.slug}` },
     ],
   };
 
@@ -72,7 +72,7 @@ export default async function EnglishProjeSonucuDetayPage({ params }: { params: 
       <JsonLd data={articleJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
       <Link
-        href="/en/proje-sonuclari"
+        href="/proje-sonuclari"
         className="cursor-pointer mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
       >
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
@@ -114,7 +114,7 @@ export default async function EnglishProjeSonucuDetayPage({ params }: { params: 
                   {relatedResults.map((related) => (
                     <li key={related.id}>
                       <Link
-                        href={`/en/proje-sonuclari/${related.slug}`}
+                        href={`/proje-sonuclari/${related.slug}`}
                         className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
                       >
                         {related.title}
@@ -149,7 +149,7 @@ export default async function EnglishProjeSonucuDetayPage({ params }: { params: 
                 {relatedResults.map((related) => (
                   <li key={related.id}>
                     <Link
-                      href={`/en/proje-sonuclari/${related.slug}`}
+                      href={`/proje-sonuclari/${related.slug}`}
                       className="cursor-pointer text-sm text-muted-foreground transition-colors duration-200 hover:text-accent"
                     >
                       {related.title}

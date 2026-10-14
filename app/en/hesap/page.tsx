@@ -37,7 +37,7 @@ export const metadata = {
 
 export default async function EnglishHesapPage() {
   const user = await getCurrentUser();
-  if (!user) redirect("/en/giris");
+  if (!user) redirect("/giris");
 
   const currentTier = user.membershipTier === "ADMIN" ? "PREMIUM" : user.membershipTier;
 
@@ -52,7 +52,7 @@ export default async function EnglishHesapPage() {
           {user.membershipTier === "FREE" && (
             <p className="mt-4 text-sm text-muted-foreground">
               To upgrade to a Standard or Premium membership, visit the{" "}
-              <a href="/en/akademi" className="cursor-pointer text-accent hover:underline">
+              <a href="/akademi" className="cursor-pointer text-accent hover:underline">
                 Erasmus Academy
               </a>{" "}
               page. Membership upgrades are currently approved manually by our team after your
@@ -104,7 +104,7 @@ export default async function EnglishHesapPage() {
                 </ul>
                 {!hasAccess && (
                   <Link
-                    href="/en/danismanlik/talep"
+                    href="/danismanlik/talep"
                     className="cursor-pointer relative mt-5 inline-flex items-center justify-center rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/50 hover:bg-muted"
                   >
                     Send Membership Request

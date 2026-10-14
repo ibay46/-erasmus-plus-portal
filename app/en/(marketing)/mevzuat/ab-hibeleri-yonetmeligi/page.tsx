@@ -58,7 +58,7 @@ export default function EnglishAbHibeleriYonetmeligiPage() {
   return (
     <div>
       <p className="text-sm text-accent mb-2">
-        <Link href="/en/mevzuat" className="cursor-pointer hover:underline">
+        <Link href="/mevzuat" className="cursor-pointer hover:underline">
           ← Legislation
         </Link>
       </p>

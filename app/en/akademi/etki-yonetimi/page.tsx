@@ -19,7 +19,7 @@ export default async function EnglishEtkiYonetimiPage() {
         evaluation and reporting stages.
       </p>
       <p className="text-sm mb-10">
-        <Link href="/en/akademi/etki-yonetimi/sozluk" className="cursor-pointer text-accent underline">
+        <Link href="/akademi/etki-yonetimi/sozluk" className="cursor-pointer text-accent underline">
           Browse the impact management glossary →
         </Link>
       </p>

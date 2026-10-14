@@ -18,7 +18,7 @@ const GROUPS: { label: string; codes: string[] }[] = [
 
 function TypeCard({ type }: { type: ProjectTypeContent }) {
   return (
-    <Link href={`/en/proje-turleri/${type.slug}`} className="cursor-pointer">
+    <Link href={`/proje-turleri/${type.slug}`} className="cursor-pointer">
       <Card className="h-full border-2 border-border transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/40">
         <Badge>{type.code}</Badge>
         <h2 className="font-medium mt-3 mb-1 text-foreground">{type.title}</h2>
@@ -38,7 +38,7 @@ export default function EnglishProjeTurleriPage() {
       </p>
       <div className="mb-10">
         <Link
-          href="/en/proje-turleri/karsilastir"
+          href="/proje-turleri/karsilastir"
           className="cursor-pointer inline-flex items-center gap-1.5 text-sm font-medium text-accent underline underline-offset-2 hover:no-underline"
         >
           View the KA210 vs KA220 vs KA240 comparison table →

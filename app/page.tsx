@@ -340,15 +340,15 @@ export default async function Home() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Erasmus+ Portal",
-    url: "https://www.erasmusportal.com",
+    url: "https://tr.erasmusportal.com",
     description:
       "Türkiye'deki Erasmus+ proje yazan öğretmenler, okullar, belediyeler ve STK'lar için haberler, rehberler, araçlar ve danışmanlık.",
     inLanguage: "tr",
     publisher: {
       "@type": "Organization",
       name: "Erasmus+ Portal",
-      url: "https://www.erasmusportal.com",
-      logo: { "@type": "ImageObject", url: "https://www.erasmusportal.com/logo-icon.png" },
+      url: "https://tr.erasmusportal.com",
+      logo: { "@type": "ImageObject", url: "https://tr.erasmusportal.com/logo-icon.png" },
     },
   };
 

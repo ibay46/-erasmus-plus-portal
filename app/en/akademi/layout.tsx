@@ -26,7 +26,7 @@ export default async function EnglishAkademiLayout({ children }: { children: Rea
         </p>
         {!user && (
           <Link
-            href="/en/giris"
+            href="/giris"
             className="cursor-pointer text-sm font-medium text-accent hover:underline"
           >
             Sign In / Sign Up

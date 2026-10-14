@@ -147,100 +147,100 @@ export const TOOL_CATEGORIES_EN: { key: ToolCategoryKey; title: string; descript
 
 export const TOOLS_EN: ToolContent[] = [
   {
-    href: "/en/araclar/ka210-sch-proje-yazma-sihirbazi",
+    href: "/araclar/ka210-sch-proje-yazma-sihirbazi",
     title: "KA210-SCH Project Writing Wizard (ChatGPT Assistant)",
     description:
       "A specially trained ChatGPT assistant that fills in the KA210-SCH application form with you question by question — from your idea to scoring your application against the official criteria and suggesting improvements.",
     category: "proje-oncesi",
   },
   {
-    href: "/en/araclar/proje-fikri-uretici",
+    href: "/araclar/proje-fikri-uretici",
     title: "AI-Powered Project Idea Generator",
     description:
       "Choose your organisation type, sector, KA action and theme; the AI generates a project-idea draft scaled to a suitable budget/duration.",
     category: "proje-oncesi",
   },
   {
-    href: "/en/araclar/kalite-puani",
+    href: "/araclar/kalite-puani",
     title: "KA210 Quality Score Simulator",
     description:
       "Self-assess your application against the Relevance, Design, Partnership and Impact criteria before submitting, and see whether you clear the threshold scores.",
     category: "proje-oncesi",
   },
   {
-    href: "/en/araclar/oncelik-eslestirici",
+    href: "/araclar/oncelik-eslestirici",
     title: "Priority–Project Idea Matcher",
     description:
       "Select your project theme, see its alignment with the 2026 Erasmus+ horizontal and sectoral priorities, and get a justification draft you can use in the application form.",
     category: "proje-oncesi",
   },
   {
-    href: "/en/araclar/ka121-butce-hesaplama",
+    href: "/araclar/ka121-butce-hesaplama",
     title: "KA121/KA122 Budget Calculator",
     description:
       "Calculate the travel band, individual support, course fee and preparatory visit together for staff mobility.",
     category: "proje-oncesi",
   },
   {
-    href: "/en/araclar/ka210-butce-hesaplama",
+    href: "/araclar/ka210-butce-hesaplama",
     title: "KA210 Budget Calculator",
     description: "Calculate your KA210 mobility budget based on the travel distance band and individual support rates.",
     category: "proje-oncesi",
   },
   {
-    href: "/en/araclar/ka220-butce-planlama",
+    href: "/araclar/ka220-butce-planlama",
     title: "KA220 Budget & Work Package Planning Tool",
     description:
       "KA220 Cooperation Partnerships are funded with a fixed lump sum (€120,000/250,000/400,000); distribute the amount you choose across work packages and partners, and plan the task allocation.",
     category: "proje-oncesi",
   },
   {
-    href: "/en/araclar/proje-zaman-cizelgesi",
+    href: "/araclar/proje-zaman-cizelgesi",
     title: "Project Timeline (Gantt)",
     description: "A click-to-mark timeline matching the official format, organised by partner organisation and month.",
     category: "proje-oncesi",
   },
   {
-    href: "/en/araclar/proje-sozlesmesi",
+    href: "/araclar/proje-sozlesmesi",
     title: "Project Partnership Agreement",
     description: "Fill in the Partnership Agreement template for KA2 Strategic Partnership projects with your organisation and budget details.",
     category: "proje-asamasi",
   },
   {
-    href: "/en/araclar/proje-dosyasi-acilmasi",
+    href: "/araclar/proje-dosyasi-acilmasi",
     title: "Project File Opening Petition",
     description:
       "After grant approval, fill in the petition and project info table needed to open the project file at your institution, using your own project details, and download it as a PDF.",
     category: "proje-asamasi",
   },
   {
-    href: "/en/araclar/meb-ppts-proje-formu",
+    href: "/araclar/meb-ppts-proje-formu",
     title: "MEB Project and Protocol Tracking System (PPTS) Form",
     description:
       "Since data entry into PPTS is handled by provincial/district national education directorates, collect your school's project details (project info, identification, budget, partners, contact person) in a single form and forward the PDF output to your provincial/district MEB office.",
     category: "proje-asamasi",
   },
   {
-    href: "/en/araclar/ka220-personel-zaman-cizelgesi",
+    href: "/araclar/ka220-personel-zaman-cizelgesi",
     title: "KA220 Staff Timesheet",
     description:
       "Fill in the staff timesheet required under the KA220-SCH 'Project Results' grant item (who worked which day, for which output) in monthly tables; the total days and amount earned are calculated automatically.",
     category: "proje-sonrasi",
   },
   {
-    href: "/en/araclar/yolluk-bildirimi",
+    href: "/araclar/yolluk-bildirimi",
     title: "Temporary Duty Travel-Expense Notification",
     description: "Fill in the travel-expense notification (M.Y.H.B.Y. Sample No. 27) you submit to your institution after mobility; amounts are calculated automatically.",
     category: "proje-sonrasi",
   },
   {
-    href: "/en/araclar/on-mali-kontrol-listesi",
+    href: "/araclar/on-mali-kontrol-listesi",
     title: "Pre-Financial Control Checklist",
     description: "Fill in the pre-financial control checklist used in the travel-advance reconciliation process; mark Yes/No and add explanations.",
     category: "proje-sonrasi",
   },
   {
-    href: "/en/araclar/avans-harcama-formu",
+    href: "/araclar/avans-harcama-formu",
     title: "EU Grant Project Advance Expenditure Form",
     description: "Enter expenditure documents to reconcile the advance you received; the total, remaining advance and the amount written in words are calculated automatically.",
     category: "proje-sonrasi",

@@ -1,10 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Locale } from "@/lib/i18n/locale";
 
-export function Logo({ locale = "tr" }: { locale?: Locale } = {}) {
+export function Logo() {
   return (
-    <Link href={locale === "en" ? "/en" : "/"} className="flex items-center gap-2 shrink-0">
+    <Link href="/" className="flex items-center gap-2 shrink-0">
       <span className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg ring-1 ring-border">
         <Image
           src="/logo-icon.png"

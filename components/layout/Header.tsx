@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { getCurrentUser } from "@/lib/auth";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Logo } from "@/components/layout/Logo";
@@ -130,36 +131,25 @@ const SINGLE_LINKS_BY_LOCALE = {
   en: [{ href: "/danismanlik", label: "Consulting" }],
 } as const;
 
-function withLocalePrefix(href: string, locale: Locale) {
-  return locale === "en" ? `/en${href}` : href;
-}
-
 export async function Header({ locale = "tr" }: { locale?: Locale } = {}) {
   const user = await getCurrentUser();
-  const navGroups = NAV_GROUPS_BY_LOCALE[locale].map((group) => ({
-    ...group,
-    sections: group.sections.map((section) => ({
-      ...section,
-      items: section.items.map((item) => ({ ...item, href: withLocalePrefix(item.href, locale) })),
-    })),
-  }));
-  const singleLinks = SINGLE_LINKS_BY_LOCALE[locale].map((link) => ({
-    ...link,
-    href: withLocalePrefix(link.href, locale),
-  }));
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "";
+  const navGroups = NAV_GROUPS_BY_LOCALE[locale];
+  const singleLinks = SINGLE_LINKS_BY_LOCALE[locale];
   const mobileNavLinks = [
     ...navGroups.flatMap((group) =>
       group.sections.flatMap((section) => section.items.map(({ href, label }) => ({ href, label })))
     ),
     ...singleLinks,
   ];
-  const accountHref = withLocalePrefix(user ? "/hesap" : "/giris", locale);
+  const accountHref = user ? "/hesap" : "/giris";
   const accountLabel = locale === "en" ? (user ? "My Account" : "Sign In") : user ? "Hesabım" : "Giriş Yap";
 
   return (
     <header className="border-b border-border bg-background/85 backdrop-blur-md">
       <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <Logo locale={locale} />
+        <Logo />
 
         <DesktopNav groups={navGroups} singleLinks={singleLinks} />
 
@@ -171,13 +161,13 @@ export async function Header({ locale = "tr" }: { locale?: Locale } = {}) {
           >
             {accountLabel}
           </Link>
-          <LanguageSwitcher locale={locale} />
+          <LanguageSwitcher locale={locale} host={host} />
           <ThemeToggle />
         </div>
 
         <div className="flex items-center gap-1 lg:hidden">
           <SiteSearch iconOnly />
-          <LanguageSwitcher locale={locale} compact />
+          <LanguageSwitcher locale={locale} host={host} compact />
           <MobileNav navLinks={mobileNavLinks} isLoggedIn={Boolean(user)} locale={locale} />
         </div>
       </div>

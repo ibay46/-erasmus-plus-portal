@@ -20,7 +20,7 @@ export function MobileNav({
   locale?: Locale;
 }) {
   const [open, setOpen] = useState(false);
-  const accountHref = locale === "en" ? (isLoggedIn ? "/en/hesap" : "/en/giris") : isLoggedIn ? "/hesap" : "/giris";
+  const accountHref = isLoggedIn ? "/hesap" : "/giris";
   const accountLabel = locale === "en" ? (isLoggedIn ? "My Account" : "Sign In") : isLoggedIn ? "Hesabım" : "Giriş Yap";
 
   return (

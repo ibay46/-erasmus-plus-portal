@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Açık Çağrılar | Erasmus+ Portal",
   description: "Yıl ve round bazında, KA210/KA220/KA240 ve sektöre göre hâlen başvuru kabul eden Ulusal Ajans çağrıları.",
   alternates: {
-    canonical: "https://www.erasmusportal.com/acik-cagrilar",
+    canonical: "https://tr.erasmusportal.com/acik-cagrilar",
   },
 };
 

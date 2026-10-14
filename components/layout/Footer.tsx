@@ -71,15 +71,8 @@ const FOOTER_COLUMNS_BY_LOCALE = {
   ],
 } as const;
 
-function withLocalePrefix(href: string, locale: Locale) {
-  return locale === "en" ? `/en${href}` : href;
-}
-
 export function Footer({ locale = "tr" }: { locale?: Locale } = {}) {
-  const footerColumns = FOOTER_COLUMNS_BY_LOCALE[locale].map((col) => ({
-    ...col,
-    links: col.links.map((link) => ({ ...link, href: withLocalePrefix(link.href, locale) })),
-  }));
+  const footerColumns = FOOTER_COLUMNS_BY_LOCALE[locale];
 
   return (
     <footer className="border-t border-border">
@@ -122,7 +115,7 @@ export function Footer({ locale = "tr" }: { locale?: Locale } = {}) {
 
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col gap-4 border-t border-border pt-6 md:flex-row md:items-center md:justify-between">
-          <Logo locale={locale} />
+          <Logo />
           <a
             href="https://www.instagram.com/erasmusportal"
             target="_blank"
@@ -159,7 +152,7 @@ export function Footer({ locale = "tr" }: { locale?: Locale } = {}) {
                 endorsed by the European Commission or any National Agency.
               </p>
               <p>
-                <Link href="/en/gizlilik-politikasi" className="cursor-pointer hover:text-foreground hover:underline">
+                <Link href="/gizlilik-politikasi" className="cursor-pointer hover:text-foreground hover:underline">
                   Privacy Policy &amp; Data Protection Notice
                 </Link>
               </p>

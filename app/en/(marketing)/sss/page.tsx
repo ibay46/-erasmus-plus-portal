@@ -30,7 +30,7 @@ export default function EnglishSssPage() {
         The questions we are asked most often about the Erasmus+ application process, budget
         calculation, finding partners and using this site. If you can't find the answer you're
         looking for, you can use the{" "}
-        <a href="/en/danismanlik/talep" className="text-accent underline">
+        <a href="/danismanlik/talep" className="text-accent underline">
           consulting request form
         </a>
         .

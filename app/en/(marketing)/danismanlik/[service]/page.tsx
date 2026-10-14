@@ -31,7 +31,7 @@ export default async function EnglishDanismanlikServisPage({
       <h1 className="text-3xl font-semibold mb-3 text-foreground">{found.title}</h1>
       <p className="text-foreground mb-8">{found.description}</p>
       <Link
-        href="/en/danismanlik/talep"
+        href="/danismanlik/talep"
         className="cursor-pointer inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
       >
         Send a Request for This Service

@@ -127,7 +127,7 @@ export default function EnglishKa210IslemAdimlariPage() {
   return (
     <div>
       <p className="text-sm text-accent mb-2">
-        <Link href="/en/mevzuat" className="cursor-pointer hover:underline">
+        <Link href="/mevzuat" className="cursor-pointer hover:underline">
           ← Legislation
         </Link>
       </p>
@@ -169,7 +169,7 @@ export default function EnglishKa210IslemAdimlariPage() {
           Governor's Office/Directorate of National Education and the rules of the coordinating
           institution's National Agency take priority. For details on financial transactions, see
           the{" "}
-          <Link href="/en/mevzuat/ab-hibeleri-yonetmeligi" className="cursor-pointer text-accent hover:underline">
+          <Link href="/mevzuat/ab-hibeleri-yonetmeligi" className="cursor-pointer text-accent hover:underline">
             EU Grants Regulation
           </Link>{" "}
           page.

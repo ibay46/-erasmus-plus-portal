@@ -14,7 +14,7 @@ export default async function ButceAraclariPage() {
         Our tool automatically calculates your Erasmus+ mobility budget (travel and individual
         support).
       </p>
-      <Link href="/en/araclar/ka210-butce-hesaplama" className="cursor-pointer">
+      <Link href="/araclar/ka210-butce-hesaplama" className="cursor-pointer">
         <Card className="hover:border-accent/50">
           <h2 className="font-medium mb-1 text-foreground">KA210 Budget Calculation</h2>
           <p className="text-sm text-muted-foreground">

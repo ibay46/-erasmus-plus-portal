@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Proje Sonuçları | Erasmus+ Portal",
   description: "Yıl, ülke, KA eylemi ve sektöre göre filtrelenebilir desteklenmeye hak kazanan Erasmus+ proje sonuçları.",
   alternates: {
-    canonical: "https://www.erasmusportal.com/proje-sonuclari",
+    canonical: "https://tr.erasmusportal.com/proje-sonuclari",
   },
 };
 

@@ -6,6 +6,9 @@ import { prisma } from "@/lib/prisma";
 import { requireTier } from "@/lib/auth";
 import type { PartnerInfo } from "@/lib/content/partnerInfo";
 
+// Both the tr./en. subdomains serve identical paths (the host determines which file
+// tree renders them), so a plain relative redirect/revalidate always stays on the
+// locale the request came from — no locale param needed here.
 const BASE_PATH = "/araclar/projelerim";
 
 export interface ProjeIdentityInput {

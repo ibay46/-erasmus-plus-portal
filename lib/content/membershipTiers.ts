@@ -45,32 +45,32 @@ export const TIER_FEATURES: Record<string, TierFeature[]> = {
 };
 
 export const FREE_FEATURES_EN: TierFeature[] = [
-  { href: "/en/haberler", label: "News" },
-  { href: "/en/proje-turleri", label: "Project Type Guides" },
-  { href: "/en/proje-kutuphanesi", label: "Project Library" },
-  { href: "/en/proje-sonuclari", label: "Project Results" },
-  { href: "/en/ab-hibe-projeleri", label: "Grant Projects" },
-  { href: "/en/mevzuat", label: "Legislation" },
-  { href: "/en/araclar", label: "Tools" },
-  { href: "/en/danismanlik", label: "General Consulting Information" },
+  { href: "/haberler", label: "News" },
+  { href: "/proje-turleri", label: "Project Type Guides" },
+  { href: "/proje-kutuphanesi", label: "Project Library" },
+  { href: "/proje-sonuclari", label: "Project Results" },
+  { href: "/ab-hibe-projeleri", label: "Grant Projects" },
+  { href: "/mevzuat", label: "Legislation" },
+  { href: "/araclar", label: "Tools" },
+  { href: "/danismanlik", label: "General Consulting Information" },
 ];
 
 export const STANDARD_LINKS_EN: TierFeature[] = [
-  { href: "/en/akademi/ornek-projeler", label: "Sample Projects" },
-  { href: "/en/akademi/egitim-videolari", label: "Training Videos" },
-  { href: "/en/akademi/kontrol-listeleri", label: "Application Checklists" },
-  { href: "/en/akademi/butce-araclari", label: "Budget Calculation Tools" },
-  { href: "/en/akademi/etki-yonetimi", label: "Impact Management Tools" },
+  { href: "/akademi/ornek-projeler", label: "Sample Projects" },
+  { href: "/akademi/egitim-videolari", label: "Training Videos" },
+  { href: "/akademi/kontrol-listeleri", label: "Application Checklists" },
+  { href: "/akademi/butce-araclari", label: "Budget Calculation Tools" },
+  { href: "/akademi/etki-yonetimi", label: "Impact Management Tools" },
 ];
 
 export const PREMIUM_LINKS_EN: TierFeature[] = [
-  { href: "/en/akademi/proje-gelistirme/proje-fikri-gelistirme", label: "Project Idea Development Wizard" },
-  { href: "/en/akademi/proje-gelistirme/basvuru-formu-asistani", label: "Application Form Assistant" },
-  { href: "/en/akademi/degerlendirme-rehberleri", label: "Project Evaluation Guides" },
-  { href: "/en/akademi/ai-promptlari", label: "AI Prompts" },
-  { href: "/en/akademi/ortak-havuzu", label: "Partner Pool" },
-  { href: "/en/akademi/topluluk", label: "Closed Community Group" },
-  { href: "/en/akademi/danismanlik-indirimi", label: "Consulting Discount" },
+  { href: "/akademi/proje-gelistirme/proje-fikri-gelistirme", label: "Project Idea Development Wizard" },
+  { href: "/akademi/proje-gelistirme/basvuru-formu-asistani", label: "Application Form Assistant" },
+  { href: "/akademi/degerlendirme-rehberleri", label: "Project Evaluation Guides" },
+  { href: "/akademi/ai-promptlari", label: "AI Prompts" },
+  { href: "/akademi/ortak-havuzu", label: "Partner Pool" },
+  { href: "/akademi/topluluk", label: "Closed Community Group" },
+  { href: "/akademi/danismanlik-indirimi", label: "Consulting Discount" },
 ];
 
 export const TIER_DESCRIPTIONS_EN: Record<string, string> = {

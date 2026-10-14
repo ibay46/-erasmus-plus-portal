@@ -19,7 +19,7 @@ export default function EnglishKayitPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (state.success) router.push("/en/hesap");
+    if (state.success) router.push("/hesap");
   }, [state.success, router]);
 
   return (
@@ -61,7 +61,7 @@ export default function EnglishKayitPage() {
           />
           <span>
             I have read and accept the{" "}
-            <Link href="/en/gizlilik-politikasi" target="_blank" className="cursor-pointer text-accent hover:underline">
+            <Link href="/gizlilik-politikasi" target="_blank" className="cursor-pointer text-accent hover:underline">
               Privacy Policy &amp; Data Protection Notice
             </Link>
             .
@@ -86,7 +86,7 @@ export default function EnglishKayitPage() {
 
       <p className="mt-4 text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/en/giris" className="cursor-pointer text-accent hover:underline">
+        <Link href="/giris" className="cursor-pointer text-accent hover:underline">
           Sign in
         </Link>
       </p>

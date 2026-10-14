@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Open Calls | Erasmus+ Portal",
   description: "National Agency calls currently accepting applications, by year, round, KA210/KA220/KA240 action and sector.",
   alternates: {
-    canonical: "https://www.erasmusportal.com/en/acik-cagrilar",
+    canonical: "https://en.erasmusportal.com/acik-cagrilar",
   },
 };
 
@@ -89,7 +89,7 @@ export default async function EnglishAcikCagrilarPage({
     if (nextRound) params.set("round", nextRound);
     if (nextAcik) params.set("acik", nextAcik);
     const qs = params.toString();
-    return qs ? `/en/acik-cagrilar?${qs}` : "/en/acik-cagrilar";
+    return qs ? `/acik-cagrilar?${qs}` : "/acik-cagrilar";
   }
 
   return (
@@ -100,7 +100,7 @@ export default async function EnglishAcikCagrilarPage({
       </p>
       <div className="mb-6">
         <Link
-          href="/en/proje-turleri/karsilastir"
+          href="/proje-turleri/karsilastir"
           className="cursor-pointer inline-flex items-center gap-1.5 text-sm font-medium text-accent underline underline-offset-2 hover:no-underline"
         >
           Which action suits you? Compare KA210 vs KA220 vs KA240 →

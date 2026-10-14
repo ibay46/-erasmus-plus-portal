@@ -24,7 +24,7 @@ export default async function EnglishEscPage() {
           {posts.map((post) => (
             <Link
               key={post.slug}
-              href={`/en/haberler/${post.slug}`}
+              href={`/haberler/${post.slug}`}
               className="group flex items-center gap-3 px-4 py-3 bg-card hover:bg-accent/5 transition-colors duration-200 cursor-pointer"
             >
               <div className="flex-1 min-w-0">

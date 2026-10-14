@@ -10,20 +10,20 @@ interface NavItem {
 
 interface NavSection {
   heading?: string;
-  items: NavItem[];
+  items: readonly NavItem[];
 }
 
 interface NavGroup {
   label: string;
-  sections: NavSection[];
+  sections: readonly NavSection[];
 }
 
 export function DesktopNav({
   groups,
   singleLinks,
 }: {
-  groups: NavGroup[];
-  singleLinks: { href: string; label: string }[];
+  groups: readonly NavGroup[];
+  singleLinks: readonly { href: string; label: string }[];
 }) {
   return (
     <nav className="hidden lg:flex items-center gap-1 text-sm">

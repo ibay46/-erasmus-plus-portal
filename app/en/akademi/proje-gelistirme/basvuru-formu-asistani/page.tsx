@@ -67,7 +67,7 @@ The project falls below its own threshold on all four criteria.`}
         <Card>
           <p className="text-sm text-muted-foreground">
             First complete a concept note with the{" "}
-            <Link href="/en/akademi/proje-gelistirme/proje-fikri-gelistirme" className="cursor-pointer text-accent underline">
+            <Link href="/akademi/proje-gelistirme/proje-fikri-gelistirme" className="cursor-pointer text-accent underline">
               Project Idea Development Wizard
             </Link>{" "}
             — this tool is created automatically in its final step.
@@ -170,7 +170,7 @@ The project falls below its own threshold on all four criteria.`}
           {sessions.map((session) => (
             <Card key={session.id} className="flex flex-col">
               <Link
-                href={`/en/akademi/proje-gelistirme/basvuru-formu-asistani/${session.id}`}
+                href={`/akademi/proje-gelistirme/basvuru-formu-asistani/${session.id}`}
                 className="cursor-pointer group flex-1"
               >
                 <h3 className="font-medium text-foreground group-hover:text-accent">{session.title}</h3>

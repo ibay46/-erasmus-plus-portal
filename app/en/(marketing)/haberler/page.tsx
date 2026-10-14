@@ -26,7 +26,7 @@ export default async function EnglishHaberlerPage() {
       ) : (
         <div className="grid lg:grid-cols-3 gap-8 mt-2">
           <div className="lg:col-span-2">
-            <Link href={`/en/haberler/${featured.slug}`} className="cursor-pointer block">
+            <Link href={`/haberler/${featured.slug}`} className="cursor-pointer block">
               <span className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
                 Latest
               </span>
@@ -49,7 +49,7 @@ export default async function EnglishHaberlerPage() {
                 {rest.map((post) => (
                   <Link
                     key={post.slug}
-                    href={`/en/haberler/${post.slug}`}
+                    href={`/haberler/${post.slug}`}
                     className="cursor-pointer flex items-start justify-between gap-4 py-4 hover:text-accent"
                   >
                     <div>
@@ -77,7 +77,7 @@ export default async function EnglishHaberlerPage() {
               {HABERLER_CATEGORIES.map((category) => (
                 <Link
                   key={category}
-                  href={`/en/haberler/kategori/${category}`}
+                  href={`/haberler/kategori/${category}`}
                   className="cursor-pointer text-sm text-muted-foreground hover:text-accent"
                 >
                   {POST_CATEGORY_LABELS_EN[category]}

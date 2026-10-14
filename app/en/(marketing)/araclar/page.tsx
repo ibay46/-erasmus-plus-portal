@@ -21,7 +21,7 @@ export default async function EnglishAraclarPage() {
       </p>
 
       <Link
-        href="/en/araclar/projelerim"
+        href="/araclar/projelerim"
         className="cursor-pointer mb-8 inline-flex items-center rounded-lg border border-accent/40 bg-accent/[0.04] px-4 py-2.5 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/70"
       >
         My Projects — enter your project information once, and tools will fill in automatically →

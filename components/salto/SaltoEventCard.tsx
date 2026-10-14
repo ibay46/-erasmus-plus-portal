@@ -162,7 +162,7 @@ export function SaltoEventCard({ post: rawPost, locale = "tr" }: { post: Post; l
 
         <div className="mt-auto flex justify-end pt-3">
           <Link
-            href={locale === "en" ? `/en/haberler/${post.slug}` : `/haberler/${post.slug}`}
+            href={`/haberler/${post.slug}`}
             className="cursor-pointer rounded-full border border-accent-warm px-4 py-1.5 text-sm font-medium text-accent-warm transition-colors duration-200 hover:bg-accent-warm hover:text-white"
           >
             {locale === "en" ? "View" : "Görüntüle"}

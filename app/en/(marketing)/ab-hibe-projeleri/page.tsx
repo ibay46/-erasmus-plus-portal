@@ -25,7 +25,7 @@ export default async function EnglishAbHibeProjeleriPage() {
           {items.map((item) => (
             <Link
               key={item.slug}
-              href={`/en/ab-hibe-projeleri/${item.slug}`}
+              href={`/ab-hibe-projeleri/${item.slug}`}
               className="cursor-pointer group block overflow-hidden rounded-xl border border-border transition-colors duration-200 hover:border-accent/50"
             >
               <div className="relative aspect-[19/9]">

@@ -36,7 +36,7 @@ export default async function EnglishProjeTuruDetayPage({ params }: { params: Pr
   return (
     <div>
       <Link
-        href="/en/proje-turleri"
+        href="/proje-turleri"
         className="cursor-pointer mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground"
       >
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">

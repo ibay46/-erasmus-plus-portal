@@ -1,16 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { toLocalePath, type Locale } from "@/lib/i18n/locale";
+import { localeHostFor, type Locale } from "@/lib/i18n/locale";
 
-export function LanguageSwitcher({ locale, compact = false }: { locale: Locale; compact?: boolean }) {
+export function LanguageSwitcher({
+  locale,
+  host,
+  compact = false,
+}: {
+  locale: Locale;
+  host: string;
+  compact?: boolean;
+}) {
   const pathname = usePathname();
   const target: Locale = locale === "en" ? "tr" : "en";
-  const href = toLocalePath(pathname ?? "/", target);
+  const targetHost = localeHostFor(host, target);
+  const protocol = host.startsWith("localhost") || host.includes(".localhost") ? "http" : "https";
+  const href = `${protocol}://${targetHost}${pathname}`;
 
   return (
-    <Link
+    <a
       href={href}
       className={
         compact
@@ -20,6 +29,6 @@ export function LanguageSwitcher({ locale, compact = false }: { locale: Locale; 
       aria-label={target === "en" ? "Switch to English" : "Türkçeye geç"}
     >
       {target === "en" ? "EN" : "TR"}
-    </Link>
+    </a>
   );
 }

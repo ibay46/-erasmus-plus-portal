@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${result.title} | Proje Sonuçları`,
     description: result.summary,
-    alternates: { canonical: `https://www.erasmusportal.com/proje-sonuclari/${result.slug}` },
+    alternates: { canonical: `https://tr.erasmusportal.com/proje-sonuclari/${result.slug}` },
     openGraph: {
       title: result.title,
       description: result.summary,
@@ -45,22 +45,22 @@ export default async function ProjeSonucuDetayPage({ params }: { params: Promise
     datePublished: result.createdAt.toISOString(),
     dateModified: result.updatedAt.toISOString(),
     inLanguage: "tr",
-    author: { "@type": "Organization", name: "Erasmus+ Portal", url: "https://www.erasmusportal.com" },
+    author: { "@type": "Organization", name: "Erasmus+ Portal", url: "https://tr.erasmusportal.com" },
     publisher: {
       "@type": "Organization",
       name: "Erasmus+ Portal",
-      logo: { "@type": "ImageObject", url: "https://www.erasmusportal.com/logo-icon.png" },
+      logo: { "@type": "ImageObject", url: "https://tr.erasmusportal.com/logo-icon.png" },
     },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.erasmusportal.com/proje-sonuclari/${result.slug}` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://tr.erasmusportal.com/proje-sonuclari/${result.slug}` },
   };
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Anasayfa", item: "https://www.erasmusportal.com" },
-      { "@type": "ListItem", position: 2, name: "Proje Sonuçları", item: "https://www.erasmusportal.com/proje-sonuclari" },
-      { "@type": "ListItem", position: 3, name: result.title, item: `https://www.erasmusportal.com/proje-sonuclari/${result.slug}` },
+      { "@type": "ListItem", position: 1, name: "Anasayfa", item: "https://tr.erasmusportal.com" },
+      { "@type": "ListItem", position: 2, name: "Proje Sonuçları", item: "https://tr.erasmusportal.com/proje-sonuclari" },
+      { "@type": "ListItem", position: 3, name: result.title, item: `https://tr.erasmusportal.com/proje-sonuclari/${result.slug}` },
     ],
   };
 

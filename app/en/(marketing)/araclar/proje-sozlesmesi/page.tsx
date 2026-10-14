@@ -125,7 +125,7 @@ export default async function ProjeSozlesmesiPage({
           {partnerSelector.map((p) => (
             <Link
               key={p.index}
-              href={`/en/araclar/${TOOL_KEY}?proje=${projeId}&ortak=${p.index}`}
+              href={`/araclar/${TOOL_KEY}?proje=${projeId}&ortak=${p.index}`}
               className={`cursor-pointer rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors duration-200 ${
                 variant === `ortak-${p.index}`
                   ? "border-accent bg-accent/10 text-accent"

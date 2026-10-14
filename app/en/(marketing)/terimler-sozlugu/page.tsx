@@ -31,7 +31,7 @@ export default function EnglishTerimlerSozluguPage() {
       <p className="text-muted-foreground mb-10 max-w-2xl">
         Short explanations of abbreviations and terms you will commonly encounter in the Erasmus+
         programme. For detailed guides on action types, see the{" "}
-        <Link href="/en/proje-turleri" className="text-accent underline">
+        <Link href="/proje-turleri" className="text-accent underline">
           Project Types
         </Link>{" "}
         page.
