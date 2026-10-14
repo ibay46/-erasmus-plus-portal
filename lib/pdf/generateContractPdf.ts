@@ -207,9 +207,8 @@ export function generateContractPdf(data: ContractPdfData) {
     drawCenteredLine("Under the Erasmus+ Programme");
     drawCenteredLine("KA2 STRATEGIC PARTNERSHIP PROJECT", { bold: true });
     advance(2);
-    drawCenteredLine(
-      `${field(data.projectNumber, isEn ? "Project No" : "Proje No")} - ${field(data.projectTitle, isEn ? "Project Title" : "Proje Başlığı")}`
-    );
+    drawCenteredLine(`${isEn ? "Project No" : "Proje No"}: ${field(data.projectNumber)}`);
+    drawCenteredLine(`${isEn ? "Project Title" : "Proje Başlığı"}: ${field(data.projectTitle)}`);
     advance(2);
 
     drawParagraph("This contract, drawn up under the Community programme Erasmus+ shall govern relations between:");
