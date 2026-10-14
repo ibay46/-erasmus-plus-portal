@@ -12,6 +12,8 @@ export async function updateAnnouncement(formData: FormData) {
   const message = ((formData.get("message") as string) ?? "").trim();
   const linkHref = ((formData.get("linkHref") as string) ?? "").trim() || null;
   const linkLabel = ((formData.get("linkLabel") as string) ?? "").trim() || null;
+  const messageEn = ((formData.get("messageEn") as string) ?? "").trim() || null;
+  const linkLabelEn = ((formData.get("linkLabelEn") as string) ?? "").trim() || null;
 
   if (enabled && !message) {
     redirect("/admin/duyuru?hata=" + encodeURIComponent("Duyuru yayındaysa mesaj alanı boş olamaz."));
@@ -19,8 +21,8 @@ export async function updateAnnouncement(formData: FormData) {
 
   await prisma.announcement.upsert({
     where: { id: "singleton" },
-    create: { id: "singleton", enabled, message, linkHref, linkLabel },
-    update: { enabled, message, linkHref, linkLabel },
+    create: { id: "singleton", enabled, message, linkHref, linkLabel, messageEn, linkLabelEn },
+    update: { enabled, message, linkHref, linkLabel, messageEn, linkLabelEn },
   });
 
   revalidatePath("/", "layout");

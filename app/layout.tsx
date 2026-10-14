@@ -75,9 +75,9 @@ export default async function RootLayout({
               <div id="site-header" className="fixed inset-x-0 top-0 z-50">
                 {announcement?.enabled && (
                   <AnnouncementBanner
-                    message={announcement.message}
+                    message={(locale === "en" && announcement.messageEn) || announcement.message}
                     linkHref={announcement.linkHref}
-                    linkLabel={announcement.linkLabel}
+                    linkLabel={(locale === "en" && announcement.linkLabelEn) || announcement.linkLabel}
                     version={announcement.updatedAt.toISOString()}
                     locale={locale}
                   />

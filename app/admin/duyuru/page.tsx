@@ -83,6 +83,34 @@ export default async function AdminDuyuruPage({
               />
             </div>
           </div>
+
+          <div className="space-y-4 rounded-lg border border-border p-4">
+            <p className="text-sm font-medium text-foreground">
+              English Content <span className="font-normal text-muted-foreground">(/en sitesi için, opsiyonel — boş bırakılırsa Türkçe metin gösterilir)</span>
+            </p>
+            <div>
+              <label htmlFor="messageEn" className="block text-sm font-medium mb-1 text-foreground">
+                Message (English)
+              </label>
+              <input
+                id="messageEn"
+                name="messageEn"
+                defaultValue={announcement?.messageEn ?? ""}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label htmlFor="linkLabelEn" className="block text-sm font-medium mb-1 text-foreground">
+                Link Text (English)
+              </label>
+              <input
+                id="linkLabelEn"
+                name="linkLabelEn"
+                defaultValue={announcement?.linkLabelEn ?? ""}
+                className={inputClass}
+              />
+            </div>
+          </div>
           <button
             type="submit"
             className="cursor-pointer w-full sm:w-auto rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
