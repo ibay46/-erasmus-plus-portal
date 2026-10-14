@@ -63,7 +63,7 @@ export function MobileNav({
             >
               {accountLabel}
             </Link>
-            <ThemeToggle />
+            <ThemeToggle locale={locale} />
           </div>
         </div>
       )}

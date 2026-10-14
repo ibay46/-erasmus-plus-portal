@@ -79,6 +79,7 @@ export default async function RootLayout({
                     linkHref={announcement.linkHref}
                     linkLabel={announcement.linkLabel}
                     version={announcement.updatedAt.toISOString()}
+                    locale={locale}
                   />
                 )}
                 <Header locale={locale} />

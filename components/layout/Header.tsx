@@ -154,7 +154,7 @@ export async function Header({ locale = "tr" }: { locale?: Locale } = {}) {
         <DesktopNav groups={navGroups} singleLinks={singleLinks} />
 
         <div className="hidden lg:flex items-center gap-3">
-          <SiteSearch />
+          <SiteSearch locale={locale} />
           <Link
             href={accountHref}
             className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
@@ -162,11 +162,11 @@ export async function Header({ locale = "tr" }: { locale?: Locale } = {}) {
             {accountLabel}
           </Link>
           <LanguageSwitcher locale={locale} host={host} />
-          <ThemeToggle />
+          <ThemeToggle locale={locale} />
         </div>
 
         <div className="flex items-center gap-1 lg:hidden">
-          <SiteSearch iconOnly />
+          <SiteSearch iconOnly locale={locale} />
           <LanguageSwitcher locale={locale} host={host} compact />
           <MobileNav navLinks={mobileNavLinks} isLoggedIn={Boolean(user)} locale={locale} />
         </div>

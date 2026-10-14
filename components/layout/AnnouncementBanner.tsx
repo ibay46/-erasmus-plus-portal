@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import type { Locale } from "@/lib/i18n/locale";
 
 interface Props {
   message: string;
   linkHref: string | null;
   linkLabel: string | null;
   version: string;
+  locale?: Locale;
 }
 
-export function AnnouncementBanner({ message, linkHref, linkLabel, version }: Props) {
+export function AnnouncementBanner({ message, linkHref, linkLabel, version, locale = "tr" }: Props) {
   const storageKey = `announcement-dismissed:${version}`;
   const [visible, setVisible] = useState(true);
 
@@ -39,7 +41,7 @@ export function AnnouncementBanner({ message, linkHref, linkLabel, version }: Pr
           localStorage.setItem(storageKey, "1");
           setVisible(false);
         }}
-        aria-label="Duyuruyu kapat"
+        aria-label={locale === "en" ? "Dismiss announcement" : "Duyuruyu kapat"}
         className="cursor-pointer rounded p-1 leading-none transition-colors duration-200 hover:bg-black/10 dark:hover:bg-white/10"
       >
         ✕

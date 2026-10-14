@@ -19,9 +19,17 @@ export function middleware(request: NextRequest) {
 
   // en. alt alan adında gelen istekler, kullanıcıya hiç göstermeden sunucu
   // tarafında app/en/* dosya ağacına yönlendirilir (admin/api hariç — onların
-  // İngilizce karşılığı yok, her zaman aynı dosyadan sunulur).
+  // İngilizce karşılığı yok, her zaman aynı dosyadan sunulur). public/ altındaki
+  // statik dosyalar (logo-icon.png, kapak görselleri vb.) ve sitemap.xml/robots.txt
+  // gibi uzantılı yollar da hariç tutulur — bunların /en altında karşılığı yok.
   const isEnglishHost = host.startsWith("en.");
-  const skipRewrite = pathname.startsWith("/api") || pathname.startsWith("/admin");
+  const isStaticAssetPath = /\.[a-zA-Z0-9]+$/.test(pathname);
+  const skipRewrite =
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/opengraph-image") ||
+    pathname.startsWith("/twitter-image") ||
+    isStaticAssetPath;
 
   const response =
     isEnglishHost && !skipRewrite

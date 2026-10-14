@@ -3,9 +3,37 @@
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import type { SearchResult } from "@/lib/search";
+import type { Locale } from "@/lib/i18n/locale";
 
-export function SiteSearch({ iconOnly = false }: { iconOnly?: boolean }) {
+const STRINGS: Record<Locale, {
+  ariaLabel: string;
+  placeholder: string;
+  close: string;
+  searching: string;
+  noResults: string;
+  typeToSearch: string;
+}> = {
+  tr: {
+    ariaLabel: "Sitede ara",
+    placeholder: "Haberler, proje sonuçları, terimler...",
+    close: "Kapat",
+    searching: "Aranıyor...",
+    noResults: "Sonuç bulunamadı.",
+    typeToSearch: "Aramaya başlamak için en az 2 karakter yazın.",
+  },
+  en: {
+    ariaLabel: "Search the site",
+    placeholder: "News, project results, terms...",
+    close: "Close",
+    searching: "Searching...",
+    noResults: "No results found.",
+    typeToSearch: "Type at least 2 characters to start searching.",
+  },
+};
+
+export function SiteSearch({ iconOnly = false, locale = "tr" }: { iconOnly?: boolean; locale?: Locale }) {
   const inputId = useId();
+  const s = STRINGS[locale];
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -29,7 +57,7 @@ export function SiteSearch({ iconOnly = false }: { iconOnly?: boolean }) {
     setLoading(true);
     const timeout = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}&locale=${locale}`);
         const data = await res.json();
         setResults(data.results ?? []);
       } finally {
@@ -37,7 +65,7 @@ export function SiteSearch({ iconOnly = false }: { iconOnly?: boolean }) {
       }
     }, 300);
     return () => clearTimeout(timeout);
-  }, [query]);
+  }, [query, locale]);
 
   useEffect(() => {
     if (!open) return;
@@ -52,7 +80,7 @@ export function SiteSearch({ iconOnly = false }: { iconOnly?: boolean }) {
     <>
       <button
         type="button"
-        aria-label="Sitede ara"
+        aria-label={s.ariaLabel}
         onClick={() => setOpen(true)}
         className={`cursor-pointer flex items-center justify-center rounded-md text-accent transition-all duration-200 hover:bg-accent/10 hover:text-accent hover:shadow-lg hover:shadow-accent/40 ${
           iconOnly ? "h-11 w-11" : "h-9 w-9"
@@ -79,7 +107,7 @@ export function SiteSearch({ iconOnly = false }: { iconOnly?: boolean }) {
                 <path strokeLinecap="round" d="M21 21l-4.3-4.3" />
               </svg>
               <label htmlFor={inputId} className="sr-only">
-                Sitede ara
+                {s.ariaLabel}
               </label>
               <input
                 ref={inputRef}
@@ -87,7 +115,7 @@ export function SiteSearch({ iconOnly = false }: { iconOnly?: boolean }) {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Haberler, proje sonuçları, terimler..."
+                placeholder={s.placeholder}
                 className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
               />
               <button
@@ -95,18 +123,18 @@ export function SiteSearch({ iconOnly = false }: { iconOnly?: boolean }) {
                 onClick={() => setOpen(false)}
                 className="cursor-pointer shrink-0 text-xs text-muted-foreground hover:text-foreground"
               >
-                Kapat
+                {s.close}
               </button>
             </div>
 
             <div className="max-h-96 overflow-y-auto p-2">
-              {loading && <p className="px-3 py-4 text-sm text-muted-foreground">Aranıyor...</p>}
+              {loading && <p className="px-3 py-4 text-sm text-muted-foreground">{s.searching}</p>}
               {!loading && query.trim().length >= 2 && results.length === 0 && (
-                <p className="px-3 py-4 text-sm text-muted-foreground">Sonuç bulunamadı.</p>
+                <p className="px-3 py-4 text-sm text-muted-foreground">{s.noResults}</p>
               )}
               {!loading && query.trim().length < 2 && (
                 <p className="px-3 py-4 text-sm text-muted-foreground">
-                  Aramaya başlamak için en az 2 karakter yazın.
+                  {s.typeToSearch}
                 </p>
               )}
               {results.map((result, i) => (
