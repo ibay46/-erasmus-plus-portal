@@ -135,7 +135,11 @@ export default async function ProjeSozlesmesiPage({
           ))}
         </div>
       )}
-      <ProjeSozlesmesi initialData={initialData} onDataChange={projeId ? handleSave : undefined} />
+      <ProjeSozlesmesi
+        key={`${projeId ?? ""}-${variant}`}
+        initialData={initialData}
+        onDataChange={projeId ? handleSave : undefined}
+      />
     </div>
   );
 }

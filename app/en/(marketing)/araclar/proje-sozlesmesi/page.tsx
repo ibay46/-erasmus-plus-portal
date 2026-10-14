@@ -138,6 +138,7 @@ export default async function ProjeSozlesmesiPage({
         </div>
       )}
       <ProjeSozlesmesi
+        key={`${projeId ?? ""}-${variant}`}
         initialData={initialData}
         onDataChange={projeId ? handleSave : undefined}
         locale="en"
