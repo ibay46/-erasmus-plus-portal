@@ -11,11 +11,14 @@ export function DynamicList({
   items,
   onChange,
   placeholder,
+  locale = "tr",
 }: {
   items: ListItem[];
   onChange: (items: ListItem[]) => void;
   placeholder: string;
+  locale?: "tr" | "en";
 }) {
+  const isEn = locale === "en";
   function update(id: string, text: string) {
     onChange(items.map((i) => (i.id === id ? { ...i, text } : i)));
   }
@@ -41,7 +44,7 @@ export function DynamicList({
             onClick={() => remove(item.id)}
             className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-red-600 transition-colors duration-200 hover:border-red-300 print:hidden"
           >
-            Sil
+            {isEn ? "Delete" : "Sil"}
           </button>
         </div>
       ))}
@@ -50,7 +53,7 @@ export function DynamicList({
         onClick={add}
         className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50 print:hidden"
       >
-        + Ekle
+        {isEn ? "+ Add" : "+ Ekle"}
       </button>
     </div>
   );

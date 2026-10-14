@@ -16,6 +16,9 @@ export function GrantProjectFormFields({
     title: string;
     excerpt: string | null;
     body: string;
+    titleEn?: string | null;
+    excerptEn?: string | null;
+    bodyEn?: string | null;
     published: boolean;
     coverImage?: string | null;
     applicationDeadline?: Date | null;
@@ -72,6 +75,28 @@ export function GrantProjectFormFields({
           yapıştırabilirsiniz. Eklenen PDF/Word/Excel dosyaları sitede doğrudan önizlenebilir.
         </p>
       </div>
+      <div className="space-y-4 rounded-lg border border-border p-4">
+        <p className="text-sm font-medium text-foreground">
+          English Content <span className="font-normal text-muted-foreground">(/en sayfası için, opsiyonel — boş bırakılırsa Türkçe metin gösterilir)</span>
+        </p>
+        <div>
+          <label htmlFor="titleEn" className="block text-sm font-medium mb-1 text-foreground">
+            Title (English)
+          </label>
+          <input id="titleEn" name="titleEn" defaultValue={defaultValues?.titleEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="excerptEn" className="block text-sm font-medium mb-1 text-foreground">
+            Excerpt (English)
+          </label>
+          <input id="excerptEn" name="excerptEn" defaultValue={defaultValues?.excerptEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-foreground">Body (English)</label>
+          <RichTextEditor name="bodyEn" defaultValue={defaultValues?.bodyEn ?? ""} />
+        </div>
+      </div>
+
       <div className="flex items-center gap-2">
         <input
           id="published"

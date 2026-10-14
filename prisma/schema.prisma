@@ -106,25 +106,36 @@ model Post {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
+  // İngilizce (/en) site içeriği. Boşsa /en sayfaları Türkçe metne düşer (fallback).
+  titleEn   String?
+  excerptEn String?
+  bodyEn    String?
+
   // SALTO Education & Training ve SALTO Youth içerikleri etkinlik olabilir; bu alanlar o durumda doldurulur.
   eventFormat              EventFormat?
   eventStartDate           DateTime?
   eventEndDate             DateTime?
   eventSectors             String       @default("")
   eventVenue               String?
+  eventVenueEn             String?
   eventPriority            String?
+  eventPriorityEn          String?
   eventApplicationDeadline DateTime?
   eventLanguage            String?
   eventSymbols             String       @default("")
 
   // SALTO Youth'a özgü ek etkinlik alanları
   eventActivityType           String?
+  eventActivityTypeEn         String?
   eventOrganiser              String?
   eventApplicationDeadlineEnd DateTime?
   eventSelectionDate          DateTime?
-  eventTargetFor              String?
-  eventTargetFrom             String?
-  eventRecommendedFor         String?
+  eventTargetFor               String?
+  eventTargetForEn             String?
+  eventTargetFrom               String?
+  eventTargetFromEn             String?
+  eventRecommendedFor           String?
+  eventRecommendedForEn         String?
 }
 
 model GrantProject {
@@ -139,6 +150,11 @@ model GrantProject {
   publishedAt         DateTime?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+
+  // İngilizce (/en) site içeriği. Boşsa /en sayfaları Türkçe metne düşer (fallback).
+  titleEn   String?
+  excerptEn String?
+  bodyEn    String?
 }
 
 model ProjectResult {
@@ -157,6 +173,12 @@ model ProjectResult {
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // İngilizce (/en) site içeriği. Boşsa /en sayfaları Türkçe metne düşer (fallback).
+  titleEn   String?
+  countryEn String?
+  summaryEn String?
+  bodyEn    String?
 }
 
 // Henüz sonuçlanmamış, açık başvuru dönemindeki Ulusal Ajans çağrıları.
@@ -193,6 +215,14 @@ model ProjectLibraryEntry {
   coverImage    String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  // İngilizce (/en) site içeriği. Boşsa /en sayfaları Türkçe metne düşer (fallback).
+  titleEn         String?
+  summaryEn       String?
+  objectivesEn    String?
+  workPackagesEn  String?
+  disseminationEn String?
+  budgetLogicEn   String?
 }
 
 enum EventFormat {

@@ -55,3 +55,49 @@ export function sectorLabelsFor(kaAction: string): string {
   const sectors = KA_ACTION_SECTORS[kaAction] ?? [];
   return sectors.map((s) => EDUCATION_SECTOR_LABELS[s] ?? s).join(", ");
 }
+
+// English mirror of KA_COMPARISON_ROWS for the /en/proje-turleri/karsilastir page.
+// Numbers must stay consistent with PROJECT_TYPES_EN / GLOSSARY_GROUPS_EN.
+// `difficulty` keeps the same internal "Kolay" | "Orta" | "Zor" codes as the TR
+// rows (same shape/type as KaComparisonRow); the EN page maps these codes to the
+// displayed English labels ("Easy" / "Medium" / "Hard") via DIFFICULTY_LABEL_EN.
+export const KA_COMPARISON_ROWS_EN: KaComparisonRow[] = [
+  {
+    kaAction: "KA210",
+    label: "Small-scale Partnerships",
+    guideSlug: "ka210",
+    budget: "€30,000 or €60,000 (lump sum)",
+    duration: "6–24 months",
+    minPartners: "At least 2 organisations from 2 countries",
+    difficulty: "Kolay",
+    idealFor: "Inexperienced organisations writing their first Erasmus+ project who want to start with less bureaucracy.",
+    commonMistake: "Setting goals too ambitious for the limited budget and duration.",
+  },
+  {
+    kaAction: "KA220",
+    label: "Cooperation Partnerships",
+    guideSlug: "ka220",
+    budget: "€120,000 – €400,000",
+    duration: "12–36 months",
+    minPartners: "At least 3 organisations from 3 countries",
+    difficulty: "Zor",
+    idealFor: "Multi-partner consortiums with strong institutional capacity aiming for concrete, structural impact.",
+    commonMistake: "Budget not distributed consistently with the work packages.",
+  },
+  {
+    kaAction: "KA240",
+    label: "European School Development Partnerships",
+    budget: "€120,000 – €400,000 (same budget logic as KA220)",
+    duration: "12–36 months",
+    minPartners: "At least 3 organisations from 3 countries",
+    difficulty: "Zor",
+    idealFor: "Partnerships only in the school education sector, at the same scale as KA220 but focused on school development.",
+    commonMistake: "Being confused with KA220-SCH and applying under the wrong action code.",
+  },
+];
+
+export const DIFFICULTY_LABEL_EN: Record<KaComparisonRow["difficulty"], string> = {
+  Kolay: "Easy",
+  Orta: "Medium",
+  Zor: "Hard",
+};

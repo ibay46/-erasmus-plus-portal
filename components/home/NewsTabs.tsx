@@ -24,7 +24,7 @@ export type NewsTab = {
   fallbackCover?: { light: string; dark?: string };
 };
 
-export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
+export function NewsTabs({ tabs, locale = "tr" }: { tabs: NewsTab[]; locale?: "tr" | "en" }) {
   const [activeKey, setActiveKey] = useState(tabs[0]?.key ?? "");
   const active = tabs.find((t) => t.key === activeKey) ?? tabs[0];
 
@@ -51,7 +51,7 @@ export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
       <div key={activeKey}>
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <h2 className="text-2xl font-semibold text-foreground">
-            Son <span className={active.accentClass}>{active.label}</span>
+            {locale === "en" ? "Latest" : "Son"} <span className={active.accentClass}>{active.label}</span>
           </h2>
           <Link
             href={active.seeAllHref}
@@ -62,7 +62,9 @@ export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
         </div>
 
         {active.items.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Henüz içerik eklenmemiş.</p>
+          <p className="text-sm text-muted-foreground">
+            {locale === "en" ? "No content added yet." : "Henüz içerik eklenmemiş."}
+          </p>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {active.items.map((item) => (
@@ -117,7 +119,7 @@ export function NewsTabs({ tabs }: { tabs: NewsTab[] }) {
                       {item.badge}
                     </span>
                   )}
-                  {item.deadline && <GrantDeadlineBadge deadline={item.deadline} />}
+                  {item.deadline && <GrantDeadlineBadge deadline={item.deadline} locale={locale} />}
                 </div>
                 <div className="bg-card p-3.5">
                   <p className="line-clamp-2 font-medium text-foreground transition-colors duration-200 group-hover:text-accent">

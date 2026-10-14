@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { useAutosave } from "@/lib/hooks/useAutosave";
+import type { Locale } from "@/lib/i18n/locale";
 
 const plainCellInputClass = "w-full bg-transparent outline-none text-foreground text-sm print:border-none";
 
@@ -18,7 +19,7 @@ interface ChecklistRow {
   aciklama: string;
 }
 
-const DEFAULT_HUSUSLAR = [
+const DEFAULT_HUSUSLAR_TR = [
   "Görevlendirme Valilik Oluru mevcut mu?",
   "Görevlendirme Erasmus Projesi kapsamında mı?",
   "Bütçede yeterli ödenek mevcut mu?",
@@ -34,6 +35,24 @@ const DEFAULT_HUSUSLAR = [
   "Ödeme emri belgesi ve ekleri tam mı?",
   "Belgelerde imza ve onay eksikliği bulunuyor mu?",
   "İşlem, 5018 sayılı Kanun ve Ön Malî Kontrol Yönetmeliğine uygun mu?",
+];
+
+const DEFAULT_HUSUSLAR_EN = [
+  "Is the Governorship's assignment approval (Valilik Oluru) on file?",
+  "Is the assignment within the scope of an Erasmus project?",
+  "Is sufficient budget allocation available?",
+  "Are the advance payment approval and payment document on file?",
+  "Are the Certificates of Attendance on file?",
+  "Is the Signature Circular on file?",
+  "Have the travel documents (flight invoices) been submitted?",
+  "Do the mobility dates match the assignment approval?",
+  "Was the travel and subsistence allowance calculated in line with applicable regulations?",
+  "Have the Travel Expense Declarations been prepared?",
+  "If there is a surplus advance, has it been refunded to the accounting account?",
+  "If a shortfall occurred, has the additional payment been calculated?",
+  "Is the payment order document and its attachments complete?",
+  "Are there any missing signatures or approvals in the documents?",
+  "Does the transaction comply with Law No. 5018 and the Pre-Financial Control Regulation?",
 ];
 
 function emptyRow(id: string, husus = ""): ChecklistRow {
@@ -53,21 +72,27 @@ export interface OnMaliKontrolListesiData {
 export function OnMaliKontrolListesi({
   initialData,
   onDataChange,
+  locale = "tr",
 }: {
   initialData?: Partial<OnMaliKontrolListesiData>;
   onDataChange?: (data: OnMaliKontrolListesiData) => void;
+  locale?: Locale;
 }) {
   const reactId = useId();
+  const isEn = locale === "en";
 
   const [harcamaBirimi, setHarcamaBirimi] = useState(initialData?.harcamaBirimi ?? "");
   const [projeAdi, setProjeAdi] = useState(initialData?.projeAdi ?? "");
   const [projeNo, setProjeNo] = useState(initialData?.projeNo ?? "");
   const [gorevliAdSoyad, setGorevliAdSoyad] = useState(initialData?.gorevliAdSoyad ?? "");
-  const [gorevliUnvan, setGorevliUnvan] = useState(initialData?.gorevliUnvan ?? "Gerçekleştirme Görevlisi");
+  const [gorevliUnvan, setGorevliUnvan] = useState(
+    initialData?.gorevliUnvan ?? (isEn ? "Authorizing Officer" : "Gerçekleştirme Görevlisi")
+  );
   const [tarih, setTarih] = useState(initialData?.tarih ?? (() => new Date().toISOString().slice(0, 10)));
 
   const [rows, setRows] = useState<ChecklistRow[]>(
-    initialData?.rows ?? DEFAULT_HUSUSLAR.map((husus, i) => emptyRow(`${reactId}-r${i}`, husus))
+    initialData?.rows ??
+      (isEn ? DEFAULT_HUSUSLAR_EN : DEFAULT_HUSUSLAR_TR).map((husus, i) => emptyRow(`${reactId}-r${i}`, husus))
   );
 
   useAutosave(
@@ -91,47 +116,59 @@ export function OnMaliKontrolListesi({
     <div>
       <div className="flex items-center justify-between mb-6 print:hidden">
         <p className="text-sm text-muted-foreground">
-          PDF&apos;e aktarırken yazdırma penceresinde yönü <strong>Dikey (Portrait)</strong> seçin.
+          {isEn ? (
+            <>
+              When exporting to PDF, select <strong>Portrait</strong> orientation in the print dialog.
+            </>
+          ) : (
+            <>
+              PDF&apos;e aktarırken yazdırma penceresinde yönü <strong>Dikey (Portrait)</strong> seçin.
+            </>
+          )}
         </p>
         <button
           type="button"
           onClick={() => window.print()}
           className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
         >
-          PDF Olarak İndir
+          {isEn ? "Download as PDF" : "PDF Olarak İndir"}
         </button>
       </div>
 
       <div className="print-isolate space-y-6 print:space-y-4">
         <Card className="print:border-none print:p-0 print:shadow-none print:bg-transparent">
-          <h3 className="text-center font-semibold text-foreground">ERASMUS+ YOLLUK AVANSI KAPATMA</h3>
-          <h3 className="text-center font-semibold text-foreground mb-6">ÖN MALÎ KONTROL LİSTESİ</h3>
+          <h3 className="text-center font-semibold text-foreground">
+            {isEn ? "ERASMUS+ TRAVEL ADVANCE RECONCILIATION" : "ERASMUS+ YOLLUK AVANSI KAPATMA"}
+          </h3>
+          <h3 className="text-center font-semibold text-foreground mb-6">
+            {isEn ? "PRE-FINANCIAL CONTROL CHECKLIST" : "ÖN MALÎ KONTROL LİSTESİ"}
+          </h3>
 
           <div className="space-y-2 text-sm">
             <p>
-              <span className="font-semibold text-foreground">Harcama Birimi: </span>
+              <span className="font-semibold text-foreground">{isEn ? "Spending Unit: " : "Harcama Birimi: "}</span>
               <input
                 value={harcamaBirimi}
                 onChange={(e) => setHarcamaBirimi(e.target.value)}
-                placeholder="Kurum adı"
+                placeholder={isEn ? "Institution name" : "Kurum adı"}
                 className={`${inlineLineInputClass} w-72`}
               />
             </p>
             <p>
-              <span className="font-semibold text-foreground">Proje Adı: </span>
+              <span className="font-semibold text-foreground">{isEn ? "Project Name: " : "Proje Adı: "}</span>
               <input
                 value={projeAdi}
                 onChange={(e) => setProjeAdi(e.target.value)}
-                placeholder="Proje adı"
+                placeholder={isEn ? "Project name" : "Proje adı"}
                 className={`${inlineLineInputClass} w-72`}
               />
             </p>
             <p>
-              <span className="font-semibold text-foreground">Proje No: </span>
+              <span className="font-semibold text-foreground">{isEn ? "Project No: " : "Proje No: "}</span>
               <input
                 value={projeNo}
                 onChange={(e) => setProjeNo(e.target.value)}
-                placeholder="Proje numarası"
+                placeholder={isEn ? "Project number" : "Proje numarası"}
                 className={`${inlineLineInputClass} w-72`}
               />
             </p>
@@ -140,13 +177,13 @@ export function OnMaliKontrolListesi({
 
         <Card className="print:border-none print:p-0 print:shadow-none print:bg-transparent">
           <div className="flex items-center justify-between mb-3 print:hidden">
-            <h4 className="font-medium text-foreground">Kontrol Maddeleri</h4>
+            <h4 className="font-medium text-foreground">{isEn ? "Checklist Items" : "Kontrol Maddeleri"}</h4>
             <button
               type="button"
               onClick={addRow}
               className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              + Madde Ekle
+              {isEn ? "+ Add Item" : "+ Madde Ekle"}
             </button>
           </div>
 
@@ -154,14 +191,14 @@ export function OnMaliKontrolListesi({
             <table className="border-collapse text-sm w-full">
               <thead>
                 <tr>
-                  <th className="border border-border p-1.5 bg-muted w-10 print:bg-transparent">Sıra</th>
+                  <th className="border border-border p-1.5 bg-muted w-10 print:bg-transparent">{isEn ? "No." : "Sıra"}</th>
                   <th className="border border-border p-1.5 bg-muted text-left min-w-[220px] print:bg-transparent">
-                    Kontrol Edilecek Husus
+                    {isEn ? "Item to be Checked" : "Kontrol Edilecek Husus"}
                   </th>
-                  <th className="border border-border p-1.5 bg-muted w-16 print:bg-transparent">Evet</th>
-                  <th className="border border-border p-1.5 bg-muted w-16 print:bg-transparent">Hayır</th>
-                  <th className="border border-border p-1.5 bg-muted min-w-[140px] print:bg-transparent">Açıklama</th>
-                  <th className="border border-border p-1.5 bg-muted print:hidden w-12">Sil</th>
+                  <th className="border border-border p-1.5 bg-muted w-16 print:bg-transparent">{isEn ? "Yes" : "Evet"}</th>
+                  <th className="border border-border p-1.5 bg-muted w-16 print:bg-transparent">{isEn ? "No" : "Hayır"}</th>
+                  <th className="border border-border p-1.5 bg-muted min-w-[140px] print:bg-transparent">{isEn ? "Explanation" : "Açıklama"}</th>
+                  <th className="border border-border p-1.5 bg-muted print:hidden w-12">{isEn ? "Delete" : "Sil"}</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,7 +209,7 @@ export function OnMaliKontrolListesi({
                       <input
                         value={row.husus}
                         onChange={(e) => updateRow(row.id, { husus: e.target.value })}
-                        placeholder="Kontrol edilecek husus"
+                        placeholder={isEn ? "Item to be checked" : "Kontrol edilecek husus"}
                         className={`${plainCellInputClass} print:hidden`}
                       />
                       <span className="hidden print:inline">{row.husus}</span>
@@ -210,7 +247,7 @@ export function OnMaliKontrolListesi({
                         onClick={() => removeRow(row.id)}
                         className="cursor-pointer text-red-600 text-xs"
                       >
-                        Sil
+                        {isEn ? "Delete" : "Sil"}
                       </button>
                     </td>
                   </tr>
@@ -222,15 +259,23 @@ export function OnMaliKontrolListesi({
 
         <Card className="print:border-none print:p-0 print:shadow-none print:bg-transparent">
           <p className="text-sm text-foreground leading-relaxed">
-            Yapılan kontroller sonucunda ödeme emri belgesi ve ekleri incelenmiş olup;
+            {isEn
+              ? "As a result of the controls carried out, the payment order document and its attachments have been reviewed, and;"
+              : "Yapılan kontroller sonucunda ödeme emri belgesi ve ekleri incelenmiş olup;"}
           </p>
-          <p className="text-sm font-semibold text-foreground mt-1">&quot;Kontrol edilmiş ve uygun görülmüştür.&quot;</p>
+          <p className="text-sm font-semibold text-foreground mt-1">
+            {isEn ? (
+              <>&quot;Reviewed and found appropriate.&quot;</>
+            ) : (
+              <>&quot;Kontrol edilmiş ve uygun görülmüştür.&quot;</>
+            )}
+          </p>
 
           <div className="mt-10 flex flex-col items-center text-center text-sm">
             <input
               value={gorevliAdSoyad}
               onChange={(e) => setGorevliAdSoyad(e.target.value)}
-              placeholder="Adı Soyadı"
+              placeholder={isEn ? "Full Name" : "Adı Soyadı"}
               className={`${inlineLineInputClass} text-center font-semibold w-56`}
             />
             <input
@@ -245,7 +290,7 @@ export function OnMaliKontrolListesi({
               className={`${inlineLineInputClass} text-center mt-1 w-40 print:hidden`}
             />
             <span className="hidden print:inline mt-1">
-              {tarih ? new Date(tarih).toLocaleDateString("tr-TR") : ""}
+              {tarih ? new Date(tarih).toLocaleDateString(isEn ? "en-GB" : "tr-TR") : ""}
             </span>
           </div>
         </Card>

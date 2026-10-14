@@ -16,6 +16,12 @@ export function LibraryFormFields({
     workPackages: string;
     dissemination: string;
     budgetLogic: string;
+    titleEn?: string | null;
+    summaryEn?: string | null;
+    objectivesEn?: string | null;
+    workPackagesEn?: string | null;
+    disseminationEn?: string | null;
+    budgetLogicEn?: string | null;
     isPremiumOnly: boolean;
   };
 }) {
@@ -141,6 +147,48 @@ export function LibraryFormFields({
           className={inputClass}
         />
       </div>
+      <div className="space-y-4 rounded-lg border border-border p-4">
+        <p className="text-sm font-medium text-foreground">
+          English Content <span className="font-normal text-muted-foreground">(/en sayfası için, opsiyonel — boş bırakılırsa Türkçe metin gösterilir)</span>
+        </p>
+        <div>
+          <label htmlFor="titleEn" className="block text-sm font-medium mb-1 text-foreground">
+            Title (English)
+          </label>
+          <input id="titleEn" name="titleEn" defaultValue={defaultValues?.titleEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="summaryEn" className="block text-sm font-medium mb-1 text-foreground">
+            Summary (English)
+          </label>
+          <textarea id="summaryEn" name="summaryEn" rows={3} defaultValue={defaultValues?.summaryEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="objectivesEn" className="block text-sm font-medium mb-1 text-foreground">
+            Objectives (English)
+          </label>
+          <textarea id="objectivesEn" name="objectivesEn" rows={3} defaultValue={defaultValues?.objectivesEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="workPackagesEn" className="block text-sm font-medium mb-1 text-foreground">
+            Work Packages (English)
+          </label>
+          <textarea id="workPackagesEn" name="workPackagesEn" rows={4} defaultValue={defaultValues?.workPackagesEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="disseminationEn" className="block text-sm font-medium mb-1 text-foreground">
+            Dissemination (English)
+          </label>
+          <textarea id="disseminationEn" name="disseminationEn" rows={3} defaultValue={defaultValues?.disseminationEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="budgetLogicEn" className="block text-sm font-medium mb-1 text-foreground">
+            Budget Logic (English)
+          </label>
+          <textarea id="budgetLogicEn" name="budgetLogicEn" rows={3} defaultValue={defaultValues?.budgetLogicEn ?? ""} className={inputClass} />
+        </div>
+      </div>
+
       <div className="flex items-center gap-2">
         <input
           id="isPremiumOnly"

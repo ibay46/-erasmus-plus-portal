@@ -312,3 +312,307 @@ export const PROJECT_TYPES: ProjectTypeContent[] = [
 export function getProjectTypeBySlug(slug: string): ProjectTypeContent | undefined {
   return PROJECT_TYPES.find((p) => p.slug === slug);
 }
+
+// English mirror of PROJECT_TYPES for the /en/proje-turleri pages. Same shape, same
+// slugs/codes (slugs and action codes are not translated), translated prose fields.
+export const PROJECT_TYPES_EN: ProjectTypeContent[] = [
+  {
+    slug: "ka120",
+    code: "KA120",
+    title: "KA120 - Accredited Mobility in School Education",
+    shortDescription:
+      "Long-term, simplified mobility projects for schools holding Erasmus+ accreditation.",
+    amac:
+      "To enable accredited schools to sustain staff and student mobility every year within a multi-annual plan, without having to write a new project each time.",
+    kimlerBasvurabilir: [
+      "Pre-school, primary, lower secondary and upper secondary schools holding Erasmus+ accreditation",
+      "Accredited consortium coordinators",
+    ],
+    butce:
+      "The budget is determined by an annual grant request based on the planned number of mobilities; it consists of travel, individual support and organisational support items.",
+    ornekFaaliyetler: [
+      "Job shadowing for teachers",
+      "Professional development courses for staff",
+      "Student group mobility",
+    ],
+    basvuruStratejileri: [
+      "Prepare an annual grant request consistent with the Erasmus Plan stated in your accreditation application",
+      "Link mobility goals to the school's strategic Europeanisation plan",
+    ],
+    sikYapilanHatalar: [
+      "Mismatch between the accreditation Erasmus Plan and the goals in the annual application",
+      "Unrealistic estimate of the number of mobilities",
+    ],
+  },
+  {
+    slug: "ka121",
+    code: "KA121",
+    title: "KA121 - Accredited Project Application in School Education",
+    shortDescription:
+      "The application type through which accredited institutions request an annual mobility grant.",
+    amac:
+      "To enable the accredited school to receive a grant for the staff and student mobility it will carry out within one year.",
+    kimlerBasvurabilir: [
+      "Institutions holding Erasmus+ school education accreditation",
+    ],
+    butce:
+      "Calculated based on the number of mobilities requested x unit costs (travel + individual support + organisational support).",
+    ornekFaaliyetler: [
+      "Teacher professional development mobility",
+      "Student exchange programmes",
+      "Short-term joint teaching groups",
+    ],
+    basvuruStratejileri: [
+      "Strengthen the request by reporting the impact of the previous year's mobilities",
+      "Follow the National Agency's annual call calendar",
+    ],
+    sikYapilanHatalar: [
+      "Budget calculation error (wrong distance band or country group selection)",
+      "Number of mobilities exceeding the institution's capacity",
+    ],
+  },
+  {
+    slug: "ka122",
+    code: "KA122",
+    title: "KA122 - Short-term Mobility Projects in School Education",
+    shortDescription:
+      "The category non-accredited schools apply to for short-term, one-off mobility projects.",
+    amac:
+      "To support non-accredited schools' first-time or irregular participation in Erasmus+ mobility.",
+    kimlerBasvurabilir: [
+      "Non-accredited pre-school, primary, lower secondary and upper secondary institutions",
+    ],
+    butce:
+      "A one-off grant based on project duration and planned number of mobilities; includes travel, individual support and organisational support items.",
+    ornekFaaliyetler: [
+      "Short-term training courses for teachers",
+      "Student group mobility",
+      "Job shadowing visits",
+    ],
+    basvuruStratejileri: [
+      "Set concrete and measurable learning objectives",
+      "Link activities to the school's Europeanisation strategy",
+    ],
+    sikYapilanHatalar: [
+      "Activities chosen independently of the school's needs analysis",
+      "A dissemination plan that stays superficial",
+    ],
+  },
+  {
+    slug: "ka150",
+    code: "KA150",
+    title: "KA150 - Accredited Mobility in the Youth Field",
+    shortDescription:
+      "Multi-annual mobility activities of accredited organisations in the youth field.",
+    amac:
+      "To enable accredited youth organisations to offer continuous mobility opportunities for youth workers and young people.",
+    kimlerBasvurabilir: [
+      "Organisations holding Erasmus+ youth field accreditation",
+    ],
+    butce:
+      "Consists of travel, individual support and organisational support items based on the annual mobility request.",
+    ornekFaaliyetler: [
+      "Youth exchanges",
+      "Youth worker mobility",
+      "International volunteering activities",
+    ],
+    basvuruStratejileri: [
+      "Stay consistent with the goals in the accreditation Erasmus Plan",
+      "Involve young people in the planning process",
+    ],
+    sikYapilanHatalar: [
+      "Target group definition being too general",
+      "Lack of a monitoring and evaluation mechanism",
+    ],
+  },
+  {
+    slug: "ka151",
+    code: "KA151",
+    title: "KA151 - Accredited Project Application in the Youth Field",
+    shortDescription: "Annual mobility grant application by accredited youth organisations.",
+    amac: "To fund the accredited organisation's youth mobility activities within one year.",
+    kimlerBasvurabilir: ["Organisations accredited in the youth field"],
+    butce: "Calculated based on unit cost tables depending on the planned number of participants and activity type.",
+    ornekFaaliyetler: ["Youth exchanges", "Training and networking activities", "Volunteering projects"],
+    basvuruStratejileri: [
+      "Reflect the results of previous period activities in the application",
+      "Set goals linked to local youth needs",
+    ],
+    sikYapilanHatalar: [
+      "Mismatch between participant profile and activity content",
+      "Budget requests kept unrealistically high",
+    ],
+  },
+  {
+    slug: "ka152",
+    code: "KA152",
+    title: "KA152 - Mobility Projects in the Youth Field",
+    shortDescription: "Short-term mobility projects of non-accredited youth organisations.",
+    amac: "To support non-accredited organisations' access to youth mobility.",
+    kimlerBasvurabilir: ["Non-accredited youth organisations and informal youth groups"],
+    butce: "Project-based, one-off grant; unit costs applied according to activity type.",
+    ornekFaaliyetler: ["Youth exchanges", "Training activities for youth workers"],
+    basvuruStratejileri: [
+      "Ground the project idea in a local need",
+      "Clearly define the roles of partner organisations",
+    ],
+    sikYapilanHatalar: [
+      "Partnership agreements not clarified before applying",
+      "Dissemination activities not budgeted",
+    ],
+  },
+  {
+    slug: "ka153",
+    code: "KA153",
+    title: "KA153 - Youth Participation Activities",
+    shortDescription: "Activities supporting young people's participation in decision-making processes.",
+    amac: "To strengthen young people's civic and democratic participation and support youth dialogue.",
+    kimlerBasvurabilir: ["Youth organisations, informal youth groups, local authorities"],
+    butce: "Budgeting that varies with activity scale and depends on the number of participants.",
+    ornekFaaliyetler: ["Youth dialogue events", "Participation projects", "Meetings with decision-makers"],
+    basvuruStratejileri: [
+      "Involve young people in project design from the very start",
+      "Link to local/national policy processes",
+    ],
+    sikYapilanHatalar: [
+      "The participation process remaining symbolic",
+      "Impact measurement not being planned",
+    ],
+  },
+  {
+    slug: "ka154",
+    code: "KA154",
+    title: "KA154 - DiscoverEU Inclusion Activities",
+    shortDescription: "Activities supporting disadvantaged young people's access to the DiscoverEU experience.",
+    amac: "To increase the participation of young people with fewer opportunities in Europe-discovery and learning mobility.",
+    kimlerBasvurabilir: ["Youth organisations, public bodies, NGOs"],
+    butce: "Budget varying with the number of participants and support needs, including preparation and accompaniment costs.",
+    ornekFaaliyetler: ["Preparatory seminars", "Accompanied travel activities", "Experience-sharing events"],
+    basvuruStratejileri: [
+      "Clearly define the type of disadvantage of the target group",
+      "Include preparation and follow-up activities in the budget",
+    ],
+    sikYapilanHatalar: [
+      "Accessibility measures not being budgeted",
+      "Follow-up/evaluation activities being skipped",
+    ],
+  },
+  {
+    slug: "ka210",
+    code: "KA210",
+    title: "KA210 - Small-scale Partnerships",
+    shortDescription:
+      "Short-term partnership projects run with less bureaucracy for newly starting or small organisations.",
+    amac:
+      "To support organisations with little Erasmus+ experience in building networks, developing capacity and cooperating across sectors.",
+    kimlerBasvurabilir: [
+      "Schools, NGOs, municipalities, youth organisations, universities and any other type of organisation",
+      "At least 2 partner organisations from 2 countries",
+    ],
+    butce: "The total grant is usually requested as one of two lump-sum options: €30,000 or €60,000.",
+    ornekFaaliyetler: [
+      "Joint curriculum/material development",
+      "Short-term learning/teaching/training activities",
+      "Online cooperation and knowledge-sharing events",
+    ],
+    basvuruStratejileri: [
+      "Define attainable, concrete outputs given the limited budget",
+      "Allocate clear tasks/responsibilities among partners",
+      "Plan dissemination at local scale but with real impact",
+    ],
+    sikYapilanHatalar: [
+      "Setting overly ambitious goals relative to budget/time scale",
+      "Work packages not linked to concrete outputs",
+      "Missing risk analysis and monitoring plan",
+    ],
+  },
+  {
+    slug: "ka220",
+    code: "KA220",
+    title: "KA220 - Cooperation Partnerships",
+    shortDescription:
+      "Larger-scale, multi-partner cooperation projects aiming for structural impact.",
+    amac:
+      "To strengthen inter-institutional cooperation, develop innovative practices and create systemic/structural change.",
+    kimlerBasvurabilir: [
+      "Schools, universities, NGOs, public bodies, companies",
+      "At least 3 partner organisations from 3 countries (may vary by field)",
+    ],
+    butce:
+      "Usually in the range of €120,000-€400,000, calculated in detail according to the requested grant's work packages and unit costs.",
+    ornekFaaliyetler: [
+      "Developing innovative educational material / digital tools",
+      "International education and training activities",
+      "Multiplier events",
+      "Research and needs-analysis studies",
+    ],
+    basvuruStratejileri: [
+      "Design work packages with concrete, measurable outputs and indicators",
+      "Choose partners with complementary expertise for the consortium",
+      "Detail the sustainability and dissemination plan at the application stage",
+    ],
+    sikYapilanHatalar: [
+      "Budget not distributed consistently with work packages",
+      "Quality control and risk management plan being superficial",
+      "Partners' project management capacity not realistically assessed",
+    ],
+  },
+  {
+    slug: "jean-monnet",
+    code: "Jean Monnet",
+    title: "Jean Monnet Actions",
+    shortDescription:
+      "Actions supporting teaching, research and debate in the field of European Union studies.",
+    amac:
+      "To promote teaching, learning and research on EU topics at higher education and other education levels.",
+    kimlerBasvurabilir: [
+      "Higher education institutions (Jean Monnet Modules/Centres)",
+      "Schools and teacher-training institutions (Jean Monnet Teacher Training/School Education)",
+    ],
+    butce: "Fixed grant amounts or unit-cost-based budgeting that varies by action type.",
+    ornekFaaliyetler: [
+      "Designing EU-themed course modules",
+      "Academic debates and seminars",
+      "Developing EU-content training materials for teachers",
+    ],
+    basvuruStratejileri: [
+      "Concretely connect the EU values and citizenship theme with the content",
+      "Emphasise academic quality and an interdisciplinary approach",
+    ],
+    sikYapilanHatalar: [
+      "Content staying limited to general European themes without being EU-specific",
+      "Missing outreach/dissemination strategy to reach the target audience",
+    ],
+  },
+  {
+    slug: "erasmus-sport",
+    code: "Erasmus Sport",
+    title: "Erasmus+ Sport Actions",
+    shortDescription:
+      "Cooperation and event projects supporting social inclusion, health and good governance through sport.",
+    amac:
+      "To promote grassroots sport and physical activity, and support social inclusion and good governance through sport.",
+    kimlerBasvurabilir: [
+      "Sports clubs, federations, local authorities, schools, NGOs",
+    ],
+    butce:
+      "Lump-sum or unit-cost-based budget that varies by project type (from small partnerships to large-scale events).",
+    ornekFaaliyetler: [
+      "Sports events focused on social inclusion",
+      "Coach and volunteer training",
+      "European Week of Sport events",
+    ],
+    basvuruStratejileri: [
+      "Express social impact (inclusion, health, equality) with measurable goals",
+      "Build concrete cooperation with local sports communities",
+    ],
+    sikYapilanHatalar: [
+      "The activity focusing only on competitive sport with a weak social dimension",
+      "Sustainability plan not defined beyond the event itself",
+    ],
+  },
+];
+
+export function getProjectTypeBySlugEn(slug: string): ProjectTypeContent | undefined {
+  return PROJECT_TYPES_EN.find((p) => p.slug === slug);
+}

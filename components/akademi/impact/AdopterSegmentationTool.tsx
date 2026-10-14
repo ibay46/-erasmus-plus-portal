@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { ToolPdfBar } from "./ToolPdfBar";
 import { textareaClass } from "./sharedStyles";
 
-const ADOPTER_CATEGORIES = [
+const ADOPTER_CATEGORIES_TR = [
   {
     key: "innovators",
     title: "Yenilikçiler (Innovators)",
@@ -38,7 +38,42 @@ const ADOPTER_CATEGORIES = [
   },
 ] as const;
 
-export function AdopterSegmentationTool() {
+const ADOPTER_CATEGORIES_EN = [
+  {
+    key: "innovators",
+    title: "Innovators",
+    share: "~2.5%",
+    description: "Risk-takers who are the first to try new ideas. Usually already in organic contact with you.",
+  },
+  {
+    key: "early-adopters",
+    title: "Early Adopters",
+    share: "~13.5%",
+    description: "Opinion leaders; people/institutions others trust, willing to try early, but not as risk-taking as innovators.",
+  },
+  {
+    key: "early-majority",
+    title: "Early Majority",
+    share: "~34%",
+    description: "The broad group that joins after seeing the early adopters' approval, valuing evidence and peer references.",
+  },
+  {
+    key: "late-majority",
+    title: "Late Majority",
+    share: "~34%",
+    description: "Skeptical; joins only after the majority has already adopted it and it has become the norm.",
+  },
+  {
+    key: "laggards",
+    title: "Laggards",
+    share: "~16%",
+    description: "Tradition-bound, the group most resistant to change; usually not a target for reach at project scale.",
+  },
+] as const;
+
+export function AdopterSegmentationTool({ locale = "tr" }: { locale?: "tr" | "en" }) {
+  const isEn = locale === "en";
+  const ADOPTER_CATEGORIES = isEn ? ADOPTER_CATEGORIES_EN : ADOPTER_CATEGORIES_TR;
   const [targetGroup, setTargetGroup] = useState("");
   const [whoIsThisGroup, setWhoIsThisGroup] = useState<Record<string, string>>({});
   const [transferMessage, setTransferMessage] = useState<Record<string, string>>({});
@@ -53,21 +88,21 @@ export function AdopterSegmentationTool() {
 
   return (
     <div>
-      <ToolPdfBar />
+      <ToolPdfBar locale={locale} />
       <div className="space-y-6">
         <Card className="border-accent/40">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Adım 1 — Genel Hedef Kitleniz</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Step 1 — Your Overall Target Audience" : "Adım 1 — Genel Hedef Kitleniz"}</p>
           <textarea
             value={targetGroup}
             onChange={(e) => setTargetGroup(e.target.value)}
-            placeholder="Sonuçlarınızı/yaklaşımınızı yaymak istediğiniz genel hedef kitleyi tanımlayın."
+            placeholder={isEn ? "Describe the overall target audience you want to spread your results/approach to." : "Sonuçlarınızı/yaklaşımınızı yaymak istediğiniz genel hedef kitleyi tanımlayın."}
             className={textareaClass}
           />
         </Card>
 
         <div>
           <p className="text-xs font-medium text-muted-foreground mb-3">
-            Adım 2 — Rogers&apos; Diffusion: Benimseyen Gruplarını Segmentleyin
+            {isEn ? "Step 2 — Rogers' Diffusion: Segment the Adopter Groups" : "Adım 2 — Rogers' Diffusion: Benimseyen Gruplarını Segmentleyin"}
           </p>
           <div className="space-y-4">
             {ADOPTER_CATEGORIES.map((cat) => (
@@ -79,20 +114,20 @@ export function AdopterSegmentationTool() {
                 <p className="mb-3 text-xs text-muted-foreground">{cat.description}</p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1.5">Bu grup, sizin bağlamınızda kim?</p>
+                    <p className="text-xs text-muted-foreground mb-1.5">{isEn ? "Who is this group, in your context?" : "Bu grup, sizin bağlamınızda kim?"}</p>
                     <textarea
                       value={whoIsThisGroup[cat.key] ?? ""}
                       onChange={(e) => updateWho(cat.key, e.target.value)}
-                      placeholder="Örn. konuyla ilgili daha önce proje yürütmüş 3 okul"
+                      placeholder={isEn ? "E.g. 3 schools that have previously run a related project" : "Örn. konuyla ilgili daha önce proje yürütmüş 3 okul"}
                       className={textareaClass}
                     />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1.5">Bu gruba hangi mesaj/kanıtla ulaşacaksınız? (transfer mesajı)</p>
+                    <p className="text-xs text-muted-foreground mb-1.5">{isEn ? "What message/evidence will you reach this group with? (transfer message)" : "Bu gruba hangi mesaj/kanıtla ulaşacaksınız? (transfer mesajı)"}</p>
                     <textarea
                       value={transferMessage[cat.key] ?? ""}
                       onChange={(e) => updateMessage(cat.key, e.target.value)}
-                      placeholder="Örn. akran kanıtı: benzer bir okulun elde ettiği somut sonuç"
+                      placeholder={isEn ? "E.g. peer evidence: a concrete result achieved by a similar school" : "Örn. akran kanıtı: benzer bir okulun elde ettiği somut sonuç"}
                       className={textareaClass}
                     />
                   </div>
@@ -103,14 +138,14 @@ export function AdopterSegmentationTool() {
         </div>
 
         <Card className="border-accent/40">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Adım 3 — Katılım (Onboarding) Akışı</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Step 3 — Onboarding Flow" : "Adım 3 — Katılım (Onboarding) Akışı"}</p>
           <p className="mb-2 text-xs text-muted-foreground">
-            Bir kurum/kişi projenizin sonuçlarını benimsemeye karar verdikten sonra hangi somut adımları izleyecek?
+            {isEn ? "Once an institution/person decides to adopt your project's results, what concrete steps will they follow?" : "Bir kurum/kişi projenizin sonuçlarını benimsemeye karar verdikten sonra hangi somut adımları izleyecek?"}
           </p>
           <textarea
             value={onboardingFlow}
             onChange={(e) => setOnboardingFlow(e.target.value)}
-            placeholder="Örn. tanıtım toplantısı → pilot uygulama → geri bildirim → tam benimseme"
+            placeholder={isEn ? "E.g. introductory meeting → pilot implementation → feedback → full adoption" : "Örn. tanıtım toplantısı → pilot uygulama → geri bildirim → tam benimseme"}
             className={`${textareaClass} min-h-[100px]`}
           />
         </Card>

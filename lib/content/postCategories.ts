@@ -10,6 +10,16 @@ export const POST_CATEGORY_LABELS: Record<string, string> = {
 
 export const POST_CATEGORIES = Object.keys(POST_CATEGORY_LABELS);
 
+export const POST_CATEGORY_LABELS_EN: Record<string, string> = {
+  YENI_CAGRI: "New Calls",
+  ULUSAL_AJANS: "National Agency News",
+  AVRUPA_KOMISYONU: "European Commission Announcements",
+  SALTO_YOUTH: "SALTO Youth",
+  SALTO_EDUCATION_TRAINING: "SALTO Education & Training",
+  ESC: "ESC",
+  GENEL: "General",
+};
+
 // SALTO Youth, SALTO Education & Training ve ESC, genel Haberler listesinden
 // ayrılıp kendi bağımsız sayfalarında (/salto-youth, /salto-egitim, /esc) gösterilir.
 export const SALTO_CATEGORIES = ["SALTO_YOUTH", "SALTO_EDUCATION_TRAINING"];

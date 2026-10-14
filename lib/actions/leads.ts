@@ -29,7 +29,14 @@ export async function submitConsultingLead(
   });
 
   if (!parsed.success) {
-    return { success: false, error: "Lütfen tüm zorunlu alanları doğru şekilde doldurun." };
+    const locale = formData.get("locale") === "en" ? "en" : "tr";
+    return {
+      success: false,
+      error:
+        locale === "en"
+          ? "Please fill in all required fields correctly."
+          : "Lütfen tüm zorunlu alanları doğru şekilde doldurun.",
+    };
   }
 
   await prisma.consultingLead.create({ data: parsed.data });

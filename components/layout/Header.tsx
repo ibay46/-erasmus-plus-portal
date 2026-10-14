@@ -5,98 +5,180 @@ import { Logo } from "@/components/layout/Logo";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { DesktopNav } from "@/components/layout/DesktopNav";
 import { SiteSearch } from "@/components/layout/SiteSearch";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import type { Locale } from "@/lib/i18n/locale";
 
-const NAV_GROUPS = [
-  {
-    label: "Haberler & Duyurular",
-    sections: [
-      {
-        items: [
-          { href: "/haberler", label: "Haberler", desc: "Yeni çağrılar ve duyurular" },
-          { href: "/ab-hibe-projeleri", label: "Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Projeler",
-    sections: [
-      {
-        items: [
-          { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },
-          { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
-          { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
-          { href: "/acik-cagrilar", label: "Açık Çağrılar", desc: "Hâlen başvuru kabul eden Ulusal Ajans çağrıları" },
-          { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
-          {
-            href: "/salto-egitim",
-            label: "SALTO Education & Training",
-            desc: "Okul, mesleki ve yetişkin eğitimi duyuruları",
-          },
-          { href: "/esc", label: "ESC", desc: "Avrupa Dayanışma Programı gönüllülük duyuruları" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Kaynaklar",
-    sections: [
-      {
-        items: [
-          { href: "/mevzuat", label: "Mevzuat", desc: "AB hibelerinin harcanmasına ilişkin resmî düzenlemeler" },
-          { href: "/yararli-linkler", label: "Yararlı Linkler", desc: "Resmi kaynaklar ve faydalı araçlara hızlı erişim" },
-          { href: "/sss", label: "Sıkça Sorulan Sorular", desc: "Başvuru, bütçe ve ortak bulma hakkında sık sorulan sorular" },
-          { href: "/terimler-sozlugu", label: "Terimler Sözlüğü", desc: "KA120, TCA, hareketlilik gibi terimlerin açıklamaları" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Araçlar & Akademi",
-    sections: [
-      {
-        items: [
-          { href: "/araclar", label: "Araçlar", desc: "Bütçe, takvim ve bildirim araçları" },
-          { href: "/akademi", label: "Erasmus Akademi", desc: "Üyelikle özel içerik ve eğitimler" },
-        ],
-      },
-    ],
-  },
-];
+const NAV_GROUPS_BY_LOCALE = {
+  tr: [
+    {
+      label: "Haberler & Duyurular",
+      sections: [
+        {
+          items: [
+            { href: "/haberler", label: "Haberler", desc: "Yeni çağrılar ve duyurular" },
+            { href: "/ab-hibe-projeleri", label: "Hibe Projeleri", desc: "AB hibe destekli proje haberleri" },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Projeler",
+      sections: [
+        {
+          items: [
+            { href: "/proje-turleri", label: "Proje Türleri", desc: "Eylem türlerine göre rehberler" },
+            { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi", desc: "Filtrelenebilir örnek proje arşivi" },
+            { href: "/proje-sonuclari", label: "Proje Sonuçları", desc: "Desteklenmeye hak kazanan projeler" },
+            { href: "/acik-cagrilar", label: "Açık Çağrılar", desc: "Hâlen başvuru kabul eden Ulusal Ajans çağrıları" },
+            { href: "/salto-youth", label: "SALTO Youth", desc: "Gençlik alanına yönelik SALTO duyuruları" },
+            {
+              href: "/salto-egitim",
+              label: "SALTO Education & Training",
+              desc: "Okul, mesleki ve yetişkin eğitimi duyuruları",
+            },
+            { href: "/esc", label: "ESC", desc: "Avrupa Dayanışma Programı gönüllülük duyuruları" },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Kaynaklar",
+      sections: [
+        {
+          items: [
+            { href: "/mevzuat", label: "Mevzuat", desc: "AB hibelerinin harcanmasına ilişkin resmî düzenlemeler" },
+            { href: "/yararli-linkler", label: "Yararlı Linkler", desc: "Resmi kaynaklar ve faydalı araçlara hızlı erişim" },
+            { href: "/sss", label: "Sıkça Sorulan Sorular", desc: "Başvuru, bütçe ve ortak bulma hakkında sık sorulan sorular" },
+            { href: "/terimler-sozlugu", label: "Terimler Sözlüğü", desc: "KA120, TCA, hareketlilik gibi terimlerin açıklamaları" },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Araçlar & Akademi",
+      sections: [
+        {
+          items: [
+            { href: "/araclar", label: "Araçlar", desc: "Bütçe, takvim ve bildirim araçları" },
+            { href: "/akademi", label: "Erasmus Akademi", desc: "Üyelikle özel içerik ve eğitimler" },
+          ],
+        },
+      ],
+    },
+  ],
+  en: [
+    {
+      label: "News & Announcements",
+      sections: [
+        {
+          items: [
+            { href: "/haberler", label: "News", desc: "New calls and announcements" },
+            { href: "/ab-hibe-projeleri", label: "Grant Projects", desc: "News on EU grant-funded projects" },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Projects",
+      sections: [
+        {
+          items: [
+            { href: "/proje-turleri", label: "Project Types", desc: "Guides by action type" },
+            { href: "/proje-kutuphanesi", label: "Project Library", desc: "Filterable archive of sample projects" },
+            { href: "/proje-sonuclari", label: "Project Results", desc: "Projects awarded funding" },
+            { href: "/acik-cagrilar", label: "Open Calls", desc: "National Agency calls currently accepting applications" },
+            { href: "/salto-youth", label: "SALTO Youth", desc: "SALTO announcements for the youth field" },
+            {
+              href: "/salto-egitim",
+              label: "SALTO Education & Training",
+              desc: "Announcements for school, VET and adult education",
+            },
+            { href: "/esc", label: "ESC", desc: "European Solidarity Corps volunteering announcements" },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Resources",
+      sections: [
+        {
+          items: [
+            { href: "/mevzuat", label: "Legislation", desc: "Official rules on spending EU grants" },
+            { href: "/yararli-linkler", label: "Useful Links", desc: "Quick access to official sources and useful tools" },
+            { href: "/sss", label: "FAQ", desc: "Frequently asked questions about applications, budget and partner search" },
+            { href: "/terimler-sozlugu", label: "Glossary", desc: "Explanations of terms like KA120, TCA, mobility" },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Tools & Academy",
+      sections: [
+        {
+          items: [
+            { href: "/araclar", label: "Tools", desc: "Budget, timeline and notification tools" },
+            { href: "/akademi", label: "Erasmus Academy", desc: "Membership-exclusive content and training" },
+          ],
+        },
+      ],
+    },
+  ],
+} as const;
 
-const NAV_SINGLE_LINKS = [{ href: "/danismanlik", label: "Danışmanlık" }];
+const SINGLE_LINKS_BY_LOCALE = {
+  tr: [{ href: "/danismanlik", label: "Danışmanlık" }],
+  en: [{ href: "/danismanlik", label: "Consulting" }],
+} as const;
 
-const MOBILE_NAV_LINKS = [
-  ...NAV_GROUPS.flatMap((group) =>
-    group.sections.flatMap((section) => section.items.map(({ href, label }) => ({ href, label })))
-  ),
-  ...NAV_SINGLE_LINKS,
-];
+function withLocalePrefix(href: string, locale: Locale) {
+  return locale === "en" ? `/en${href}` : href;
+}
 
-export async function Header() {
+export async function Header({ locale = "tr" }: { locale?: Locale } = {}) {
   const user = await getCurrentUser();
+  const navGroups = NAV_GROUPS_BY_LOCALE[locale].map((group) => ({
+    ...group,
+    sections: group.sections.map((section) => ({
+      ...section,
+      items: section.items.map((item) => ({ ...item, href: withLocalePrefix(item.href, locale) })),
+    })),
+  }));
+  const singleLinks = SINGLE_LINKS_BY_LOCALE[locale].map((link) => ({
+    ...link,
+    href: withLocalePrefix(link.href, locale),
+  }));
+  const mobileNavLinks = [
+    ...navGroups.flatMap((group) =>
+      group.sections.flatMap((section) => section.items.map(({ href, label }) => ({ href, label })))
+    ),
+    ...singleLinks,
+  ];
+  const accountHref = withLocalePrefix(user ? "/hesap" : "/giris", locale);
+  const accountLabel = locale === "en" ? (user ? "My Account" : "Sign In") : user ? "Hesabım" : "Giriş Yap";
 
   return (
     <header className="border-b border-border bg-background/85 backdrop-blur-md">
       <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-        <Logo />
+        <Logo locale={locale} />
 
-        <DesktopNav groups={NAV_GROUPS} singleLinks={NAV_SINGLE_LINKS} />
+        <DesktopNav groups={navGroups} singleLinks={singleLinks} />
 
         <div className="hidden lg:flex items-center gap-3">
           <SiteSearch />
           <Link
-            href={user ? "/hesap" : "/giris"}
+            href={accountHref}
             className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
           >
-            {user ? "Hesabım" : "Giriş Yap"}
+            {accountLabel}
           </Link>
+          <LanguageSwitcher locale={locale} />
           <ThemeToggle />
         </div>
 
-        <div className="flex items-center lg:hidden">
+        <div className="flex items-center gap-1 lg:hidden">
           <SiteSearch iconOnly />
-          <MobileNav navLinks={MOBILE_NAV_LINKS} isLoggedIn={Boolean(user)} />
+          <LanguageSwitcher locale={locale} compact />
+          <MobileNav navLinks={mobileNavLinks} isLoggedIn={Boolean(user)} locale={locale} />
         </div>
       </div>
     </header>

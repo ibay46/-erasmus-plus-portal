@@ -1,20 +1,28 @@
-import { FAQ_GROUPS } from "@/lib/content/faq";
+import { FAQ_GROUPS, FAQ_GROUPS_EN } from "@/lib/content/faq";
 import { Card } from "@/components/ui/Card";
 import { JsonLd } from "@/components/seo/JsonLd";
+import type { Locale } from "@/lib/i18n/locale";
 
 const DEFAULT_DISCLAIMER =
   "Bu sayfadaki bilgiler, son güncelleme tarihindeki resmi kaynaklara dayanmakta olup değişmiş olabilir. Bağlayıcı bilgi için resmi kaynaklar (ec.europa.eu, erasmus.eacea.eu) esas alınmalıdır. Bu sayfadaki bilgiler hukuki tavsiye niteliği taşımaz ve resmi başvuru belgesi olarak kullanılamaz.";
+
+const DEFAULT_DISCLAIMER_EN =
+  "The information on this page is based on official sources as of the last update and may have changed. Official sources (ec.europa.eu, erasmus.eacea.eu) should be treated as binding. The information on this page is not legal advice and cannot be used as an official application document.";
 
 // Belirli bir SSS kategorisini, sayfaya özel bir Sorumluluk Reddi uyarısıyla birlikte gösterir.
 // Araç/veri sayfalarının altına eklenen standart güven + SEO (FAQPage schema) bloğu.
 export function DisclaimerFaqSection({
   category,
-  disclaimer = DEFAULT_DISCLAIMER,
+  disclaimer,
+  locale = "tr",
 }: {
   category: string;
   disclaimer?: string;
+  locale?: Locale;
 }) {
-  const group = FAQ_GROUPS.find((g) => g.category === category);
+  const groups = locale === "en" ? FAQ_GROUPS_EN : FAQ_GROUPS;
+  const group = groups.find((g) => g.category === category);
+  const resolvedDisclaimer = disclaimer ?? (locale === "en" ? DEFAULT_DISCLAIMER_EN : DEFAULT_DISCLAIMER);
   if (!group) return null;
 
   const faqJsonLd = {
@@ -33,14 +41,14 @@ export function DisclaimerFaqSection({
 
       <Card className="border-accent-warm/30 bg-accent-warm/5">
         <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-accent-warm">
-          Güncellik ve Doğruluk Uyarısı
+          {locale === "en" ? "Accuracy & Currency Notice" : "Güncellik ve Doğruluk Uyarısı"}
         </h2>
-        <p className="text-sm text-muted-foreground">{disclaimer}</p>
+        <p className="text-sm text-muted-foreground">{resolvedDisclaimer}</p>
       </Card>
 
       <section>
         <h2 className="mb-4 text-sm font-mono font-semibold uppercase tracking-widest text-accent">
-          Sıkça Sorulan Sorular
+          {locale === "en" ? "Frequently Asked Questions" : "Sıkça Sorulan Sorular"}
         </h2>
         <div className="space-y-3">
           {group.items.map((item) => (

@@ -146,3 +146,133 @@ export const IMPACT_PHASES: ImpactPhase[] = [
     ],
   },
 ];
+
+export const IMPACT_PHASES_EN: ImpactPhase[] = [
+  {
+    title: "Phase 1: Grant Application",
+    description: "The stage where you lay the foundation of your project.",
+    color: "border-sky-300",
+    stages: [
+      {
+        title: "Stage 1: Define Your Impact Goal",
+        description: "Define the change you want to see as a result of your project.",
+        tool: {
+          title: "Problem Tree Analysis",
+          href: "/en/akademi/etki-yonetimi/problem-agaci",
+          description: "Map the root problem, its causes and effects with a tree diagram.",
+        },
+      },
+      {
+        title: "Stage 2: Build a Project Plan",
+        description: "Turn how you will reach your impact goal into something concrete.",
+        tool: {
+          title: "Project Plan Canvas",
+          href: "/en/akademi/etki-yonetimi/proje-plani-canvas",
+          description: "Plan milestones, activities, resources and the timeline on a single page.",
+        },
+      },
+      {
+        title: "Stage 3: Design the Change Mechanism",
+        description: "Instead of assuming impact will happen on its own, test in advance the barriers to behaviour change.",
+        tool: {
+          title: "Behaviour Change Design",
+          href: "/en/akademi/etki-yonetimi/davranis-degisimi-tasarimi",
+          description: "Use the COM-B framework (Capability, Opportunity, Motivation) to map barriers to the target behaviour and the intervention logic.",
+        },
+      },
+      {
+        title: "Stage 4: Plan Your Scale-Up Strategy",
+        description: "Instead of disseminating broadly, segment your target audience and design a tailored message for each group.",
+        tool: {
+          title: "Adopter Segmentation",
+          href: "/en/akademi/etki-yonetimi/benimseyen-segmentasyonu",
+          description: "Identify the five adopter groups using Rogers' Diffusion model and plan transfer messages.",
+        },
+      },
+      {
+        title: "Stage 5: Justify Cost-Effectiveness",
+        description: "Instead of just explaining the cost of implementation, show the broad social value delivered in return for the budget.",
+        tool: {
+          title: "Social Value Case",
+          href: "/en/akademi/etki-yonetimi/sosyal-deger-gerekcesi",
+          description: "Define qualitative Key Value Indicators (KVIs) and build a business case for evaluators using SROI logic.",
+        },
+      },
+    ],
+  },
+  {
+    title: "Phase 2: Project Implementation",
+    description: "The stage where your plans are put into practice.",
+    color: "border-rose-300",
+    stages: [
+      {
+        title: "Stage 1: Make Impact Measurable",
+        description: "Turn your broad impact goal into concrete, measurable targets.",
+        tool: {
+          title: "Impact Mind Map",
+          href: "/en/akademi/etki-yonetimi/etki-zihin-haritasi",
+          description: "Map an activity's milestones, medium- and long-term impacts, and indicators.",
+        },
+      },
+      {
+        title: "Stage 2: Monitor Impact",
+        description: "Regularly check whether you are progressing toward your goals.",
+        tool: {
+          title: "Micro Surveys",
+          href: "/en/akademi/etki-yonetimi/mikro-anketler",
+          description: "Short surveys for collecting real-time feedback from participants.",
+        },
+      },
+    ],
+  },
+  {
+    title: "Phase 3: Mid-Term Evaluation",
+    description: "The stage where you assess your halfway progress and make the necessary adjustments.",
+    color: "border-lime-300",
+    stages: [
+      {
+        title: "Stage 1: Review Impact",
+        description: "Assess how well you are progressing toward your impact goals.",
+        tool: {
+          title: "Most Significant Change (MSC)",
+          href: "/en/akademi/etki-yonetimi/en-onemli-degisim",
+          description: "A storytelling method that evaluates impact through participant stories.",
+        },
+      },
+      {
+        title: "Stage 2: Iterate",
+        description: "Based on your review, adjust the project to better fit its goals.",
+        tool: {
+          title: "After Action Review (AAR)",
+          href: "/en/akademi/etki-yonetimi/eylem-sonrasi-inceleme",
+          description: "A structured discussion focused on what worked, what didn't, and how to improve.",
+        },
+      },
+    ],
+  },
+  {
+    title: "Phase 4: Impact Reporting",
+    description: "The stage, as your project comes to an end, where you report results and learn from the experience.",
+    color: "border-amber-300",
+    stages: [
+      {
+        title: "Stage 1: External Reporting",
+        description: "Prepare a comprehensive report describing your achievements, challenges and impact indicators.",
+        tool: {
+          title: "Focus Group Interview",
+          href: "/en/akademi/etki-yonetimi/odak-grup-gorusmesi",
+          description: "A structured, in-depth interview with a small group of participants.",
+        },
+      },
+      {
+        title: "Stage 2: Enable Internal Learning",
+        description: "Evaluate the project within the team; what went well, what could be improved?",
+        tool: {
+          title: "Living Learnings Document",
+          href: "/en/akademi/etki-yonetimi/yasayan-ogrenimler-belgesi",
+          description: "A continuously updated, shared document recording the team's reflections and good practices.",
+        },
+      },
+    ],
+  },
+];

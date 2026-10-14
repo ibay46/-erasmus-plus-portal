@@ -1,6 +1,18 @@
 ﻿import { loginWithGoogle } from "@/lib/actions/auth";
+import type { Locale } from "@/lib/i18n/locale";
 
-export function GoogleSignInButton({ disabled = false }: { disabled?: boolean }) {
+const LABELS: Record<Locale, string> = {
+  tr: "Google ile Giriş Yap",
+  en: "Sign in with Google",
+};
+
+export function GoogleSignInButton({
+  disabled = false,
+  locale = "tr",
+}: {
+  disabled?: boolean;
+  locale?: Locale;
+}) {
   return (
     <form action={loginWithGoogle}>
       <button
@@ -26,7 +38,7 @@ export function GoogleSignInButton({ disabled = false }: { disabled?: boolean })
             d="M12 4.75c1.76 0 3.34.6 4.59 1.79l3.42-3.42C17.94 1.18 15.24 0 12 0 7.31 0 3.26 2.7 1.27 6.62l4 3.07C6.22 6.86 8.87 4.75 12 4.75z"
           />
         </svg>
-        Google ile Giriş Yap
+        {LABELS[locale]}
       </button>
     </form>
   );

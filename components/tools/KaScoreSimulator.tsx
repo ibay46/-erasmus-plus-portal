@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CRITERIA, type Criterion, type CriterionId } from "@/lib/ka-score/criteria";
+import type { Locale } from "@/lib/i18n/locale";
 
 // ─── styles ────────────────────────────────────────────────────────────────────
 
@@ -33,8 +34,9 @@ const CRITERION_STYLES: Record<
 
 // ─── element row ──────────────────────────────────────────────────────────────
 
-function ElementRow({ element }: { element: Criterion["elements"][number] }) {
+function ElementRow({ element, locale }: { element: Criterion["elements"][number]; locale: Locale }) {
   const [open, setOpen] = useState(false);
+  const isEn = locale === "en";
 
   return (
     <div className="border border-border rounded-lg overflow-hidden">
@@ -43,7 +45,9 @@ function ElementRow({ element }: { element: Criterion["elements"][number] }) {
         className="w-full flex items-start justify-between px-4 py-3 text-left bg-card hover:bg-muted/40 transition-colors gap-3"
         onClick={() => setOpen((o) => !o)}
       >
-        <span className="text-sm font-medium text-foreground leading-snug">{element.label}</span>
+        <span className="text-sm font-medium text-foreground leading-snug">
+          {isEn ? element.labelEn : element.label}
+        </span>
         <svg
           viewBox="0 0 20 20"
           fill="none"
@@ -60,15 +64,17 @@ function ElementRow({ element }: { element: Criterion["elements"][number] }) {
           {/* what evaluator looks for */}
           <div className="pt-3">
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
-              Değerlendirici Ne Arar?
+              {isEn ? "What Does the Evaluator Look For?" : "Değerlendirici Ne Arar?"}
             </p>
-            <p className="text-sm text-foreground leading-relaxed">{element.description}</p>
+            <p className="text-sm text-foreground leading-relaxed">
+              {isEn ? element.descriptionEn : element.description}
+            </p>
           </div>
 
           {/* form questions */}
           <div>
             <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-              İlgili Form Soruları
+              {isEn ? "Related Form Questions" : "İlgili Form Soruları"}
             </p>
             <ul className="space-y-2">
               {element.formQuestions.map((q, i) => (
@@ -78,7 +84,7 @@ function ElementRow({ element }: { element: Criterion["elements"][number] }) {
                   </p>
                   {q.note && (
                     <p className="text-xs text-muted-foreground mt-1 leading-snug">
-                      ↳ {q.note}
+                      ↳ {isEn ? q.noteEn ?? q.note : q.note}
                     </p>
                   )}
                 </li>
@@ -89,9 +95,11 @@ function ElementRow({ element }: { element: Criterion["elements"][number] }) {
           {/* tip */}
           <div className="rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 px-3 py-2.5">
             <p className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wide mb-1">
-              Değerlendirici Gözünden İpucu
+              {isEn ? "Tip From an Evaluator's Perspective" : "Değerlendirici Gözünden İpucu"}
             </p>
-            <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">{element.tip}</p>
+            <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+              {isEn ? element.tipEn : element.tip}
+            </p>
           </div>
         </div>
       )}
@@ -101,9 +109,10 @@ function ElementRow({ element }: { element: Criterion["elements"][number] }) {
 
 // ─── criterion panel ──────────────────────────────────────────────────────────
 
-function CriterionPanel({ criterion }: { criterion: Criterion }) {
+function CriterionPanel({ criterion, locale }: { criterion: Criterion; locale: Locale }) {
   const [open, setOpen] = useState(false);
   const s = CRITERION_STYLES[criterion.id];
+  const isEn = locale === "en";
 
   return (
     <div className={`border-2 ${s.accent} rounded-xl overflow-hidden`}>
@@ -114,16 +123,18 @@ function CriterionPanel({ criterion }: { criterion: Criterion }) {
       >
         <div className="flex items-center gap-3 min-w-0">
           <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0 ${s.badge}`}>
-            {criterion.maxScore} puan
+            {criterion.maxScore} {isEn ? "points" : "puan"}
           </span>
           <div className="min-w-0">
-            <p className="font-bold text-foreground">{criterion.label}</p>
-            <p className="text-xs text-muted-foreground">{criterion.labelEn}</p>
+            <p className="font-bold text-foreground">{isEn ? criterion.labelEn : criterion.label}</p>
+            {!isEn && <p className="text-xs text-muted-foreground">{criterion.labelEn}</p>}
           </div>
         </div>
         <div className="flex items-center gap-3 shrink-0 ml-3">
           <span className="text-xs text-muted-foreground hidden sm:inline">
-            Eşik: {criterion.threshold} puan · {criterion.elements.length} unsur
+            {isEn
+              ? `Threshold: ${criterion.threshold} points · ${criterion.elements.length} elements`
+              : `Eşik: ${criterion.threshold} puan · ${criterion.elements.length} unsur`}
           </span>
           <svg
             viewBox="0 0 20 20"
@@ -146,13 +157,14 @@ function CriterionPanel({ criterion }: { criterion: Criterion }) {
                 <path d="M10 9v4M10 14.5v.5" />
               </svg>
               <p className="text-xs text-red-700 dark:text-red-300 leading-relaxed">
-                <strong>Kritik:</strong> {criterion.criticalNote}
+                <strong>{isEn ? "Critical:" : "Kritik:"}</strong>{" "}
+                {isEn ? criterion.criticalNoteEn : criterion.criticalNote}
               </p>
             </div>
           )}
           <div className="space-y-2">
             {criterion.elements.map((el) => (
-              <ElementRow key={el.id} element={el} />
+              <ElementRow key={el.id} element={el} locale={locale} />
             ))}
           </div>
         </div>
@@ -163,7 +175,9 @@ function CriterionPanel({ criterion }: { criterion: Criterion }) {
 
 // ─── main ─────────────────────────────────────────────────────────────────────
 
-export default function KaScoreSimulator() {
+export default function KaScoreSimulator({ locale = "tr" }: { locale?: Locale } = {}) {
+  const isEn = locale === "en";
+
   return (
     <div className="space-y-4">
       {/* legend */}
@@ -175,9 +189,9 @@ export default function KaScoreSimulator() {
               key={c.id}
               className={`rounded-lg border px-3 py-2 ${s.badge} border-transparent`}
             >
-              <p className="text-xs font-semibold">{c.label}</p>
+              <p className="text-xs font-semibold">{isEn ? c.labelEn : c.label}</p>
               <p className="text-[10px] opacity-70 mt-0.5">
-                {c.maxScore} puan · eşik {c.threshold}
+                {isEn ? `${c.maxScore} points · threshold ${c.threshold}` : `${c.maxScore} puan · eşik ${c.threshold}`}
               </p>
             </div>
           );
@@ -185,47 +199,84 @@ export default function KaScoreSimulator() {
       </div>
 
       {/* puan özeti */}
-      <div className="bg-muted/30 border border-border rounded-xl px-4 py-3 text-sm text-muted-foreground leading-relaxed">
-        Toplam <strong className="text-foreground">100 puan</strong> üzerinden değerlendirme yapılır.
-        Geçme koşulları: <strong className="text-foreground">toplam ≥ 60</strong> VE her kriterden
-        eşik puanı veya üzeri almak. Her kriter kartını genişletin, alt unsurları ve ilgili form
-        sorularını inceleyin.
-      </div>
+      {isEn ? (
+        <div className="bg-muted/30 border border-border rounded-xl px-4 py-3 text-sm text-muted-foreground leading-relaxed">
+          The assessment is scored out of a total of <strong className="text-foreground">100 points</strong>.
+          Passing conditions: <strong className="text-foreground">total ≥ 60</strong> AND meeting the
+          threshold on every criterion. Expand each criterion card to review its sub-elements and the
+          related form questions.
+        </div>
+      ) : (
+        <div className="bg-muted/30 border border-border rounded-xl px-4 py-3 text-sm text-muted-foreground leading-relaxed">
+          Toplam <strong className="text-foreground">100 puan</strong> üzerinden değerlendirme yapılır.
+          Geçme koşulları: <strong className="text-foreground">toplam ≥ 60</strong> VE her kriterden
+          eşik puanı veya üzeri almak. Her kriter kartını genişletin, alt unsurları ve ilgili form
+          sorularını inceleyin.
+        </div>
+      )}
 
       {/* criterion panels */}
       <div className="space-y-3">
         {CRITERIA.map((c) => (
-          <CriterionPanel key={c.id} criterion={c} />
+          <CriterionPanel key={c.id} criterion={c} locale={locale} />
         ))}
       </div>
 
       {/* puanlanmayan bölümler */}
-      <div className="border border-border rounded-xl px-4 py-3 text-xs text-muted-foreground space-y-1.5">
-        <p className="font-semibold text-foreground text-sm">Puanlanmayan Form Bölümleri</p>
-        <ul className="space-y-1 mt-1">
-          <li>
-            <strong>Context</strong> (başlık, süre, lump sum, NA seçimi) — uygunluk/eligibility
-            kontrolü; ancak süre ve lump sum, Tasarım c) unsurundaki orantılılık değerlendirmesine
-            zemin oluşturur.
-          </li>
-          <li>
-            <strong>Project summary</strong> (Objectives / Implementation / Results) — puanlanmaz
-            ama değerlendiricinin okuduğu ilk metindir; ilk izlenimi belirler.
-          </li>
-          <li>
-            <strong>Application conditions</strong> (EU sanctions, Original content, Data
-            protection) — uygunluk beyanı; yalnızca EU values kısmı Uygunluk b) unsuruna dokunur.
-          </li>
-          <li>
-            <strong>Annexes</strong> (Declaration on Honour, Accession forms) — idari şart, puan
-            dışı.
-          </li>
-        </ul>
-      </div>
+      {isEn ? (
+        <div className="border border-border rounded-xl px-4 py-3 text-xs text-muted-foreground space-y-1.5">
+          <p className="font-semibold text-foreground text-sm">Unscored Form Sections</p>
+          <ul className="space-y-1 mt-1">
+            <li>
+              <strong>Context</strong> (title, duration, lump sum, NA selection) — an
+              eligibility check; however, duration and lump sum feed into the proportionality
+              assessment under Design element c).
+            </li>
+            <li>
+              <strong>Project summary</strong> (Objectives / Implementation / Results) — not
+              scored, but it's the first text the evaluator reads, so it shapes the first
+              impression.
+            </li>
+            <li>
+              <strong>Application conditions</strong> (EU sanctions, Original content, Data
+              protection) — an eligibility declaration; only the EU values part touches Relevance
+              element b).
+            </li>
+            <li>
+              <strong>Annexes</strong> (Declaration on Honour, Accession forms) — an
+              administrative requirement, not scored.
+            </li>
+          </ul>
+        </div>
+      ) : (
+        <div className="border border-border rounded-xl px-4 py-3 text-xs text-muted-foreground space-y-1.5">
+          <p className="font-semibold text-foreground text-sm">Puanlanmayan Form Bölümleri</p>
+          <ul className="space-y-1 mt-1">
+            <li>
+              <strong>Context</strong> (başlık, süre, lump sum, NA seçimi) — uygunluk/eligibility
+              kontrolü; ancak süre ve lump sum, Tasarım c) unsurundaki orantılılık değerlendirmesine
+              zemin oluşturur.
+            </li>
+            <li>
+              <strong>Project summary</strong> (Objectives / Implementation / Results) — puanlanmaz
+              ama değerlendiricinin okuduğu ilk metindir; ilk izlenimi belirler.
+            </li>
+            <li>
+              <strong>Application conditions</strong> (EU sanctions, Original content, Data
+              protection) — uygunluk beyanı; yalnızca EU values kısmı Uygunluk b) unsuruna dokunur.
+            </li>
+            <li>
+              <strong>Annexes</strong> (Declaration on Honour, Accession forms) — idari şart, puan
+              dışı.
+            </li>
+          </ul>
+        </div>
+      )}
 
       <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-        Kaynak: Guide for Experts on Quality Assessment 2026, KA210 bölümü (s. 58-64). Bu rehber
-        bilgi amaçlıdır; gerçek değerlendirme bağımsız uzmanlar tarafından yapılır.
+        {isEn
+          ? "Source: Guide for Experts on Quality Assessment 2026, KA210 section (p. 58-64). This guide is for informational purposes; the actual assessment is carried out by independent experts."
+          : "Kaynak: Guide for Experts on Quality Assessment 2026, KA210 bölümü (s. 58-64). Bu rehber bilgi amaçlıdır; gerçek değerlendirme bağımsız uzmanlar tarafından yapılır."}
       </p>
     </div>
   );

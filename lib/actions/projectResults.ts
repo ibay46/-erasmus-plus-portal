@@ -16,6 +16,10 @@ const projectResultSchema = z.object({
   sectors: z.string().min(1),
   summary: z.string().min(10),
   body: z.string().min(10),
+  titleEn: z.string().nullable(),
+  countryEn: z.string().nullable(),
+  summaryEn: z.string().nullable(),
+  bodyEn: z.string().nullable(),
   published: z.boolean(),
   coverImage: z.string().nullable(),
 });
@@ -32,6 +36,10 @@ function parseProjectResultForm(formData: FormData) {
     sectors: sectorsArray.join(","),
     summary: formData.get("summary"),
     body: formData.get("body"),
+    titleEn: formData.get("titleEn") || null,
+    countryEn: formData.get("countryEn") || null,
+    summaryEn: formData.get("summaryEn") || null,
+    bodyEn: formData.get("bodyEn") || null,
     published: formData.get("published") === "on",
     coverImage: formData.get("coverImage") || null,
   });

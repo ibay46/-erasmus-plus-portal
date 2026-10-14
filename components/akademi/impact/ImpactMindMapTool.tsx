@@ -6,7 +6,8 @@ import { ToolPdfBar } from "./ToolPdfBar";
 import { inputClass } from "./sharedStyles";
 import { DynamicList, type ListItem } from "./DynamicList";
 
-export function ImpactMindMapTool() {
+export function ImpactMindMapTool({ locale = "tr" }: { locale?: "tr" | "en" }) {
+  const isEn = locale === "en";
   const reactId = useId();
   const [activity, setActivity] = useState("");
   const [milestones, setMilestones] = useState<ListItem[]>([
@@ -29,40 +30,55 @@ export function ImpactMindMapTool() {
 
   return (
     <div>
-      <ToolPdfBar />
+      <ToolPdfBar locale={locale} />
       <div className="space-y-6">
         <Card className="border-accent/40">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Adım 1 — Faaliyet</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Step 1 — Activity" : "Adım 1 — Faaliyet"}</p>
           <input
             value={activity}
             onChange={(e) => setActivity(e.target.value)}
-            placeholder="Analiz edilecek faaliyeti tanımlayın (örn. 3 dijital okuryazarlık çalıştayı)"
+            placeholder={
+              isEn
+                ? "Define the activity to be analysed (e.g. 3 digital literacy workshops)"
+                : "Analiz edilecek faaliyeti tanımlayın (örn. 3 dijital okuryazarlık çalıştayı)"
+            }
             className={inputClass}
           />
         </Card>
 
         <Card>
           <p className="text-xs font-medium text-muted-foreground mb-2">
-            Adım 2 — Kilometre Taşları (faaliyetin doğrudan/anlık etkileri)
+            {isEn
+              ? "Step 2 — Milestones (the activity's direct/immediate effects)"
+              : "Adım 2 — Kilometre Taşları (faaliyetin doğrudan/anlık etkileri)"}
           </p>
-          <DynamicList items={milestones} onChange={setMilestones} placeholder="Bu faaliyetin anlık etkisi nedir?" />
+          <DynamicList
+            items={milestones}
+            onChange={setMilestones}
+            placeholder={isEn ? "What is the immediate effect of this activity?" : "Bu faaliyetin anlık etkisi nedir?"}
+            locale={locale}
+          />
         </Card>
 
         <Card>
           <p className="text-xs font-medium text-muted-foreground mb-2">
-            Adım 3 — Orta Vadeli Etkiler (her kilometre taşının olumlu/olumsuz, beklenen/beklenmeyen etkileri)
+            {isEn
+              ? "Step 3 — Medium-Term Impacts (positive/negative, expected/unexpected effects of each milestone)"
+              : "Adım 3 — Orta Vadeli Etkiler (her kilometre taşının olumlu/olumsuz, beklenen/beklenmeyen etkileri)"}
           </p>
-          <DynamicList items={midTerm} onChange={setMidTerm} placeholder="Orta vadeli etki" />
+          <DynamicList items={midTerm} onChange={setMidTerm} placeholder={isEn ? "Medium-term impact" : "Orta vadeli etki"} locale={locale} />
         </Card>
 
         <Card>
-          <p className="text-xs font-medium text-muted-foreground mb-2">Adım 4 — Uzun Vadeli Etkiler</p>
-          <DynamicList items={longTerm} onChange={setLongTerm} placeholder="Uzun vadeli etki" />
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Step 4 — Long-Term Impacts" : "Adım 4 — Uzun Vadeli Etkiler"}</p>
+          <DynamicList items={longTerm} onChange={setLongTerm} placeholder={isEn ? "Long-term impact" : "Uzun vadeli etki"} locale={locale} />
         </Card>
 
         <Card>
           <p className="text-xs font-medium text-muted-foreground mb-2">
-            Adım 5 — Gizli Etkiler — Farklı dallarda tekrar eden veya sürpriz temalar var mı?
+            {isEn
+              ? "Step 5 — Hidden Effects — Are there recurring or surprising themes across different branches?"
+              : "Adım 5 — Gizli Etkiler — Farklı dallarda tekrar eden veya sürpriz temalar var mı?"}
           </p>
           <textarea
             value={hiddenEffects}
@@ -73,9 +89,11 @@ export function ImpactMindMapTool() {
 
         <Card className="border-accent/40">
           <p className="text-xs font-medium text-muted-foreground mb-2">
-            Adım 6 — Göstergeler — En çok umut bağladığınız uzun vadeli etkiler için niceliksel/niteliksel göstergeler
+            {isEn
+              ? "Step 6 — Indicators — Quantitative/qualitative indicators for the long-term impacts you're most hopeful about"
+              : "Adım 6 — Göstergeler — En çok umut bağladığınız uzun vadeli etkiler için niceliksel/niteliksel göstergeler"}
           </p>
-          <DynamicList items={indicators} onChange={setIndicators} placeholder="Gösterge" />
+          <DynamicList items={indicators} onChange={setIndicators} placeholder={isEn ? "Indicator" : "Gösterge"} locale={locale} />
         </Card>
       </div>
     </div>

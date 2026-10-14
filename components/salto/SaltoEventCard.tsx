@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Post } from "@/app/generated/prisma/client";
 import { EVENT_SYMBOL_LABELS } from "@/lib/content/eventSymbols";
 import { ACTIVITY_TYPE_LABELS } from "@/lib/content/activityTypes";
+import { localizePost } from "@/lib/i18n/localize";
+import type { Locale } from "@/lib/i18n/locale";
 
 const SECTOR_COLORS: Record<string, string> = {
   SE: "bg-violet-600",
@@ -32,11 +34,16 @@ function OnlineIcon() {
   );
 }
 
-function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+function formatDate(date: Date, locale: Locale) {
+  return new Date(date).toLocaleDateString(locale === "en" ? "en-GB" : "tr-TR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
 
-export function SaltoEventCard({ post }: { post: Post }) {
+export function SaltoEventCard({ post: rawPost, locale = "tr" }: { post: Post; locale?: Locale }) {
+  const post = localizePost(rawPost, locale);
   const sectors = post.eventSectors.split(",").filter(Boolean);
   const symbols = post.eventSymbols.split(",").filter(Boolean);
   const isYouth = post.category === "SALTO_YOUTH";
@@ -74,7 +81,7 @@ export function SaltoEventCard({ post }: { post: Post }) {
           <p>
             <span className="font-medium text-foreground">{isYouth ? "Activity date: " : "Event date: "}</span>
             <span className="text-muted-foreground">
-              {formatDate(post.eventStartDate)} - {formatDate(post.eventEndDate)}
+              {formatDate(post.eventStartDate, locale)} - {formatDate(post.eventEndDate, locale)}
             </span>
           </p>
         )}
@@ -112,8 +119,8 @@ export function SaltoEventCard({ post }: { post: Post }) {
             <span className="font-medium text-foreground">Application deadline: </span>
             <span className="text-muted-foreground">
               {post.eventApplicationDeadlineEnd
-                ? `${formatDate(post.eventApplicationDeadline)} - ${formatDate(post.eventApplicationDeadlineEnd)}`
-                : formatDate(post.eventApplicationDeadline)}
+                ? `${formatDate(post.eventApplicationDeadline, locale)} - ${formatDate(post.eventApplicationDeadlineEnd, locale)}`
+                : formatDate(post.eventApplicationDeadline, locale)}
             </span>
           </p>
         )}
@@ -121,7 +128,7 @@ export function SaltoEventCard({ post }: { post: Post }) {
         {post.eventSelectionDate && (
           <p>
             <span className="font-medium text-foreground">Date of selection: </span>
-            <span className="text-muted-foreground">{formatDate(post.eventSelectionDate)}</span>
+            <span className="text-muted-foreground">{formatDate(post.eventSelectionDate, locale)}</span>
           </p>
         )}
 
@@ -155,10 +162,10 @@ export function SaltoEventCard({ post }: { post: Post }) {
 
         <div className="mt-auto flex justify-end pt-3">
           <Link
-            href={`/haberler/${post.slug}`}
+            href={locale === "en" ? `/en/haberler/${post.slug}` : `/haberler/${post.slug}`}
             className="cursor-pointer rounded-full border border-accent-warm px-4 py-1.5 text-sm font-medium text-accent-warm transition-colors duration-200 hover:bg-accent-warm hover:text-white"
           >
-            Görüntüle
+            {locale === "en" ? "View" : "Görüntüle"}
           </Link>
         </div>
       </div>

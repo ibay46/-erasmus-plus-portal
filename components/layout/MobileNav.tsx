@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import type { Locale } from "@/lib/i18n/locale";
 
 interface NavLink {
   href: string;
@@ -12,17 +13,21 @@ interface NavLink {
 export function MobileNav({
   navLinks,
   isLoggedIn,
+  locale = "tr",
 }: {
   navLinks: NavLink[];
   isLoggedIn: boolean;
+  locale?: Locale;
 }) {
   const [open, setOpen] = useState(false);
+  const accountHref = locale === "en" ? (isLoggedIn ? "/en/hesap" : "/en/giris") : isLoggedIn ? "/hesap" : "/giris";
+  const accountLabel = locale === "en" ? (isLoggedIn ? "My Account" : "Sign In") : isLoggedIn ? "Hesabım" : "Giriş Yap";
 
   return (
     <div className="lg:hidden">
       <button
         type="button"
-        aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
+        aria-label={open ? (locale === "en" ? "Close menu" : "Menüyü kapat") : locale === "en" ? "Open menu" : "Menüyü aç"}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className="cursor-pointer flex h-11 w-11 items-center justify-center rounded-md text-foreground transition-colors duration-200 hover:bg-muted"
@@ -52,11 +57,11 @@ export function MobileNav({
           </nav>
           <div className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
             <Link
-              href={isLoggedIn ? "/hesap" : "/giris"}
+              href={accountHref}
               onClick={() => setOpen(false)}
               className="cursor-pointer text-sm font-medium text-foreground"
             >
-              {isLoggedIn ? "Hesabım" : "Giriş Yap"}
+              {accountLabel}
             </Link>
             <ThemeToggle />
           </div>

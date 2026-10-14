@@ -16,13 +16,14 @@ function emptyRow(id: string, category: string): LearningRow {
   return { id, category, subcategory: "", description: "", recommendation: "" };
 }
 
-export function LivingLearningsTool() {
+export function LivingLearningsTool({ locale = "tr" }: { locale?: "tr" | "en" }) {
+  const isEn = locale === "en";
   const reactId = useId();
   const [problemRows, setProblemRows] = useState<LearningRow[]>([
-    emptyRow(`${reactId}-p1`, "Sorunlar / Problemler"),
+    emptyRow(`${reactId}-p1`, isEn ? "Problems / Issues" : "Sorunlar / Problemler"),
   ]);
   const [successRows, setSuccessRows] = useState<LearningRow[]>([
-    emptyRow(`${reactId}-s1`, "Başarılar"),
+    emptyRow(`${reactId}-s1`, isEn ? "Achievements" : "Başarılar"),
   ]);
 
   function renderTable(
@@ -51,17 +52,17 @@ export function LivingLearningsTool() {
             onClick={addRow}
             className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
           >
-            + Satır Ekle
+            {isEn ? "+ Add Row" : "+ Satır Ekle"}
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="border-collapse text-sm w-full">
             <thead>
               <tr>
-                <th className="border border-border p-2 bg-muted text-left w-32">Alt Kategori</th>
+                <th className="border border-border p-2 bg-muted text-left w-32">{isEn ? "Subcategory" : "Alt Kategori"}</th>
                 <th className="border border-border p-2 bg-muted text-left">{descriptionLabel}</th>
-                <th className="border border-border p-2 bg-muted text-left">Öneri</th>
-                <th className="border border-border p-2 bg-muted print:hidden">Sil</th>
+                <th className="border border-border p-2 bg-muted text-left">{isEn ? "Recommendation" : "Öneri"}</th>
+                <th className="border border-border p-2 bg-muted print:hidden">{isEn ? "Delete" : "Sil"}</th>
               </tr>
             </thead>
             <tbody>
@@ -71,7 +72,7 @@ export function LivingLearningsTool() {
                     <input
                       value={row.subcategory}
                       onChange={(e) => update(row.id, { subcategory: e.target.value })}
-                      placeholder="Örn. İletişim, Ekip Çalışması"
+                      placeholder={isEn ? "E.g. Communication, Teamwork" : "Örn. İletişim, Ekip Çalışması"}
                       className="w-full bg-transparent outline-none text-foreground text-sm focus:ring-1 focus:ring-accent/50 rounded-sm print:border-none print:focus:ring-0"
                     />
                   </td>
@@ -96,7 +97,7 @@ export function LivingLearningsTool() {
                       disabled={rows.length <= 1}
                       className="cursor-pointer text-red-600 text-xs disabled:opacity-40"
                     >
-                      Sil
+                      {isEn ? "Delete" : "Sil"}
                     </button>
                   </td>
                 </tr>
@@ -110,10 +111,14 @@ export function LivingLearningsTool() {
 
   return (
     <div>
-      <ToolPdfBar />
+      <ToolPdfBar locale={locale} />
       <div className="space-y-6">
-        {renderTable("CATEGORY — Proje Sırasındaki Sorunlar", problemRows, setProblemRows, "Sorun", "Sorunlar / Problemler")}
-        {renderTable("CATEGORY — Başarılar", successRows, setSuccessRows, "Başarı", "Başarılar")}
+        {isEn
+          ? renderTable("CATEGORY — Issues During the Project", problemRows, setProblemRows, "Problem", "Problems / Issues")
+          : renderTable("CATEGORY — Proje Sırasındaki Sorunlar", problemRows, setProblemRows, "Sorun", "Sorunlar / Problemler")}
+        {isEn
+          ? renderTable("CATEGORY — Achievements", successRows, setSuccessRows, "Achievement", "Achievements")
+          : renderTable("CATEGORY — Başarılar", successRows, setSuccessRows, "Başarı", "Başarılar")}
       </div>
     </div>
   );

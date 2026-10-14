@@ -51,6 +51,10 @@ export function ProjectResultFormFields({
     sectors: string;
     summary: string;
     body: string;
+    titleEn?: string | null;
+    countryEn?: string | null;
+    summaryEn?: string | null;
+    bodyEn?: string | null;
     published: boolean;
     coverImage?: string | null;
   };
@@ -163,6 +167,35 @@ export function ProjectResultFormFields({
         <label className="block text-sm font-medium mb-1 text-foreground">Detaylı İçerik</label>
         <RichTextEditor name="body" defaultValue={defaultValues?.body} />
       </div>
+
+      <div className="space-y-4 rounded-lg border border-border p-4">
+        <p className="text-sm font-medium text-foreground">
+          English Content <span className="font-normal text-muted-foreground">(/en sayfası için, opsiyonel — boş bırakılırsa Türkçe metin gösterilir)</span>
+        </p>
+        <div>
+          <label htmlFor="titleEn" className="block text-sm font-medium mb-1 text-foreground">
+            Title (English)
+          </label>
+          <input id="titleEn" name="titleEn" defaultValue={defaultValues?.titleEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="countryEn" className="block text-sm font-medium mb-1 text-foreground">
+            Country (English) <span className="text-muted-foreground">— örn. Türkiye → Turkey</span>
+          </label>
+          <input id="countryEn" name="countryEn" defaultValue={defaultValues?.countryEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="summaryEn" className="block text-sm font-medium mb-1 text-foreground">
+            Summary (English)
+          </label>
+          <textarea id="summaryEn" name="summaryEn" rows={3} defaultValue={defaultValues?.summaryEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-foreground">Body (English)</label>
+          <RichTextEditor name="bodyEn" defaultValue={defaultValues?.bodyEn ?? ""} />
+        </div>
+      </div>
+
       <div className="flex items-center gap-2">
         <input
           id="published"

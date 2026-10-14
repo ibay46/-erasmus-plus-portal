@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { inputClass, textareaClass } from "@/components/akademi/impact/sharedStyles";
 import {
   IDEA_WIZARD_STEPS,
+  IDEA_WIZARD_STEPS_EN,
   resolveFieldOptions,
   PARTNER_ACTIVITY_PLAN_STEP_KEY,
   type IdeaWizardStepConfig,
@@ -36,14 +37,19 @@ export function IdeaWizard({
   sessionId,
   sessionTitle,
   initialAnswers,
+  locale = "tr",
 }: {
   sessionId: string;
   sessionTitle: string;
   initialAnswers: Record<string, { input: Record<string, string>; output: string }>;
+  locale?: "tr" | "en";
 }) {
+  const isEn = locale === "en";
+  const steps = isEn ? IDEA_WIZARD_STEPS_EN : IDEA_WIZARD_STEPS;
+
   const [stepStates, setStepStates] = useState<StepStates>(() => {
     const states: StepStates = {};
-    for (const step of IDEA_WIZARD_STEPS) {
+    for (const step of steps) {
       const saved = initialAnswers[step.key];
       states[step.key] = saved
         ? { formValues: saved.input, output: saved.output }
@@ -52,8 +58,8 @@ export function IdeaWizard({
     return states;
   });
 
-  const firstIncomplete = IDEA_WIZARD_STEPS.findIndex((s) => !stepStates[s.key].output);
-  const [currentIndex, setCurrentIndex] = useState(firstIncomplete === -1 ? IDEA_WIZARD_STEPS.length - 1 : firstIncomplete);
+  const firstIncomplete = steps.findIndex((s) => !stepStates[s.key].output);
+  const [currentIndex, setCurrentIndex] = useState(firstIncomplete === -1 ? steps.length - 1 : firstIncomplete);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -61,7 +67,7 @@ export function IdeaWizard({
   const [titleSaved, setTitleSaved] = useState(true);
   const router = useRouter();
 
-  const step = IDEA_WIZARD_STEPS[currentIndex];
+  const step = steps[currentIndex];
   const state = stepStates[step.key];
 
   function updateStepState(stepKey: string, patch: Partial<StepState>) {
@@ -82,7 +88,7 @@ export function IdeaWizard({
       body: JSON.stringify({ sessionId, stepKey: step.key, input: state.formValues, action, output }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error ?? "Bir hata oluştu. Lütfen tekrar deneyin.");
+    if (!res.ok) throw new Error(data.error ?? (isEn ? "Something went wrong. Please try again." : "Bir hata oluştu. Lütfen tekrar deneyin."));
     return data as { output: string; applicationFormSessionId?: string };
   }
 
@@ -93,7 +99,7 @@ export function IdeaWizard({
       const data = await callApi("generate");
       updateStepState(step.key, { output: data.output });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Bağlantı hatası. Lütfen tekrar deneyin.");
+      setError(err instanceof Error ? err.message : (isEn ? "Connection error. Please try again." : "Bağlantı hatası. Lütfen tekrar deneyin."));
     } finally {
       setLoading(false);
     }
@@ -108,12 +114,14 @@ export function IdeaWizard({
     try {
       const data = await callApi("save", outputToSave);
       if (data.applicationFormSessionId) {
-        router.push(`/akademi/proje-gelistirme/basvuru-formu-asistani/${data.applicationFormSessionId}`);
-      } else if (currentIndex < IDEA_WIZARD_STEPS.length - 1) {
+        router.push(
+          `${isEn ? "/en" : ""}/akademi/proje-gelistirme/basvuru-formu-asistani/${data.applicationFormSessionId}`
+        );
+      } else if (currentIndex < steps.length - 1) {
         setCurrentIndex(currentIndex + 1);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Kaydedilemedi. Lütfen tekrar deneyin.");
+      setError(err instanceof Error ? err.message : (isEn ? "Could not save. Please try again." : "Kaydedilemedi. Lütfen tekrar deneyin."));
     } finally {
       setSaving(false);
     }
@@ -125,7 +133,7 @@ export function IdeaWizard({
   }
 
   function buildExportSections() {
-    return IDEA_WIZARD_STEPS.filter((s) => s.key !== PARTNER_ACTIVITY_PLAN_STEP_KEY).map((s) => ({
+    return steps.filter((s) => s.key !== PARTNER_ACTIVITY_PLAN_STEP_KEY).map((s) => ({
       title: s.title,
       content: stepStates[s.key].output,
     }));
@@ -161,13 +169,13 @@ export function IdeaWizard({
             onClick={handleSaveTitle}
             className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
           >
-            Başlığı Kaydet
+            {isEn ? "Save Title" : "Başlığı Kaydet"}
           </button>
         )}
       </div>
 
       <ol className="mb-8 flex flex-wrap gap-2">
-        {IDEA_WIZARD_STEPS.map((s, i) => {
+        {steps.map((s, i) => {
           const done = Boolean(stepStates[s.key].output);
           const active = i === currentIndex;
           return (
@@ -242,7 +250,11 @@ export function IdeaWizard({
             disabled={loading || !requiredFieldsFilled}
             className="cursor-pointer mb-5 inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Üretiliyor…" : state.output ? "AI'dan Tekrar Üret" : "AI'dan Öneri Al"}
+            {loading
+              ? isEn ? "Generating…" : "Üretiliyor…"
+              : state.output
+                ? isEn ? "Regenerate with AI" : "AI'dan Tekrar Üret"
+                : isEn ? "Get AI Suggestion" : "AI'dan Öneri Al"}
           </button>
         )}
 
@@ -255,12 +267,12 @@ export function IdeaWizard({
         {step.requiresAi && (
           <label className="block mb-5">
             <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              AI Çıktısı (düzenleyebilirsiniz)
+              {isEn ? "AI Output (you can edit this)" : "AI Çıktısı (düzenleyebilirsiniz)"}
             </span>
             <textarea
               value={state.output}
               onChange={(e) => updateStepState(step.key, { output: e.target.value })}
-              placeholder="AI'dan öneri almak için yukarıdaki düğmeyi kullanın."
+              placeholder={isEn ? "Use the button above to get an AI suggestion." : "AI'dan öneri almak için yukarıdaki düğmeyi kullanın."}
               className={`${textareaClass} min-h-[220px] font-mono text-[13px]`}
             />
           </label>
@@ -273,7 +285,11 @@ export function IdeaWizard({
             disabled={saving || !canContinue}
             className="cursor-pointer inline-flex items-center rounded-lg border border-accent px-5 py-2.5 text-sm font-semibold text-accent transition-colors duration-200 hover:bg-accent/10 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {saving ? "Kaydediliyor…" : currentIndex < IDEA_WIZARD_STEPS.length - 1 ? "Kaydet ve Devam Et" : "Kaydet"}
+            {saving
+              ? isEn ? "Saving…" : "Kaydediliyor…"
+              : currentIndex < steps.length - 1
+                ? isEn ? "Save and Continue" : "Kaydet ve Devam Et"
+                : isEn ? "Save" : "Kaydet"}
           </button>
           {currentIndex > 0 && (
             <button
@@ -281,7 +297,7 @@ export function IdeaWizard({
               onClick={() => setCurrentIndex(currentIndex - 1)}
               className="cursor-pointer text-sm text-muted-foreground hover:text-foreground"
             >
-              ← Önceki Adım
+              {isEn ? "← Previous Step" : "← Önceki Adım"}
             </button>
           )}
         </div>
@@ -289,9 +305,11 @@ export function IdeaWizard({
 
       {stepStates["konsept-not"]?.output && (
         <Card className="mt-6">
-          <h3 className="mb-2 font-medium text-foreground">Konsept Notunu Dışa Aktar</h3>
+          <h3 className="mb-2 font-medium text-foreground">{isEn ? "Export Concept Note" : "Konsept Notunu Dışa Aktar"}</h3>
           <p className="mb-3 text-sm text-muted-foreground">
-            Tüm adımlarınızı tek bir belgede PDF veya Word (.docx) olarak indirin.
+            {isEn
+              ? "Download all your steps as a single PDF or Word (.docx) document."
+              : "Tüm adımlarınızı tek bir belgede PDF veya Word (.docx) olarak indirin."}
           </p>
           <div className="flex gap-3">
             <button
@@ -299,14 +317,14 @@ export function IdeaWizard({
               onClick={handleExportPdf}
               className="cursor-pointer inline-flex items-center rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              PDF İndir
+              {isEn ? "Download PDF" : "PDF İndir"}
             </button>
             <button
               type="button"
               onClick={handleExportDocx}
               className="cursor-pointer inline-flex items-center rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              Word (.docx) İndir
+              {isEn ? "Download Word (.docx)" : "Word (.docx) İndir"}
             </button>
           </div>
         </Card>

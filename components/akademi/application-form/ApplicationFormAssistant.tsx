@@ -23,14 +23,14 @@ function key(questionId: string, instanceIndex: number): string {
   return `${questionId}:${instanceIndex}`;
 }
 
-async function callApi(body: Record<string, unknown>) {
+async function callApi(body: Record<string, unknown>, isEn: boolean) {
   const res = await fetch("/api/basvuru-formu-asistani", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.error ?? "Bir hata oluştu. Lütfen tekrar deneyin.");
+  if (!res.ok) throw new Error(data.error ?? (isEn ? "Something went wrong. Please try again." : "Bir hata oluştu. Lütfen tekrar deneyin."));
   return data;
 }
 
@@ -87,6 +87,7 @@ function QuestionCard({
   onGenerate,
   refinementNote,
   onRefinementNoteChange,
+  isEn,
 }: {
   question: ApplicationFormQuestion;
   instanceIndex: number;
@@ -97,17 +98,18 @@ function QuestionCard({
   onGenerate: () => void;
   refinementNote: string;
   onRefinementNoteChange: (v: string) => void;
+  isEn: boolean;
 }) {
   const { maxChars, bilingual } = question;
   const overLimit = !bilingual && maxChars !== undefined && value.length > maxChars;
   const hasNote = refinementNote.trim().length > 0;
   const generateLabel = loading
-    ? "Üretiliyor…"
+    ? isEn ? "Generating…" : "Üretiliyor…"
     : !value
-      ? "AI'dan Öneri Al"
+      ? isEn ? "Get AI Suggestion" : "AI'dan Öneri Al"
       : hasNote
-        ? "Talimatla Güncelle"
-        : "AI'dan Tekrar Üret";
+        ? isEn ? "Update with Instruction" : "Talimatla Güncelle"
+        : isEn ? "Regenerate with AI" : "AI'dan Tekrar Üret";
   return (
     <Card>
       <p className="mb-0.5 text-sm font-medium text-foreground">{question.text}</p>
@@ -117,7 +119,11 @@ function QuestionCard({
         <input
           value={refinementNote}
           onChange={(e) => onRefinementNoteChange(e.target.value)}
-          placeholder="Ek talimat (opsiyonel) — örn. &quot;ayrıca X'i de ekle&quot;, &quot;bunu kısalt&quot;"
+          placeholder={
+            isEn
+              ? 'Extra instruction (optional) — e.g. "also add X", "shorten this"'
+              : "Ek talimat (opsiyonel) — örn. &quot;ayrıca X'i de ekle&quot;, &quot;bunu kısalt&quot;"
+          }
           className={`${inputClass} mb-2 text-xs`}
         />
       )}
@@ -133,19 +139,24 @@ function QuestionCard({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={onBlurSave}
-        placeholder="AI'dan öneri almak için yukarıdaki düğmeyi kullanın veya doğrudan yazın."
+        placeholder={
+          isEn
+            ? "Use the button above to get an AI suggestion, or type directly."
+            : "AI'dan öneri almak için yukarıdaki düğmeyi kullanın veya doğrudan yazın."
+        }
         className={`${textareaClass} min-h-[120px] font-mono text-[13px]`}
       />
       {bilingual ? (
         <p className="mt-1.5 text-xs text-muted-foreground">
-          {value.length} karakter · Türkçe ve İngilizce üretilir, karakter sınırı ({maxChars}) her iki bölüme de
-          ayrı ayrı uygulanır.
+          {isEn
+            ? `${value.length} characters · Generated in Turkish and English, the character limit (${maxChars}) applies separately to each part.`
+            : `${value.length} karakter · Türkçe ve İngilizce üretilir, karakter sınırı (${maxChars}) her iki bölüme de ayrı ayrı uygulanır.`}
         </p>
       ) : (
         <p className={`mt-1.5 text-right text-xs ${overLimit ? "font-semibold text-red-600 dark:text-red-400" : "text-muted-foreground"}`}>
           {value.length}
-          {maxChars !== undefined ? ` / ${maxChars}` : ""} karakter (boşluk dahil)
-          {overLimit && " — gerçek formun sınırını aşıyor"}
+          {maxChars !== undefined ? ` / ${maxChars}` : ""} {isEn ? "characters (including spaces)" : "karakter (boşluk dahil)"}
+          {overLimit && (isEn ? " — exceeds the real form's limit" : " — gerçek formun sınırını aşıyor")}
         </p>
       )}
     </Card>
@@ -161,6 +172,7 @@ export function ApplicationFormAssistant({
   kurulusSayisi,
   initialAnswers,
   initialDenetimOutput,
+  locale = "tr",
 }: {
   sessionId: string;
   sessionTitle: string;
@@ -170,7 +182,9 @@ export function ApplicationFormAssistant({
   kurulusSayisi: number;
   initialAnswers: Record<string, string>;
   initialDenetimOutput: string;
+  locale?: "tr" | "en";
 }) {
+  const isEn = locale === "en";
   const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers);
   const [refinementNotes, setRefinementNotes] = useState<Record<string, string>>({});
   const [loadingKeys, setLoadingKeys] = useState<Set<string>>(new Set());
@@ -224,11 +238,11 @@ export function ApplicationFormAssistant({
     setLoading(k, true);
     setError(null);
     try {
-      const data = await callApi({ sessionId, action: "generate", questionId, instanceIndex, refinementNote });
+      const data = await callApi({ sessionId, action: "generate", questionId, instanceIndex, refinementNote }, isEn);
       setAnswers((prev) => ({ ...prev, [k]: data.answer }));
       if (refinementNote) setRefinementNotes((prev) => ({ ...prev, [k]: "" }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Bağlantı hatası.");
+      setError(err instanceof Error ? err.message : (isEn ? "Connection error." : "Bağlantı hatası."));
     } finally {
       setLoading(k, false);
     }
@@ -237,18 +251,18 @@ export function ApplicationFormAssistant({
   async function handleSave(questionId: string, instanceIndex: number) {
     const k = key(questionId, instanceIndex);
     try {
-      await callApi({ sessionId, action: "save", questionId, instanceIndex, answer: answers[k] ?? "" });
+      await callApi({ sessionId, action: "save", questionId, instanceIndex, answer: answers[k] ?? "" }, isEn);
     } catch {
-      // sessiz geç — kullanıcı yazmaya devam edebilir, bir sonraki blur'da tekrar dener
+      // fail silently — the user can keep typing, it retries on the next blur
     }
   }
 
   async function handleSaveOrgInfo(instanceIndex: number) {
     const k = key(ORG_INFO_KEY_PREFIX, instanceIndex);
     try {
-      await callApi({ sessionId, action: "save-org-info", instanceIndex, orgInfo: answers[k] ?? "" });
+      await callApi({ sessionId, action: "save-org-info", instanceIndex, orgInfo: answers[k] ?? "" }, isEn);
     } catch {
-      // sessiz geç
+      // fail silently
     }
   }
 
@@ -256,10 +270,10 @@ export function ApplicationFormAssistant({
     setDenetimLoading(true);
     setError(null);
     try {
-      const data = await callApi({ sessionId, action: "denetim" });
+      const data = await callApi({ sessionId, action: "denetim" }, isEn);
       setDenetimOutput(data.output);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Bağlantı hatası.");
+      setError(err instanceof Error ? err.message : (isEn ? "Connection error." : "Bağlantı hatası."));
     } finally {
       setDenetimLoading(false);
     }
@@ -287,15 +301,26 @@ export function ApplicationFormAssistant({
             onClick={handleSaveTitle}
             className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
           >
-            Başlığı Kaydet
+            {isEn ? "Save Title" : "Başlığı Kaydet"}
           </button>
         )}
       </div>
 
       <p className="mb-8 text-sm text-muted-foreground">
-        {answeredCount} / {totalQuestions} soru cevaplandı · {ulusotesiSayisi} ulusötesi · {yerelSayisi} yerel ·{" "}
-        {yonetimYayginSayisi > 0 ? "1 yönetim/yaygınlaştırma · " : ""}
-        {kurulusSayisi} kuruluş
+        {isEn ? (
+          <>
+            {answeredCount} / {totalQuestions} questions answered · {ulusotesiSayisi} transnational ·{" "}
+            {yerelSayisi} local ·{" "}
+            {yonetimYayginSayisi > 0 ? "1 management/dissemination · " : ""}
+            {kurulusSayisi} organisations
+          </>
+        ) : (
+          <>
+            {answeredCount} / {totalQuestions} soru cevaplandı · {ulusotesiSayisi} ulusötesi · {yerelSayisi} yerel ·{" "}
+            {yonetimYayginSayisi > 0 ? "1 yönetim/yaygınlaştırma · " : ""}
+            {kurulusSayisi} kuruluş
+          </>
+        )}
       </p>
 
       {error && (
@@ -305,11 +330,9 @@ export function ApplicationFormAssistant({
       )}
 
       <p className="mb-8 text-xs text-muted-foreground">
-        Sekmeler, gerçek KA210-SCH başvuru formunun (EU Funding &amp; Tender Portal) kendi bölümleriyle
-        aynı sırada. Her soru için önce resmi İngilizce metin, altında Türkçe karşılığı gösterilir — cevaplar
-        Türkçe üretilir (Project Summary hariç, o hem Türkçe hem İngilizce üretilir); forma geçirmeden önce
-        kendiniz İngilizce&apos;ye çevirin. Sırayla doldurmak zorunda değilsiniz; genel/özet sorular
-        ürettiğinizde AI, o ana kadar doldurduğunuz faaliyet ve kuruluş cevaplarını da otomatik dikkate alır.
+        {isEn
+          ? "The tabs follow the same order as the real KA210-SCH application form's own sections (EU Funding & Tender Portal). For each question, the official English text is shown first, with its Turkish counterpart below — answers are generated in Turkish (except for Project Summary, which is generated in both Turkish and English); you translate them into English yourself before transferring them into the form. You don't have to fill them in order; when you generate a general/summary question, the AI automatically takes into account the activity and organisation answers you've filled in so far."
+          : "Sekmeler, gerçek KA210-SCH başvuru formunun (EU Funding & Tender Portal) kendi bölümleriyle aynı sırada. Her soru için önce resmi İngilizce metin, altında Türkçe karşılığı gösterilir — cevaplar Türkçe üretilir (Project Summary hariç, o hem Türkçe hem İngilizce üretilir); forma geçirmeden önce kendiniz İngilizce'ye çevirin. Sırayla doldurmak zorunda değilsiniz; genel/özet sorular ürettiğinizde AI, o ana kadar doldurduğunuz faaliyet ve kuruluş cevaplarını da otomatik dikkate alır."}
       </p>
 
       <div className="space-y-4">
@@ -341,6 +364,7 @@ export function ApplicationFormAssistant({
                       onGenerate={() => handleGenerate(q.id, 0)}
                       refinementNote={refinementNotes[k] ?? ""}
                       onRefinementNoteChange={(v) => setRefinementNotes((prev) => ({ ...prev, [k]: v }))}
+                      isEn={isEn}
                     />
                   );
                 })}
@@ -364,8 +388,8 @@ export function ApplicationFormAssistant({
               title={ACTIVITY_TYPE_LABELS[activityType]}
               subtitle={
                 activityType === "management"
-                  ? "Ayrı bir bütçe kalemi."
-                  : "Her faaliyet için ayrı bir sekme olarak tekrarlanır."
+                  ? isEn ? "A separate budget line." : "Ayrı bir bütçe kalemi."
+                  : isEn ? "Repeated as a separate tab for each activity." : "Her faaliyet için ayrı bir sekme olarak tekrarlanır."
               }
               badge={`${answeredInType}/${PER_ACTIVITY_QUESTIONS.length * count}`}
               isOpen={openSections.has(activityType)}
@@ -394,6 +418,7 @@ export function ApplicationFormAssistant({
                               onGenerate={() => handleGenerate(q.id, storedIndex)}
                               refinementNote={refinementNotes[k] ?? ""}
                               onRefinementNoteChange={(v) => setRefinementNotes((prev) => ({ ...prev, [k]: v }))}
+                              isEn={isEn}
                             />
                           );
                         })}
@@ -409,7 +434,11 @@ export function ApplicationFormAssistant({
         <AccordionSection
           sectionKey="Organisation Profile"
           title="Organisation Profile"
-          subtitle="Başvuran dahil her kuruluş için önce kısa bir kuruluş bilgisi girin — AI sadece bu bilgileri kullanır, detay uydurmaz."
+          subtitle={
+            isEn
+              ? "For each organisation, including the applicant, first enter a short organisation profile — AI only uses this information and doesn't invent details."
+              : "Başvuran dahil her kuruluş için önce kısa bir kuruluş bilgisi girin — AI sadece bu bilgileri kullanır, detay uydurmaz."
+          }
           badge={`${orgAnswered}/${PER_PARTNER_QUESTIONS.length * kurulusSayisi}`}
           isOpen={openSections.has("Organisation Profile")}
           onToggle={toggleSection}
@@ -420,17 +449,21 @@ export function ApplicationFormAssistant({
               return (
                 <div key={partnerIndex}>
                   <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-accent-warm">
-                    Kuruluş {partnerIndex + 1} {partnerIndex === 0 && "(Başvuran)"}
+                    {isEn ? "Organisation" : "Kuruluş"} {partnerIndex + 1} {partnerIndex === 0 && (isEn ? "(Applicant)" : "(Başvuran)")}
                   </h3>
                   <Card className="mb-4 border-accent-warm/40">
                     <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Kuruluş Bilgisi (AI bunu kullanır, kendisi uydurmaz)
+                      {isEn ? "Organisation Information (AI uses this, it doesn't invent its own)" : "Kuruluş Bilgisi (AI bunu kullanır, kendisi uydurmaz)"}
                     </p>
                     <textarea
                       value={answers[orgKey] ?? ""}
                       onChange={(e) => setAnswers((prev) => ({ ...prev, [orgKey]: e.target.value }))}
                       onBlur={() => handleSaveOrgInfo(partnerIndex)}
-                      placeholder="Örn. Kuruluş adı, türü, kaç yıldır bu alanda çalıştığı, hedef kitleye erişimi, daha önceki Erasmus+ deneyimi..."
+                      placeholder={
+                        isEn
+                          ? "E.g. Organisation name, type, how many years it has worked in this field, access to the target group, previous Erasmus+ experience..."
+                          : "Örn. Kuruluş adı, türü, kaç yıldır bu alanda çalıştığı, hedef kitleye erişimi, daha önceki Erasmus+ deneyimi..."
+                      }
                       className={`${textareaClass} min-h-[80px]`}
                     />
                   </Card>
@@ -449,6 +482,7 @@ export function ApplicationFormAssistant({
                           onGenerate={() => handleGenerate(q.id, partnerIndex)}
                           refinementNote={refinementNotes[k] ?? ""}
                           onRefinementNoteChange={(v) => setRefinementNotes((prev) => ({ ...prev, [k]: v }))}
+                          isEn={isEn}
                         />
                       );
                     })}
@@ -461,13 +495,14 @@ export function ApplicationFormAssistant({
 
         <AccordionSection
           sectionKey="Denetim"
-          title="Denetim"
+          title={isEn ? "Review" : "Denetim"}
           isOpen={openSections.has("Denetim")}
           onToggle={toggleSection}
         >
           <p className="mb-4 text-sm text-muted-foreground">
-            Tüm cevaplarınızı gerçek bir KA210 değerlendiricisi gibi puanlar; zayıf noktaları ve düzeltme
-            planını gösterir. Sorularınızı doldurdukça tekrar çalıştırıp puanınızın yükseldiğini görebilirsiniz.
+            {isEn
+              ? "Scores all your answers like a real KA210 evaluator would, showing weak points and a correction plan. You can re-run it as you fill in your questions and watch your score rise."
+              : "Tüm cevaplarınızı gerçek bir KA210 değerlendiricisi gibi puanlar; zayıf noktaları ve düzeltme planını gösterir. Sorularınızı doldurdukça tekrar çalıştırıp puanınızın yükseldiğini görebilirsiniz."}
           </p>
           <button
             type="button"
@@ -475,7 +510,11 @@ export function ApplicationFormAssistant({
             disabled={denetimLoading || answeredCount === 0}
             className="cursor-pointer mb-4 inline-flex items-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {denetimLoading ? "Denetleniyor…" : denetimOutput ? "Tekrar Denetle" : "Denetimi Başlat"}
+            {denetimLoading
+              ? isEn ? "Reviewing…" : "Denetleniyor…"
+              : denetimOutput
+                ? isEn ? "Review Again" : "Tekrar Denetle"
+                : isEn ? "Start Review" : "Denetimi Başlat"}
           </button>
           {denetimOutput && (
             <textarea

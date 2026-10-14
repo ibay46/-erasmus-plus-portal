@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type ExcelJS from "exceljs";
 import { Card } from "@/components/ui/Card";
+import type { Locale } from "@/lib/i18n/locale";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -27,6 +28,11 @@ const MONTH_NAMES_TR = [
   "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
 ];
 
+const MONTH_NAMES_EN = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
 interface PlannedOutput {
   id: string;
   title: string;
@@ -47,8 +53,8 @@ interface MonthBlock {
   days: DayEntry[];
 }
 
-function daysInMonth(monthName: string, year: number) {
-  const idx = MONTH_NAMES_TR.indexOf(monthName);
+function daysInMonth(monthNames: string[], monthName: string, year: number) {
+  const idx = monthNames.indexOf(monthName);
   if (idx === -1) return 30;
   return new Date(year, idx + 1, 0).getDate();
 }
@@ -57,11 +63,13 @@ function buildDayEntries(count: number, previous: DayEntry[] = []): DayEntry[] {
   return Array.from({ length: count }, (_, i) => previous[i] ?? { output: "", activity: "", task: "", days: 0 });
 }
 
-function formatEur(value: number) {
-  return `${(value || 0).toLocaleString("tr-TR", { maximumFractionDigits: 2 })} €`;
+function formatEur(value: number, isEn: boolean) {
+  return `${(value || 0).toLocaleString(isEn ? "en-GB" : "tr-TR", { maximumFractionDigits: 2 })} €`;
 }
 
-export function Ka220PersonelZamanCizelgesi() {
+export function Ka220PersonelZamanCizelgesi({ locale = "tr" }: { locale?: Locale } = {}) {
+  const isEn = locale === "en";
+  const MONTH_NAMES = isEn ? MONTH_NAMES_EN : MONTH_NAMES_TR;
   const [projectNo, setProjectNo] = useState("");
   const [projectTitle, setProjectTitle] = useState("");
   const [institution, setInstitution] = useState("");
@@ -77,9 +85,9 @@ export function Ka220PersonelZamanCizelgesi() {
   const [months, setMonths] = useState<MonthBlock[]>([
     {
       id: "m-1",
-      month: MONTH_NAMES_TR[now.getMonth()],
+      month: MONTH_NAMES[now.getMonth()],
       year: now.getFullYear(),
-      days: buildDayEntries(daysInMonth(MONTH_NAMES_TR[now.getMonth()], now.getFullYear())),
+      days: buildDayEntries(daysInMonth(MONTH_NAMES, MONTH_NAMES[now.getMonth()], now.getFullYear())),
     },
   ]);
 
@@ -99,18 +107,18 @@ export function Ka220PersonelZamanCizelgesi() {
       let nextMonthIdx = now.getMonth();
       let nextYear = now.getFullYear();
       if (last) {
-        const idx = MONTH_NAMES_TR.indexOf(last.month);
+        const idx = MONTH_NAMES.indexOf(last.month);
         nextMonthIdx = (idx + 1) % 12;
         nextYear = idx === 11 ? last.year + 1 : last.year;
       }
-      const month = MONTH_NAMES_TR[nextMonthIdx];
+      const month = MONTH_NAMES[nextMonthIdx];
       return [
         ...prev,
         {
           id: `m-${Date.now()}`,
           month,
           year: nextYear,
-          days: buildDayEntries(daysInMonth(month, nextYear)),
+          days: buildDayEntries(daysInMonth(MONTH_NAMES, month, nextYear)),
         },
       ];
     });
@@ -121,7 +129,7 @@ export function Ka220PersonelZamanCizelgesi() {
       prev.map((m) => {
         if (m.id !== id) return m;
         const merged = { ...m, ...patch };
-        const count = daysInMonth(merged.month, merged.year);
+        const count = daysInMonth(MONTH_NAMES, merged.month, merged.year);
         return { ...merged, days: buildDayEntries(count, m.days) };
       })
     );
@@ -164,26 +172,39 @@ export function Ka220PersonelZamanCizelgesi() {
       right: { style: "thin" },
     };
 
-    const ozet = workbook.addWorksheet("Özet");
+    const ozet = workbook.addWorksheet(isEn ? "Summary" : "Özet");
     ozet.getColumn(1).width = 30;
     ozet.getColumn(2).width = 40;
 
     ozet.mergeCells("A1:B1");
-    ozet.getCell("A1").value = "KA220-SCH Personel Zaman Çizelgesi (Timesheet)";
+    ozet.getCell("A1").value = isEn
+      ? "KA220-SCH Staff Timesheet"
+      : "KA220-SCH Personel Zaman Çizelgesi (Timesheet)";
     ozet.getCell("A1").font = { bold: true, size: 14 };
 
     ozet.mergeCells("A2:B2");
-    ozet.getCell("A2").value = "Proje Sonuçları Hibe Kalemi Destekleyici Belgesi";
+    ozet.getCell("A2").value = isEn
+      ? "Supporting Document for the ‘Project Results’ Grant Item"
+      : "Proje Sonuçları Hibe Kalemi Destekleyici Belgesi";
     ozet.getCell("A2").font = { italic: true, color: { argb: "FF595959" } };
 
-    const infoRows: [string, string][] = [
-      ["Proje No:", projectNo],
-      ["Proje Adı / Akronim:", projectTitle],
-      ["Yararlanıcı Kurum:", institution],
-      ["Personel Adı Soyadı:", staffName],
-      ["Personel Kategorisi *:", staffCategory],
-      ["Günlük Birim Maliyet (€) **:", String(dailyRate)],
-    ];
+    const infoRows: [string, string][] = isEn
+      ? [
+          ["Project No:", projectNo],
+          ["Project Name / Acronym:", projectTitle],
+          ["Beneficiary Institution:", institution],
+          ["Staff Full Name:", staffName],
+          ["Staff Category *:", staffCategory],
+          ["Daily Unit Cost (€) **:", String(dailyRate)],
+        ]
+      : [
+          ["Proje No:", projectNo],
+          ["Proje Adı / Akronim:", projectTitle],
+          ["Yararlanıcı Kurum:", institution],
+          ["Personel Adı Soyadı:", staffName],
+          ["Personel Kategorisi *:", staffCategory],
+          ["Günlük Birim Maliyet (€) **:", String(dailyRate)],
+        ];
     infoRows.forEach(([label, value], i) => {
       const row = 4 + i;
       ozet.getCell(row, 1).value = label;
@@ -193,10 +214,10 @@ export function Ka220PersonelZamanCizelgesi() {
 
     let row = 11;
     ozet.mergeCells(`A${row}:C${row}`);
-    ozet.getCell(row, 1).value = "Çıktı Bazında Planlanan Gün Sayısı";
+    ozet.getCell(row, 1).value = isEn ? "Planned Days by Output" : "Çıktı Bazında Planlanan Gün Sayısı";
     ozet.getCell(row, 1).font = { bold: true };
     row += 1;
-    ["Çıktı / İş Paketi", "Planlanan Gün"].forEach((h, i) => {
+    (isEn ? ["Output / Work Package", "Planned Days"] : ["Çıktı / İş Paketi", "Planlanan Gün"]).forEach((h, i) => {
       const cell = ozet.getCell(row, i + 1);
       cell.value = h;
       cell.font = headerFont;
@@ -211,35 +232,37 @@ export function Ka220PersonelZamanCizelgesi() {
       ozet.getCell(row, 2).border = thinBorder;
       row += 1;
     });
-    ozet.getCell(row, 1).value = "Toplam Planlanan Gün:";
+    ozet.getCell(row, 1).value = isEn ? "Total Planned Days:" : "Toplam Planlanan Gün:";
     ozet.getCell(row, 1).font = { bold: true };
     ozet.getCell(row, 2).value = totalPlannedDays;
     row += 2;
 
-    ozet.getCell(row, 1).value = "Toplam Gerçekleşen Gün:";
+    ozet.getCell(row, 1).value = isEn ? "Total Days Worked:" : "Toplam Gerçekleşen Gün:";
     ozet.getCell(row, 1).font = { bold: true };
     ozet.getCell(row, 2).value = totalWorkedDays;
     row += 1;
-    ozet.getCell(row, 1).value = "Toplam Hak Edilen Tutar (€):";
+    ozet.getCell(row, 1).value = isEn ? "Total Amount Earned (€):" : "Toplam Hak Edilen Tutar (€):";
     ozet.getCell(row, 1).font = { bold: true };
     ozet.getCell(row, 2).value = totalAmount;
     row += 2;
 
-    ozet.getCell(row, 1).value = "Personel İmzası:";
+    ozet.getCell(row, 1).value = isEn ? "Staff Signature:" : "Personel İmzası:";
     ozet.getCell(row, 1).font = { bold: true };
-    ozet.getCell(row, 3).value = "Proje Koordinatörü İmzası:";
+    ozet.getCell(row, 3).value = isEn ? "Project Coordinator Signature:" : "Proje Koordinatörü İmzası:";
     ozet.getCell(row, 3).font = { bold: true };
     row += 3;
 
     ozet.mergeCells(`A${row}:D${row}`);
-    ozet.getCell(row, 1).value =
-      "* Kategoriler: Manager; Teacher, trainer, educator or youth worker; Technician; Administrative staff — kişinin unvanına değil, projedeki işlevine göre seçilir.";
+    ozet.getCell(row, 1).value = isEn
+      ? "* Categories: Manager; Teacher, trainer, educator or youth worker; Technician; Administrative staff — chosen according to the person’s function in the project, not their job title."
+      : "* Kategoriler: Manager; Teacher, trainer, educator or youth worker; Technician; Administrative staff — kişinin unvanına değil, projedeki işlevine göre seçilir.";
     ozet.getCell(row, 1).font = noteFont;
     ozet.getCell(row, 1).alignment = { wrapText: true };
     row += 1;
     ozet.mergeCells(`A${row}:D${row}`);
-    ozet.getCell(row, 1).value =
-      "** Bu tutar kurum tarafından belirlenmez; hibe sözleşmenizin Ek IV (Geçerli Oranlar) bölümünden veya ilgili çağrı yılının Erasmus+ Program Rehberi Annex III tablosundan alınmalıdır.";
+    ozet.getCell(row, 1).value = isEn
+      ? "** This amount is not determined by the institution; it must be taken from Annex IV (Applicable Rates) of your grant agreement or the Annex III table of the Erasmus+ Programme Guide for the relevant call year."
+      : "** Bu tutar kurum tarafından belirlenmez; hibe sözleşmenizin Ek IV (Geçerli Oranlar) bölümünden veya ilgili çağrı yılının Erasmus+ Program Rehberi Annex III tablosundan alınmalıdır.";
     ozet.getCell(row, 1).font = noteFont;
     ozet.getCell(row, 1).alignment = { wrapText: true };
 
@@ -252,14 +275,23 @@ export function Ka220PersonelZamanCizelgesi() {
       sheet.getColumn(4).width = 34;
       sheet.getColumn(5).width = 12;
 
-      const meta: [string, string][] = [
-        ["Proje Adı:", projectTitle],
-        ["Kurum Adı:", institution],
-        ["Personel Adı:", staffName],
-        ["Personel Kategorisi:", staffCategory],
-        ["Günlük Birim Maliyet (€):", String(dailyRate)],
-        ["Dönem:", `${block.month} ${block.year}`],
-      ];
+      const meta: [string, string][] = isEn
+        ? [
+            ["Project Name:", projectTitle],
+            ["Institution Name:", institution],
+            ["Staff Name:", staffName],
+            ["Staff Category:", staffCategory],
+            ["Daily Unit Cost (€):", String(dailyRate)],
+            ["Period:", `${block.month} ${block.year}`],
+          ]
+        : [
+            ["Proje Adı:", projectTitle],
+            ["Kurum Adı:", institution],
+            ["Personel Adı:", staffName],
+            ["Personel Kategorisi:", staffCategory],
+            ["Günlük Birim Maliyet (€):", String(dailyRate)],
+            ["Dönem:", `${block.month} ${block.year}`],
+          ];
       meta.forEach(([label, value], i) => {
         sheet.getCell(i + 1, 1).value = label;
         sheet.getCell(i + 1, 1).font = { bold: true };
@@ -267,7 +299,10 @@ export function Ka220PersonelZamanCizelgesi() {
       });
 
       const headerRow = 8;
-      ["Gün", "Çıktı", "Faaliyet", "Yapılan Görev", "Gün Sayısı"].forEach((h, i) => {
+      (isEn
+        ? ["Day", "Output", "Activity", "Task Performed", "Days"]
+        : ["Gün", "Çıktı", "Faaliyet", "Yapılan Görev", "Gün Sayısı"]
+      ).forEach((h, i) => {
         const cell = sheet.getCell(headerRow, i + 1);
         cell.value = h;
         cell.font = headerFont;
@@ -287,7 +322,7 @@ export function Ka220PersonelZamanCizelgesi() {
       });
 
       const totalRow = headerRow + 1 + block.days.length;
-      sheet.getCell(totalRow, 4).value = "Toplam Gün:";
+      sheet.getCell(totalRow, 4).value = isEn ? "Total Days:" : "Toplam Gün:";
       sheet.getCell(totalRow, 4).font = { bold: true };
       sheet.getCell(totalRow, 5).value = {
         formula: `SUM(E${headerRow + 1}:E${headerRow + block.days.length})`,
@@ -296,14 +331,15 @@ export function Ka220PersonelZamanCizelgesi() {
 
       const noteRow = totalRow + 2;
       sheet.mergeCells(noteRow, 1, noteRow, 5);
-      sheet.getCell(noteRow, 1).value =
-        "Kategoriler: Manager; Teacher, trainer, educator or youth worker; Technician; Administrative staff";
+      sheet.getCell(noteRow, 1).value = isEn
+        ? "Categories: Manager; Teacher, trainer, educator or youth worker; Technician; Administrative staff"
+        : "Kategoriler: Manager; Teacher, trainer, educator or youth worker; Technician; Administrative staff";
       sheet.getCell(noteRow, 1).font = noteFont;
 
       const sigRow = noteRow + 2;
-      sheet.getCell(sigRow, 1).value = "Personel İmzası:";
+      sheet.getCell(sigRow, 1).value = isEn ? "Staff Signature:" : "Personel İmzası:";
       sheet.getCell(sigRow, 1).font = { bold: true };
-      sheet.getCell(sigRow, 4).value = "Proje Koordinatörü İmzası:";
+      sheet.getCell(sigRow, 4).value = isEn ? "Project Coordinator Signature:" : "Proje Koordinatörü İmzası:";
       sheet.getCell(sigRow, 4).font = { bold: true };
     });
 
@@ -312,7 +348,9 @@ export function Ka220PersonelZamanCizelgesi() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${projectTitle || "proje"}-personel-zaman-cizelgesi.xlsx`;
+    link.download = isEn
+      ? `${projectTitle || "project"}-staff-timesheet.xlsx`
+      : `${projectTitle || "proje"}-personel-zaman-cizelgesi.xlsx`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -321,45 +359,56 @@ export function Ka220PersonelZamanCizelgesi() {
     <div>
       <div className="flex items-center justify-between mb-6 print:hidden gap-4">
         <p className="text-sm text-muted-foreground max-w-xl">
-          Günlük birim maliyeti kurumunuz belirlemez; hibe sözleşmenizin Ek IV&apos;ünden veya ilgili çağrı
-          yılının Program Rehberi Annex III tablosundan alın.
+          {isEn
+            ? "The daily unit cost is not set by your institution; take it from Annex IV of your grant agreement or the Annex III table of the relevant call year's Programme Guide."
+            : "Günlük birim maliyeti kurumunuz belirlemez; hibe sözleşmenizin Ek IV’ünden veya ilgili çağrı yılının Program Rehberi Annex III tablosundan alın."}
         </p>
         <div className="flex gap-2 shrink-0">
           <button type="button" onClick={exportToExcel} className={secondaryButtonClass}>
-            Excel&apos;e Aktar
+            {isEn ? "Export to Excel" : "Excel’e Aktar"}
           </button>
           <button
             type="button"
             onClick={() => window.print()}
             className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
           >
-            PDF Olarak İndir
+            {isEn ? "Download as PDF" : "PDF Olarak İndir"}
           </button>
         </div>
       </div>
 
       <div className="space-y-6 print:flex print:flex-col print:gap-6 print:space-y-0">
         <Card className="print:hidden">
-          <h2 className="font-medium mb-4 text-foreground">Proje ve Personel Bilgileri</h2>
+          <h2 className="font-medium mb-4 text-foreground">
+            {isEn ? "Project and Staff Information" : "Proje ve Personel Bilgileri"}
+          </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Proje No</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">{isEn ? "Project No" : "Proje No"}</label>
               <input value={projectNo} onChange={(e) => setProjectNo(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Proje Adı / Akronim</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">
+                {isEn ? "Project Name / Acronym" : "Proje Adı / Akronim"}
+              </label>
               <input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Yararlanıcı Kurum</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">
+                {isEn ? "Beneficiary Institution" : "Yararlanıcı Kurum"}
+              </label>
               <input value={institution} onChange={(e) => setInstitution(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Personel Adı Soyadı</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">
+                {isEn ? "Staff Full Name" : "Personel Adı Soyadı"}
+              </label>
               <input value={staffName} onChange={(e) => setStaffName(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Personel Kategorisi</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">
+                {isEn ? "Staff Category" : "Personel Kategorisi"}
+              </label>
               <select
                 value={staffCategory}
                 onChange={(e) => setStaffCategory(e.target.value)}
@@ -373,7 +422,9 @@ export function Ka220PersonelZamanCizelgesi() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Günlük Birim Maliyet (€)</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">
+                {isEn ? "Daily Unit Cost (€)" : "Günlük Birim Maliyet (€)"}
+              </label>
               <input
                 type="number"
                 min={0}
@@ -388,9 +439,11 @@ export function Ka220PersonelZamanCizelgesi() {
 
         <Card className="print:hidden">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-medium text-foreground">Çıktı Bazında Planlanan Gün Sayısı</h2>
+            <h2 className="font-medium text-foreground">
+              {isEn ? "Planned Days by Output" : "Çıktı Bazında Planlanan Gün Sayısı"}
+            </h2>
             <button type="button" onClick={addPlannedOutput} className={secondaryButtonClass}>
-              + Çıktı Ekle
+              {isEn ? "+ Add Output" : "+ Çıktı Ekle"}
             </button>
           </div>
           <div className="space-y-2">
@@ -399,7 +452,7 @@ export function Ka220PersonelZamanCizelgesi() {
                 <input
                   value={o.title}
                   onChange={(e) => updatePlannedOutput(o.id, { title: e.target.value })}
-                  placeholder="Çıktı / İş paketi adı"
+                  placeholder={isEn ? "Output / work package name" : "Çıktı / İş paketi adı"}
                   className={inputClass}
                 />
                 <input
@@ -407,7 +460,7 @@ export function Ka220PersonelZamanCizelgesi() {
                   min={0}
                   value={o.plannedDays}
                   onChange={(e) => updatePlannedOutput(o.id, { plannedDays: Number(e.target.value) || 0 })}
-                  placeholder="Planlanan gün"
+                  placeholder={isEn ? "Planned days" : "Planlanan gün"}
                   className={`${inputClass} max-w-[140px]`}
                 />
                 <button
@@ -415,21 +468,22 @@ export function Ka220PersonelZamanCizelgesi() {
                   onClick={() => removePlannedOutput(o.id)}
                   className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
                 >
-                  Sil
+                  {isEn ? "Delete" : "Sil"}
                 </button>
               </div>
             ))}
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            Toplam planlanan gün: <strong className="text-foreground">{totalPlannedDays}</strong>
+            {isEn ? "Total planned days: " : "Toplam planlanan gün: "}
+            <strong className="text-foreground">{totalPlannedDays}</strong>
           </p>
         </Card>
 
         <Card className="print:hidden">
           <div className="flex items-center justify-between">
-            <h2 className="font-medium text-foreground">Aylık Zaman Çizelgeleri</h2>
+            <h2 className="font-medium text-foreground">{isEn ? "Monthly Timesheets" : "Aylık Zaman Çizelgeleri"}</h2>
             <button type="button" onClick={addMonth} className={secondaryButtonClass}>
-              + Ay Ekle
+              {isEn ? "+ Add Month" : "+ Ay Ekle"}
             </button>
           </div>
         </Card>
@@ -442,7 +496,7 @@ export function Ka220PersonelZamanCizelgesi() {
                 onChange={(e) => updateMonthMeta(block.id, { month: e.target.value })}
                 className={`${inputClass} max-w-[160px]`}
               >
-                {MONTH_NAMES_TR.map((m) => (
+                {MONTH_NAMES.map((m) => (
                   <option key={m} value={m}>
                     {m}
                   </option>
@@ -456,7 +510,7 @@ export function Ka220PersonelZamanCizelgesi() {
               />
               {months.length > 1 && (
                 <button type="button" onClick={() => removeMonth(block.id)} className={`${dangerLinkClass} ml-auto`}>
-                  Bu Ayı Sil
+                  {isEn ? "Delete This Month" : "Bu Ayı Sil"}
                 </button>
               )}
             </div>
@@ -467,11 +521,13 @@ export function Ka220PersonelZamanCizelgesi() {
               <table className="border-collapse text-xs w-full print:text-[10px]">
                 <thead>
                   <tr>
-                    <th className="border border-border p-1 print:py-0 bg-muted w-10">Gün</th>
-                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[120px]">Çıktı</th>
-                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[140px]">Faaliyet</th>
-                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[200px]">Yapılan Görev</th>
-                    <th className="border border-border p-1 print:py-0 bg-muted w-20">Gün Sayısı</th>
+                    <th className="border border-border p-1 print:py-0 bg-muted w-10">{isEn ? "Day" : "Gün"}</th>
+                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[120px]">{isEn ? "Output" : "Çıktı"}</th>
+                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[140px]">{isEn ? "Activity" : "Faaliyet"}</th>
+                    <th className="border border-border p-1 print:py-0 bg-muted min-w-[200px]">
+                      {isEn ? "Task Performed" : "Yapılan Görev"}
+                    </th>
+                    <th className="border border-border p-1 print:py-0 bg-muted w-20">{isEn ? "Days" : "Gün Sayısı"}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -515,7 +571,7 @@ export function Ka220PersonelZamanCizelgesi() {
                 <tfoot>
                   <tr>
                     <td colSpan={4} className="border border-border p-1 print:py-0 text-right font-medium text-foreground">
-                      Toplam Gün:
+                      {isEn ? "Total Days:" : "Toplam Gün:"}
                     </td>
                     <td className="border border-border p-1 print:py-0 text-center font-medium text-foreground">
                       {monthTotal(block)}
@@ -529,49 +585,65 @@ export function Ka220PersonelZamanCizelgesi() {
 
         <Card className="print:order-first print:p-[2cm]">
           <div className="hidden print:block mb-4">
-            <h2 className="text-lg font-semibold text-foreground">KA220-SCH Personel Zaman Çizelgesi (Timesheet)</h2>
-            <p className="text-sm italic text-muted-foreground">Proje Sonuçları Hibe Kalemi Destekleyici Belgesi</p>
+            <h2 className="text-lg font-semibold text-foreground">
+              {isEn ? "KA220-SCH Staff Timesheet" : "KA220-SCH Personel Zaman Çizelgesi (Timesheet)"}
+            </h2>
+            <p className="text-sm italic text-muted-foreground">
+              {isEn
+                ? "Supporting Document for the ‘Project Results’ Grant Item"
+                : "Proje Sonuçları Hibe Kalemi Destekleyici Belgesi"}
+            </p>
           </div>
 
-          <h2 className="font-medium mb-4 text-foreground">Özet</h2>
+          <h2 className="font-medium mb-4 text-foreground">{isEn ? "Summary" : "Özet"}</h2>
 
           <div className="space-y-1.5 text-sm mb-6">
             <p>
-              <span className="font-medium text-foreground">Proje No: </span>
+              <span className="font-medium text-foreground">{isEn ? "Project No: " : "Proje No: "}</span>
               <span className="text-muted-foreground">{projectNo || "—"}</span>
             </p>
             <p>
-              <span className="font-medium text-foreground">Proje Adı / Akronim: </span>
+              <span className="font-medium text-foreground">
+                {isEn ? "Project Name / Acronym: " : "Proje Adı / Akronim: "}
+              </span>
               <span className="text-muted-foreground">{projectTitle || "—"}</span>
             </p>
             <p>
-              <span className="font-medium text-foreground">Yararlanıcı Kurum: </span>
+              <span className="font-medium text-foreground">
+                {isEn ? "Beneficiary Institution: " : "Yararlanıcı Kurum: "}
+              </span>
               <span className="text-muted-foreground">{institution || "—"}</span>
             </p>
             <p>
-              <span className="font-medium text-foreground">Personel Adı Soyadı: </span>
+              <span className="font-medium text-foreground">
+                {isEn ? "Staff Full Name: " : "Personel Adı Soyadı: "}
+              </span>
               <span className="text-muted-foreground">{staffName || "—"}</span>
             </p>
             <p>
-              <span className="font-medium text-foreground">Personel Kategorisi *: </span>
+              <span className="font-medium text-foreground">{isEn ? "Staff Category *: " : "Personel Kategorisi *: "}</span>
               <span className="text-muted-foreground">{staffCategory}</span>
             </p>
             <p>
-              <span className="font-medium text-foreground">Günlük Birim Maliyet (€) **: </span>
-              <span className="text-muted-foreground">{formatEur(dailyRate)}</span>
+              <span className="font-medium text-foreground">
+                {isEn ? "Daily Unit Cost (€) **: " : "Günlük Birim Maliyet (€) **: "}
+              </span>
+              <span className="text-muted-foreground">{formatEur(dailyRate, isEn)}</span>
             </p>
           </div>
 
-          <h3 className="font-medium mb-2 text-foreground">Çıktı Bazında Planlanan Gün Sayısı</h3>
+          <h3 className="font-medium mb-2 text-foreground">
+            {isEn ? "Planned Days by Output" : "Çıktı Bazında Planlanan Gün Sayısı"}
+          </h3>
           <div className="overflow-x-auto mb-6">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr>
                   <th className="border border-border bg-accent p-2 text-left text-accent-foreground">
-                    Çıktı / İş Paketi
+                    {isEn ? "Output / Work Package" : "Çıktı / İş Paketi"}
                   </th>
                   <th className="border border-border bg-accent p-2 text-right text-accent-foreground w-40">
-                    Planlanan Gün
+                    {isEn ? "Planned Days" : "Planlanan Gün"}
                   </th>
                 </tr>
               </thead>
@@ -586,7 +658,7 @@ export function Ka220PersonelZamanCizelgesi() {
               <tfoot>
                 <tr>
                   <td className="border border-border p-2 text-right font-medium text-foreground">
-                    Toplam Planlanan Gün:
+                    {isEn ? "Total Planned Days:" : "Toplam Planlanan Gün:"}
                   </td>
                   <td className="border border-border p-2 text-right font-medium text-foreground">
                     {totalPlannedDays}
@@ -598,35 +670,58 @@ export function Ka220PersonelZamanCizelgesi() {
 
           <div className="space-y-1.5 text-sm mb-6">
             <p>
-              <span className="font-medium text-foreground">Toplam Gerçekleşen Gün: </span>
+              <span className="font-medium text-foreground">
+                {isEn ? "Total Actual Days: " : "Toplam Gerçekleşen Gün: "}
+              </span>
               <span className="text-muted-foreground">{totalWorkedDays}</span>
             </p>
             <p>
-              <span className="font-medium text-foreground">Toplam Hak Edilen Tutar (€): </span>
-              <span className="text-muted-foreground">{formatEur(totalAmount)}</span>
+              <span className="font-medium text-foreground">
+                {isEn ? "Total Amount Earned (€): " : "Toplam Hak Edilen Tutar (€): "}
+              </span>
+              <span className="text-muted-foreground">{formatEur(totalAmount, isEn)}</span>
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6 mb-6 text-sm">
             <div>
-              <p className="text-muted-foreground mb-8">Personel İmzası</p>
+              <p className="text-muted-foreground mb-8">{isEn ? "Staff Signature" : "Personel İmzası"}</p>
               <p className="border-t border-border pt-1 text-foreground">{staffName || " "}</p>
             </div>
             <div>
-              <p className="text-muted-foreground mb-8">Proje Koordinatörü İmzası</p>
+              <p className="text-muted-foreground mb-8">
+                {isEn ? "Project Coordinator Signature" : "Proje Koordinatörü İmzası"}
+              </p>
               <p className="border-t border-border pt-1 text-foreground">&nbsp;</p>
             </div>
           </div>
 
           <div className="space-y-1 text-xs italic text-muted-foreground">
-            <p>
-              * Personel Kategorisi seçenekleri: Manager; Teacher, trainer, educator or youth worker; Technician;
-              Administrative staff — kişinin unvanına değil, projedeki işlevine göre seçilir.
-            </p>
-            <p>
-              ** Bu tutar kurum tarafından belirlenmez; hibe sözleşmenizin Ek IV (Geçerli Oranlar) bölümünden veya
-              ilgili çağrı yılının Erasmus+ Program Rehberi Annex III tablosundan alınmalıdır.
-            </p>
+            {isEn ? (
+              <>
+                <p>
+                  * Staff Category options: Manager; Teacher, trainer, educator or youth worker; Technician;
+                  Administrative staff — chosen based on the person&rsquo;s function in the project, not their job
+                  title.
+                </p>
+                <p>
+                  ** This amount is not set by the institution; it must be taken from Annex IV (Applicable Rates) of
+                  your grant agreement or the Annex III table of the Erasmus+ Programme Guide for the relevant call
+                  year.
+                </p>
+              </>
+            ) : (
+              <>
+                <p>
+                  * Personel Kategorisi seçenekleri: Manager; Teacher, trainer, educator or youth worker; Technician;
+                  Administrative staff — kişinin unvanına değil, projedeki işlevine göre seçilir.
+                </p>
+                <p>
+                  ** Bu tutar kurum tarafından belirlenmez; hibe sözleşmenizin Ek IV (Geçerli Oranlar) bölümünden veya
+                  ilgili çağrı yılının Erasmus+ Program Rehberi Annex III tablosundan alınmalıdır.
+                </p>
+              </>
+            )}
           </div>
         </Card>
       </div>

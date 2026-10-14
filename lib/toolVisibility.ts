@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { TOOLS } from "@/lib/content/tools";
+import { TOOLS, TOOLS_EN } from "@/lib/content/tools";
+import type { Locale } from "@/lib/i18n/locale";
 
 // Kayıt yoksa araç varsayılan olarak yayında ve ücretsiz kabul edilir.
 export async function getToolVisibilityMap(): Promise<Record<string, boolean>> {
@@ -22,11 +23,16 @@ export async function isToolPremium(toolKey: string): Promise<boolean> {
   return row?.isPremium ?? false;
 }
 
-export async function getPublishedTools() {
+export async function getPublishedTools(locale: Locale = "tr") {
   const visibility = await getToolVisibilityMap();
   const premium = await getToolPremiumMap();
-  return TOOLS.filter((tool) => visibility[tool.href] ?? true).map((tool) => ({
-    ...tool,
-    isPremium: premium[tool.href] ?? false,
-  }));
+  const source = locale === "en" ? TOOLS_EN : TOOLS;
+  // Visibility/premium rows are keyed by the Turkish (unprefixed) href regardless of locale.
+  const toTrHref = (href: string) => (locale === "en" ? href.replace(/^\/en/, "") : href);
+  return source
+    .filter((tool) => visibility[toTrHref(tool.href)] ?? true)
+    .map((tool) => ({
+      ...tool,
+      isPremium: premium[toTrHref(tool.href)] ?? false,
+    }));
 }

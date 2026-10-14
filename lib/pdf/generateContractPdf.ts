@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { workSansRegularBase64, workSansBoldBase64 } from "./workSansFont";
+import type { Locale } from "@/lib/i18n/locale";
 
 const PAGE_WIDTH = 210;
 const PAGE_HEIGHT = 297;
@@ -59,6 +60,7 @@ export interface ContractPdfData {
   coordinatorPlace: string;
   beneficiaryPlace: string;
   signDateLabel: string;
+  locale?: Locale;
 }
 
 function registerFont(doc: jsPDF) {
@@ -89,6 +91,7 @@ function drawEuFlag(doc: jsPDF, x: number, y: number) {
 }
 
 export function generateContractPdf(data: ContractPdfData) {
+  const isEn = data.locale === "en";
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   registerFont(doc);
 
@@ -204,7 +207,9 @@ export function generateContractPdf(data: ContractPdfData) {
     drawCenteredLine("Under the Erasmus+ Programme");
     drawCenteredLine("KA2 STRATEGIC PARTNERSHIP PROJECT", { bold: true });
     advance(2);
-    drawCenteredLine(`${field(data.projectNumber, "Proje No")} - ${field(data.projectTitle, "Proje Başlığı")}`);
+    drawCenteredLine(
+      `${field(data.projectNumber, isEn ? "Project No" : "Proje No")} - ${field(data.projectTitle, isEn ? "Project Title" : "Proje Başlığı")}`
+    );
     advance(2);
 
     drawParagraph("This contract, drawn up under the Community programme Erasmus+ shall govern relations between:");
@@ -425,7 +430,11 @@ export function generateContractPdf(data: ContractPdfData) {
   doc.text("ANNEX I", MARGIN_X + CARD_PADDING, cursorY);
   cursorY += 6;
   doc.setFontSize(9.5);
-  doc.text(`${field(data.beneficiary.officialName, "Kurum Adı")} - ${field(data.beneficiary.country, "Ülke")}`, MARGIN_X + CARD_PADDING, cursorY);
+  doc.text(
+    `${field(data.beneficiary.officialName, isEn ? "Institution Name" : "Kurum Adı")} - ${field(data.beneficiary.country, isEn ? "Country" : "Ülke")}`,
+    MARGIN_X + CARD_PADDING,
+    cursorY
+  );
   cursorY += 5;
   doc.text("DETAILED BUDGET RELATING TO THE ACTIVITIES OF THE BENEFICIARY", MARGIN_X + CARD_PADDING, cursorY);
   doc.setFont("WorkSans", "normal");
@@ -464,7 +473,11 @@ export function generateContractPdf(data: ContractPdfData) {
   doc.text("ANNEX II", MARGIN_X + CARD_PADDING, cursorY);
   cursorY += 6;
   doc.setFontSize(9.5);
-  doc.text(`${field(data.beneficiary.officialName, "Kurum Adı")} - ${field(data.beneficiary.country, "Ülke")}`, MARGIN_X + CARD_PADDING, cursorY);
+  doc.text(
+    `${field(data.beneficiary.officialName, isEn ? "Institution Name" : "Kurum Adı")} - ${field(data.beneficiary.country, isEn ? "Country" : "Ülke")}`,
+    MARGIN_X + CARD_PADDING,
+    cursorY
+  );
   cursorY += 5;
   doc.text("Project tasks and beneficiary responsibilities and budget", MARGIN_X + CARD_PADDING, cursorY);
   doc.setFont("WorkSans", "normal");
@@ -497,5 +510,5 @@ export function generateContractPdf(data: ContractPdfData) {
     doc.text(`${i} / ${totalPages}`, PAGE_WIDTH / 2, PAGE_HEIGHT - 8, { align: "center" });
   }
 
-  doc.save("proje-ortaklik-sozlesmesi.pdf");
+  doc.save(isEn ? "partnership-agreement.pdf" : "proje-ortaklik-sozlesmesi.pdf");
 }

@@ -377,6 +377,172 @@ export const PARTNER_ACTIVITY_PLAN_INPUT_KEYS = [
   "lumpSum",
 ] as const;
 
+// English UI-text sibling of IDEA_WIZARD_STEPS, following the FAQ_GROUPS / FAQ_GROUPS_EN
+// pattern in lib/content/faq.ts. This only translates the VISIBLE wizard chrome (step
+// title/shortTitle/description and field label/placeholder/helpText) consumed by
+// <IdeaWizard locale="en" />. It intentionally reuses the same buildPrompt/formatOutput
+// functions as the Turkish steps — those build the Turkish-language AI prompt sent to
+// app/api/proje-fikri-gelistirme/route.ts and are out of scope to change, so AI-generated
+// step output (and the step-11 "formatOutput" summary) will still come back/read in
+// Turkish even on the English wizard pages.
+interface IdeaWizardStepTranslation {
+  title: string;
+  shortTitle: string;
+  description: string;
+  fields?: Record<string, { label?: string; placeholder?: string; helpText?: string; options?: IdeaWizardFieldOption[] }>;
+}
+
+const IDEA_WIZARD_STEP_TRANSLATIONS_EN: Record<string, IdeaWizardStepTranslation> = {
+  "problem-cozum": {
+    title: "Problem and Solution",
+    shortTitle: "Problem & Solution",
+    description:
+      "Define the concrete problem your project addresses and the solution you propose. Every later step builds on this information.",
+    fields: {
+      problem: {
+        label: "Problem",
+        placeholder: 'E.g. "Digital literacy among lower-secondary students in rural areas lags behind their urban peers."',
+        helpText: "What concrete problem are you trying to solve? What are its causes and consequences?",
+      },
+      cozum: {
+        label: "Your Proposed Solution",
+        placeholder: "Describe your solution and its impact on the target group.",
+        helpText: "What is your proposed solution/approach? What impact will it have on the target group?",
+      },
+    },
+  },
+  "hedef-kitle": {
+    title: "Target Group",
+    shortTitle: "Target Group",
+    description:
+      "AI clarifies the direct/primary beneficiaries, indirect beneficiaries, and any disadvantaged/under-represented groups, if any.",
+    fields: {
+      hedefKitleNotu: {
+        label: "Do you already have a target group in mind? (optional)",
+        placeholder: "E.g. 40 lower-secondary students aged 12-14, 8 teachers",
+      },
+    },
+  },
+  "ortaklik-gerekcesi": {
+    title: "Partnership Rationale",
+    shortTitle: "Partnership Rationale",
+    description: "AI justifies why this problem should be solved with transnational partners rather than within a single country.",
+  },
+  oncelikler: {
+    title: "Priority Suggestion",
+    shortTitle: "Priorities",
+    description:
+      "AI suggests and justifies the 1 horizontal + 1 School Education priority from the official priority list that best fits your project.",
+  },
+  hedefler: {
+    title: "Overall Objective and Specific Objectives",
+    shortTitle: "Objectives",
+    description:
+      "AI proposes your project's overall objective and the specific objectives (SO1, SO2, ...) that break it down into concrete, measurable steps.",
+  },
+  "mantiksal-cerceve": {
+    title: "Logical Framework and Coherence Check",
+    shortTitle: "Logical Framework",
+    description:
+      "AI produces a logical-framework table turning your specific objectives into mutually complementary mobilities, and assesses whether the combined impact matches your overall objective.",
+  },
+  "vizyon-inovasyon": {
+    title: "Vision and Innovation",
+    shortTitle: "Vision & Innovation",
+    description:
+      "AI produces your project's one-sentence vision statement and a narrative explaining why this project deserves funding.",
+    fields: {
+      inovasyonVurgusu: {
+        label: "Is there an innovation element you'd like emphasised? (optional)",
+        placeholder: "E.g. AI-assisted personalisation",
+      },
+    },
+  },
+  "proje-adi": {
+    title: "Project Name Suggestions",
+    shortTitle: "Project Name",
+    description: "AI suggests 5 potential project names based on everything entered so far.",
+  },
+  gostergeler: {
+    title: "Indicators",
+    shortTitle: "Indicators",
+    description:
+      "Enter your estimated budget; AI suggests qualitative and quantitative indicators, taking Erasmus+ evaluation criteria and green/digital practices into account.",
+    fields: {
+      butce: {
+        label: "Estimated Budget (EUR)",
+        placeholder: "E.g. 30000 or 60000",
+        helpText: "KA210-SCH uses fixed lump-sum brackets: usually €30,000 or €60,000.",
+      },
+    },
+  },
+  "konsept-not": {
+    title: "Concept Note",
+    shortTitle: "Concept Note",
+    description: "AI combines all previous steps into a concept note of roughly 4000 characters.",
+  },
+  [PARTNER_ACTIVITY_PLAN_STEP_KEY]: {
+    title: "Partners and Activity Plan",
+    shortTitle: "Partners & Activities",
+    description:
+      "Final step: enter how many partner organisations, how many transnational/local activities you'll have, and your total grant amount. Once saved, the Application Form Assistant is created automatically and you're redirected straight there — you'll fill in the real KA210-SCH form questions based on this concept note.",
+    fields: {
+      kurulusSayisi: {
+        label: "How many partner organisations are there? (including the applicant)",
+        placeholder: "E.g. 2",
+        helpText: "Total number of organisations, including the applicant organisation.",
+      },
+      ulusotesiSayisi: {
+        label: "How many transnational mobilities do you have?",
+        placeholder: "E.g. 3",
+        helpText: "Mobilities planned on a day basis, taking place abroad. The number of rows in your Logical Framework table.",
+      },
+      yerelSayisi: {
+        label: "How many local activities do you have? (if any)",
+        placeholder: "E.g. 0",
+        helpText: "Activities planned on an hour basis, taking place in your own country.",
+      },
+      yonetimYayginSayisi: {
+        label: "Will there be a separate management and dissemination activity?",
+        options: [
+          { value: "0", label: "No" },
+          { value: "1", label: "Yes" },
+        ],
+      },
+      lumpSum: {
+        label: "Total lump-sum grant amount",
+        options: [
+          { value: "30000", label: "€30,000" },
+          { value: "60000", label: "€60,000" },
+        ],
+        helpText: "KA210-SCH only allows these two fixed amounts.",
+      },
+    },
+  },
+};
+
+export const IDEA_WIZARD_STEPS_EN: IdeaWizardStepConfig[] = IDEA_WIZARD_STEPS.map((step) => {
+  const t = IDEA_WIZARD_STEP_TRANSLATIONS_EN[step.key];
+  if (!t) return step;
+  return {
+    ...step,
+    title: t.title,
+    shortTitle: t.shortTitle,
+    description: t.description,
+    fields: step.fields.map((field) => {
+      const ft = t.fields?.[field.key];
+      if (!ft) return field;
+      return {
+        ...field,
+        label: ft.label ?? field.label,
+        placeholder: ft.placeholder ?? field.placeholder,
+        helpText: ft.helpText ?? field.helpText,
+        options: ft.options ?? field.options,
+      };
+    }),
+  };
+});
+
 export function getIdeaWizardStep(stepKey: string): IdeaWizardStepConfig | undefined {
   return IDEA_WIZARD_STEPS.find((s) => s.key === stepKey);
 }

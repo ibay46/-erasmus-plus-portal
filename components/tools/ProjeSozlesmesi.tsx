@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { useAutosave } from "@/lib/hooks/useAutosave";
+import type { Locale } from "@/lib/i18n/locale";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -47,8 +48,8 @@ function EuFlagHeader() {
   );
 }
 
-function formatEur(value: number) {
-  return `${value.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} EUR`;
+function formatEur(value: number, locale: Locale = "tr") {
+  return `${value.toLocaleString(locale === "en" ? "en-GB" : "tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} EUR`;
 }
 
 function Inline({
@@ -111,11 +112,14 @@ const emptyLocalPartner: PartnerInfo = {
 export function ProjeSozlesmesi({
   initialData,
   onDataChange,
+  locale = "tr",
 }: {
   initialData?: Partial<ProjeSozlesmesiData>;
   onDataChange?: (data: ProjeSozlesmesiData) => void;
+  locale?: Locale;
 } = {}) {
   const reactId = useId();
+  const isEn = locale === "en";
 
   const [protNo, setProtNo] = useState(initialData?.protNo ?? "");
   const [protDate, setProtDate] = useState(initialData?.protDate ?? "");
@@ -198,7 +202,7 @@ export function ProjeSozlesmesi({
     setBudgetRows((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
   }
 
-  const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString("tr-TR") : "….");
+  const fmtDate = (iso: string) => (iso ? new Date(iso).toLocaleDateString(isEn ? "en-GB" : "tr-TR") : "….");
 
   async function handleDownloadPdf() {
     const { generateContractPdf } = await import("@/lib/pdf/generateContractPdf");
@@ -209,7 +213,7 @@ export function ProjeSozlesmesi({
       projectTitle,
       coordinator,
       beneficiary,
-      maxAmountLabel: maxAmount ? formatEur(maxAmount) : "",
+      maxAmountLabel: maxAmount ? formatEur(maxAmount, locale) : "",
       durationMonthsLabel: durationMonths ? String(durationMonths) : "",
       startDateLabel: fmtDate(startDate),
       endDateLabel: fmtDate(endDate),
@@ -221,15 +225,16 @@ export function ProjeSozlesmesi({
       iban,
       bic,
       budgetRows,
-      totalBudgetLabel: formatEur(totalBudget),
-      eightyLabel: formatEur(eighty),
-      twentyLabel: formatEur(twenty),
+      totalBudgetLabel: formatEur(totalBudget, locale),
+      eightyLabel: formatEur(eighty, locale),
+      twentyLabel: formatEur(twenty, locale),
       annexIIDescription,
       annexIIDatesLabel: `${fmtDate(startDate)} - ${fmtDate(endDate)}`,
-      annexIIBudgetLabel: annexIIBudget ? formatEur(annexIIBudget) : formatEur(totalBudget),
+      annexIIBudgetLabel: annexIIBudget ? formatEur(annexIIBudget, locale) : formatEur(totalBudget, locale),
       coordinatorPlace,
       beneficiaryPlace,
       signDateLabel: fmtDate(signDate),
+      locale,
     });
   }
 
@@ -237,89 +242,93 @@ export function ProjeSozlesmesi({
     <div>
       <div className="flex items-center justify-between mb-6 print:hidden">
         <p className="text-sm text-muted-foreground">
-          Aşağıdaki önizleme ekranda kontrol içindir; indirme gerçek bir PDF dosyası oluşturur (sayfa
-          numaraları ve AB bayrağı her sayfada otomatik eklenir).
+          {isEn
+            ? "The preview below is for on-screen checking only; downloading generates a real PDF file (page numbers and the EU flag are added automatically on every page)."
+            : "Aşağıdaki önizleme ekranda kontrol içindir; indirme gerçek bir PDF dosyası oluşturur (sayfa numaraları ve AB bayrağı her sayfada otomatik eklenir)."}
         </p>
         <button
           type="button"
           onClick={handleDownloadPdf}
           className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
         >
-          PDF Olarak İndir
+          {isEn ? "Download as PDF" : "PDF Olarak İndir"}
         </button>
       </div>
 
       <Card className="mb-6 print:hidden">
-        <h2 className="font-medium mb-4 text-foreground">Taraf Bilgileri</h2>
+        <h2 className="font-medium mb-4 text-foreground">{isEn ? "Party Details" : "Taraf Bilgileri"}</h2>
         <p className="text-xs text-muted-foreground mb-4">
-          Aşağıdaki alanlar, belge içindeki vurgulu (sarı) alanlarla eşleşir. Doldurdukça sözleşme metni
-          altta otomatik güncellenir.
+          {isEn
+            ? "The fields below match the highlighted (yellow) fields inside the document. As you fill them in, the contract text below updates automatically."
+            : "Aşağıdaki alanlar, belge içindeki vurgulu (sarı) alanlarla eşleşir. Doldurdukça sözleşme metni altta otomatik güncellenir."}
         </p>
         <div className="grid sm:grid-cols-2 gap-6">
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-2">Koordinatör Kurum</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-2">{isEn ? "Coordinator Organisation" : "Koordinatör Kurum"}</h3>
             <div className="space-y-2">
-              <input value={coordinator.officialName} onChange={(e) => setCoordinator({ ...coordinator, officialName: e.target.value })} placeholder="Resmi adı" className={inputClass} />
-              <input value={coordinator.institutionCode} onChange={(e) => setCoordinator({ ...coordinator, institutionCode: e.target.value })} placeholder="Kurum kodu" className={inputClass} />
-              <input value={coordinator.address} onChange={(e) => setCoordinator({ ...coordinator, address: e.target.value })} placeholder="Adres" className={inputClass} />
-              <input value={coordinator.country} onChange={(e) => setCoordinator({ ...coordinator, country: e.target.value })} placeholder="Ülke" className={inputClass} />
+              <input value={coordinator.officialName} onChange={(e) => setCoordinator({ ...coordinator, officialName: e.target.value })} placeholder={isEn ? "Official name" : "Resmi adı"} className={inputClass} />
+              <input value={coordinator.institutionCode} onChange={(e) => setCoordinator({ ...coordinator, institutionCode: e.target.value })} placeholder={isEn ? "Institution code" : "Kurum kodu"} className={inputClass} />
+              <input value={coordinator.address} onChange={(e) => setCoordinator({ ...coordinator, address: e.target.value })} placeholder={isEn ? "Address" : "Adres"} className={inputClass} />
+              <input value={coordinator.country} onChange={(e) => setCoordinator({ ...coordinator, country: e.target.value })} placeholder={isEn ? "Country" : "Ülke"} className={inputClass} />
               <input value={coordinator.vat} onChange={(e) => setCoordinator({ ...coordinator, vat: e.target.value })} placeholder="VAT" className={inputClass} />
               <input value={coordinator.pic} onChange={(e) => setCoordinator({ ...coordinator, pic: e.target.value })} placeholder="PIC" className={inputClass} />
-              <input value={coordinator.legalRep} onChange={(e) => setCoordinator({ ...coordinator, legalRep: e.target.value })} placeholder="Yasal temsilci" className={inputClass} />
+              <input value={coordinator.legalRep} onChange={(e) => setCoordinator({ ...coordinator, legalRep: e.target.value })} placeholder={isEn ? "Legal representative" : "Yasal temsilci"} className={inputClass} />
             </div>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-2">Faydalanıcı Kurum (Beneficiary)</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-2">{isEn ? "Beneficiary Organisation" : "Faydalanıcı Kurum (Beneficiary)"}</h3>
             <div className="space-y-2">
-              <input value={beneficiary.officialName} onChange={(e) => setBeneficiary({ ...beneficiary, officialName: e.target.value })} placeholder="Resmi adı" className={inputClass} />
-              <input value={beneficiary.institutionCode} onChange={(e) => setBeneficiary({ ...beneficiary, institutionCode: e.target.value })} placeholder="Kurum kodu" className={inputClass} />
-              <input value={beneficiary.address} onChange={(e) => setBeneficiary({ ...beneficiary, address: e.target.value })} placeholder="Adres" className={inputClass} />
-              <input value={beneficiary.country} onChange={(e) => setBeneficiary({ ...beneficiary, country: e.target.value })} placeholder="Ülke" className={inputClass} />
+              <input value={beneficiary.officialName} onChange={(e) => setBeneficiary({ ...beneficiary, officialName: e.target.value })} placeholder={isEn ? "Official name" : "Resmi adı"} className={inputClass} />
+              <input value={beneficiary.institutionCode} onChange={(e) => setBeneficiary({ ...beneficiary, institutionCode: e.target.value })} placeholder={isEn ? "Institution code" : "Kurum kodu"} className={inputClass} />
+              <input value={beneficiary.address} onChange={(e) => setBeneficiary({ ...beneficiary, address: e.target.value })} placeholder={isEn ? "Address" : "Adres"} className={inputClass} />
+              <input value={beneficiary.country} onChange={(e) => setBeneficiary({ ...beneficiary, country: e.target.value })} placeholder={isEn ? "Country" : "Ülke"} className={inputClass} />
               <input value={beneficiary.vat} onChange={(e) => setBeneficiary({ ...beneficiary, vat: e.target.value })} placeholder="VAT" className={inputClass} />
               <input value={beneficiary.pic} onChange={(e) => setBeneficiary({ ...beneficiary, pic: e.target.value })} placeholder="PIC" className={inputClass} />
-              <input value={beneficiary.legalRep} onChange={(e) => setBeneficiary({ ...beneficiary, legalRep: e.target.value })} placeholder="Yasal temsilci" className={inputClass} />
+              <input value={beneficiary.legalRep} onChange={(e) => setBeneficiary({ ...beneficiary, legalRep: e.target.value })} placeholder={isEn ? "Legal representative" : "Yasal temsilci"} className={inputClass} />
             </div>
           </div>
         </div>
 
-        <h3 className="text-sm font-semibold text-foreground mt-6 mb-2">Proje Bilgileri</h3>
+        <h3 className="text-sm font-semibold text-foreground mt-6 mb-2">{isEn ? "Project Details" : "Proje Bilgileri"}</h3>
         <div className="grid sm:grid-cols-2 gap-3">
           <input value={protNo} onChange={(e) => setProtNo(e.target.value)} placeholder="Prot. No" className={inputClass} />
           <label className="block">
-            <span className="block text-xs text-muted-foreground mb-1">Sözleşme/Protokol Tarihi</span>
+            <span className="block text-xs text-muted-foreground mb-1">{isEn ? "Contract/Protocol Date" : "Sözleşme/Protokol Tarihi"}</span>
             <input type="date" value={protDate} onChange={(e) => setProtDate(e.target.value)} className={inputClass} />
           </label>
-          <input value={projectNumber} onChange={(e) => setProjectNumber(e.target.value)} placeholder="Proje No (örn. 2025-1-TR01-KA210-SCH-000000)" className={inputClass} />
-          <input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder="Proje Başlığı" className={inputClass} />
-          <input type="number" min={0} value={maxAmount || ""} onChange={(e) => setMaxAmount(Number(e.target.value) || 0)} placeholder="Maksimum hibe tutarı (EUR)" className={inputClass} />
-          <input type="number" min={0} value={durationMonths || ""} onChange={(e) => handleDurationMonthsChange(Number(e.target.value) || 0)} placeholder="Süre (ay)" className={inputClass} />
+          <input value={projectNumber} onChange={(e) => setProjectNumber(e.target.value)} placeholder={isEn ? "Project No (e.g. 2025-1-TR01-KA210-SCH-000000)" : "Proje No (örn. 2025-1-TR01-KA210-SCH-000000)"} className={inputClass} />
+          <input value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} placeholder={isEn ? "Project Title" : "Proje Başlığı"} className={inputClass} />
+          <input type="number" min={0} value={maxAmount || ""} onChange={(e) => setMaxAmount(Number(e.target.value) || 0)} placeholder={isEn ? "Maximum grant amount (EUR)" : "Maksimum hibe tutarı (EUR)"} className={inputClass} />
+          <input type="number" min={0} value={durationMonths || ""} onChange={(e) => handleDurationMonthsChange(Number(e.target.value) || 0)} placeholder={isEn ? "Duration (months)" : "Süre (ay)"} className={inputClass} />
           <label className="block">
-            <span className="block text-xs text-muted-foreground mb-1">Proje Başlangıç Tarihi</span>
+            <span className="block text-xs text-muted-foreground mb-1">{isEn ? "Project Start Date" : "Proje Başlangıç Tarihi"}</span>
             <input type="date" value={startDate} onChange={(e) => handleStartDateChange(e.target.value)} className={inputClass} />
           </label>
           <label className="block">
             <span className="block text-xs text-muted-foreground mb-1">
-              Proje Bitiş Tarihi (süre + başlangıçtan otomatik hesaplanır, değiştirebilirsiniz)
+              {isEn
+                ? "Project End Date (calculated automatically from start date + duration, editable)"
+                : "Proje Bitiş Tarihi (süre + başlangıçtan otomatik hesaplanır, değiştirebilirsiniz)"}
             </span>
             <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
           </label>
         </div>
 
-        <h3 className="text-sm font-semibold text-foreground mt-6 mb-2">Faydalanıcı Banka Bilgileri</h3>
+        <h3 className="text-sm font-semibold text-foreground mt-6 mb-2">{isEn ? "Beneficiary Bank Details" : "Faydalanıcı Banka Bilgileri"}</h3>
         <div className="grid sm:grid-cols-2 gap-3">
-          <input value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder="Banka Adı" className={inputClass} />
-          <input value={bankAddress} onChange={(e) => setBankAddress(e.target.value)} placeholder="Banka Adresi" className={inputClass} />
-          <input value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} placeholder="Hesap Sahibi" className={inputClass} />
+          <input value={bankName} onChange={(e) => setBankName(e.target.value)} placeholder={isEn ? "Bank Name" : "Banka Adı"} className={inputClass} />
+          <input value={bankAddress} onChange={(e) => setBankAddress(e.target.value)} placeholder={isEn ? "Bank Address" : "Banka Adresi"} className={inputClass} />
+          <input value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} placeholder={isEn ? "Account Holder" : "Hesap Sahibi"} className={inputClass} />
           <input value={iban} onChange={(e) => setIban(e.target.value)} placeholder="IBAN" className={inputClass} />
           <input value={bic} onChange={(e) => setBic(e.target.value)} placeholder="BIC/SWIFT" className={inputClass} />
         </div>
 
-        <h3 className="text-sm font-semibold text-foreground mt-6 mb-2">İmza Bilgileri</h3>
+        <h3 className="text-sm font-semibold text-foreground mt-6 mb-2">{isEn ? "Signature Details" : "İmza Bilgileri"}</h3>
         <div className="grid sm:grid-cols-2 gap-3">
-          <input value={coordinatorPlace} onChange={(e) => setCoordinatorPlace(e.target.value)} placeholder="Koordinatör imza yeri (örn. Altamura - Italy)" className={inputClass} />
-          <input value={beneficiaryPlace} onChange={(e) => setBeneficiaryPlace(e.target.value)} placeholder="Faydalanıcı imza yeri (örn. Kahramanmaraş - Türkiye)" className={inputClass} />
+          <input value={coordinatorPlace} onChange={(e) => setCoordinatorPlace(e.target.value)} placeholder={isEn ? "Coordinator's place of signature (e.g. Altamura - Italy)" : "Koordinatör imza yeri (örn. Altamura - Italy)"} className={inputClass} />
+          <input value={beneficiaryPlace} onChange={(e) => setBeneficiaryPlace(e.target.value)} placeholder={isEn ? "Beneficiary's place of signature (e.g. Kahramanmaraş - Türkiye)" : "Faydalanıcı imza yeri (örn. Kahramanmaraş - Türkiye)"} className={inputClass} />
           <label className="block">
-            <span className="block text-xs text-muted-foreground mb-1">İmza Tarihi</span>
+            <span className="block text-xs text-muted-foreground mb-1">{isEn ? "Signature Date" : "İmza Tarihi"}</span>
             <input type="date" value={signDate} onChange={(e) => setSignDate(e.target.value)} className={inputClass} />
           </label>
         </div>
@@ -338,8 +347,8 @@ export function ProjeSozlesmesi({
           <p className="text-center text-sm font-bold text-foreground mb-4">KA2 STRATEGIC PARTNERSHIP PROJECT</p>
 
           <p className="text-center text-sm text-foreground mb-4">
-            <Inline value={projectNumber} onChange={setProjectNumber} placeholder="Proje No" widthClass="w-64" /> -{" "}
-            <Inline value={projectTitle} onChange={setProjectTitle} placeholder="Proje Başlığı" widthClass="w-64" />
+            <Inline value={projectNumber} onChange={setProjectNumber} placeholder={isEn ? "Project No" : "Proje No"} widthClass="w-64" /> -{" "}
+            <Inline value={projectTitle} onChange={setProjectTitle} placeholder={isEn ? "Project Title" : "Proje Başlığı"} widthClass="w-64" />
           </p>
 
           <p className="text-sm text-foreground">
@@ -385,7 +394,7 @@ export function ProjeSozlesmesi({
             <li>concluded between the Coordinator and the National Agency, the Coordinator and Beneficiary commit themselves to carrying out the work programme covered the contract mentioned above.</li>
             <li>
               The grant of the whole project for the contractual period shall be of a maximum amount of{" "}
-              <Inline value={maxAmount ? formatEur(maxAmount) : ""} onChange={() => {}} widthClass="w-40" placeholder="60,000 EUR" />{" "}
+              <Inline value={maxAmount ? formatEur(maxAmount, locale) : ""} onChange={() => {}} widthClass="w-40" placeholder="60,000 EUR" />{" "}
               and shall take the form of unit contributions and reimbursement of eligible costs.
             </li>
             <li>The final financial contribution shall depend on the evaluation of the quality of the results of the project n° <Inline value={projectNumber} onChange={setProjectNumber} widthClass="w-64" /> pursuant to the rules but shall, under no circumstances, give rise to a profit.</li>
@@ -681,18 +690,18 @@ export function ProjeSozlesmesi({
           <EuFlagHeader />
           <h2 className="font-bold text-sm text-foreground mb-1">ANNEX I</h2>
           <p className="text-sm font-semibold text-foreground">
-            {beneficiary.officialName || "Kurum Adı"} - {beneficiary.country || "Ülke"}
+            {beneficiary.officialName || (isEn ? "Institution Name" : "Kurum Adı")} - {beneficiary.country || (isEn ? "Country" : "Ülke")}
           </p>
           <p className="text-sm font-bold text-foreground mb-3">DETAILED BUDGET RELATING TO THE ACTIVITIES OF THE BENEFICIARY</p>
 
           <div className="flex items-center justify-between mb-2 print:hidden">
-            <p className="text-xs text-muted-foreground">Faaliyet satırları</p>
+            <p className="text-xs text-muted-foreground">{isEn ? "Activity rows" : "Faaliyet satırları"}</p>
             <button
               type="button"
               onClick={addBudgetRow}
               className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              + Satır Ekle
+              {isEn ? "+ Add Row" : "+ Satır Ekle"}
             </button>
           </div>
 
@@ -703,7 +712,7 @@ export function ProjeSozlesmesi({
                 <th className="border border-border p-1.5 bg-muted print:bg-transparent">Participants</th>
                 <th className="border border-border p-1.5 bg-muted print:bg-transparent">Dates</th>
                 <th className="border border-border p-1.5 bg-muted print:bg-transparent">Budget (EUR)</th>
-                <th className="border border-border p-1.5 bg-muted print:hidden">Sil</th>
+                <th className="border border-border p-1.5 bg-muted print:hidden">{isEn ? "Delete" : "Sil"}</th>
               </tr>
             </thead>
             <tbody>
@@ -722,7 +731,7 @@ export function ProjeSozlesmesi({
                     <input type="number" min={0} value={row.budget} onChange={(e) => updateBudgetRow(row.id, { budget: Number(e.target.value) || 0 })} className="w-full bg-transparent outline-none text-foreground text-sm text-right print:border-none" />
                   </td>
                   <td className="border border-border p-1.5 text-center print:hidden">
-                    <button type="button" onClick={() => removeBudgetRow(row.id)} className="cursor-pointer text-red-600 text-xs">Sil</button>
+                    <button type="button" onClick={() => removeBudgetRow(row.id)} className="cursor-pointer text-red-600 text-xs">{isEn ? "Delete" : "Sil"}</button>
                   </td>
                 </tr>
               ))}
@@ -730,17 +739,17 @@ export function ProjeSozlesmesi({
             <tfoot>
               <tr>
                 <td className="border border-border p-2 font-bold" colSpan={3}>Total</td>
-                <td className="border border-border p-2 font-bold text-right">{formatEur(totalBudget)}</td>
+                <td className="border border-border p-2 font-bold text-right">{formatEur(totalBudget, locale)}</td>
                 <td className="border border-border p-2 print:hidden" />
               </tr>
               <tr>
                 <td className="border border-border p-2 font-bold" colSpan={3}>80% of the Budget</td>
-                <td className="border border-border p-2 font-bold text-right">{formatEur(eighty)}</td>
+                <td className="border border-border p-2 font-bold text-right">{formatEur(eighty, locale)}</td>
                 <td className="border border-border p-2 print:hidden" />
               </tr>
               <tr>
                 <td className="border border-border p-2 font-bold" colSpan={3}>20% of the Budget</td>
-                <td className="border border-border p-2 font-bold text-right">{formatEur(twenty)}</td>
+                <td className="border border-border p-2 font-bold text-right">{formatEur(twenty, locale)}</td>
                 <td className="border border-border p-2 print:hidden" />
               </tr>
             </tfoot>
@@ -751,7 +760,7 @@ export function ProjeSozlesmesi({
           <EuFlagHeader />
           <h2 className="font-bold text-sm text-foreground mb-1">ANNEX II</h2>
           <p className="text-sm font-semibold text-foreground">
-            {beneficiary.officialName || "Kurum Adı"} - {beneficiary.country || "Ülke"}
+            {beneficiary.officialName || (isEn ? "Institution Name" : "Kurum Adı")} - {beneficiary.country || (isEn ? "Country" : "Ülke")}
           </p>
           <p className="text-sm font-bold text-foreground mb-3">Project tasks and beneficiary responsibilities and budget</p>
 
@@ -770,7 +779,7 @@ export function ProjeSozlesmesi({
                     value={annexIIDescription}
                     onChange={(e) => setAnnexIIDescription(e.target.value)}
                     rows={4}
-                    placeholder="Bu faaliyetin açıklaması (proje yönetimi, yaygınlaştırma vb.)"
+                    placeholder={isEn ? "Description of this activity (project management, dissemination, etc.)" : "Bu faaliyetin açıklaması (proje yönetimi, yaygınlaştırma vb.)"}
                     className="w-full bg-transparent outline-none text-foreground text-sm print:border-none resize-none"
                   />
                 </td>
@@ -778,7 +787,7 @@ export function ProjeSozlesmesi({
                   <p>{fmtDate(startDate)}</p>
                   <p>{fmtDate(endDate)}</p>
                   <p className="text-xs text-muted-foreground mt-1 print:hidden">
-                    (Madde 2&apos;deki proje başlangıç/bitiş tarihi)
+                    {isEn ? "(Project start/end date from Article 2)" : "(Madde 2’deki proje başlangıç/bitiş tarihi)"}
                   </p>
                 </td>
                 <td className="border border-border p-1.5">
@@ -787,7 +796,7 @@ export function ProjeSozlesmesi({
                     min={0}
                     value={annexIIBudget || ""}
                     onChange={(e) => setAnnexIIBudget(Number(e.target.value) || 0)}
-                    placeholder={formatEur(totalBudget)}
+                    placeholder={formatEur(totalBudget, locale)}
                     className="w-full bg-transparent outline-none text-foreground text-sm text-right print:border-none"
                   />
                 </td>

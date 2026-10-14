@@ -16,14 +16,28 @@ export interface HomeSection {
   levels: ExperienceLevel[];
 }
 
-const LEVELS: { key: ExperienceLevel; label: string; description: string }[] = [
-  { key: "baslangic", label: "Yeni Başlayan", description: "AB fonlarını keşfetmeye başlıyorum." },
-  { key: "orta", label: "Orta Seviye", description: "Proje başvurusu hazırlıyorum." },
-  { key: "uzman", label: "Uzman", description: "Aktif proje yönetiyorum veya danışmanlık yapıyorum." },
-];
+const LEVELS_BY_LOCALE: Record<"tr" | "en", { key: ExperienceLevel; label: string; description: string }[]> = {
+  tr: [
+    { key: "baslangic", label: "Yeni Başlayan", description: "AB fonlarını keşfetmeye başlıyorum." },
+    { key: "orta", label: "Orta Seviye", description: "Proje başvurusu hazırlıyorum." },
+    { key: "uzman", label: "Uzman", description: "Aktif proje yönetiyorum veya danışmanlık yapıyorum." },
+  ],
+  en: [
+    { key: "baslangic", label: "Beginner", description: "I'm just starting to explore EU funding." },
+    { key: "orta", label: "Intermediate", description: "I'm preparing a project application." },
+    { key: "uzman", label: "Expert", description: "I manage an active project or provide consulting." },
+  ],
+};
 
-export function LevelFilteredSections({ sections }: { sections: HomeSection[] }) {
+export function LevelFilteredSections({
+  sections,
+  locale = "tr",
+}: {
+  sections: HomeSection[];
+  locale?: "tr" | "en";
+}) {
   const [level, setLevel] = useState<ExperienceLevel | null>(null);
+  const LEVELS = LEVELS_BY_LOCALE[locale];
 
   const activeLevel = LEVELS.find((l) => l.key === level);
   const visible = activeLevel ? sections.filter((s) => s.levels.includes(activeLevel.key)) : sections;
@@ -40,7 +54,7 @@ export function LevelFilteredSections({ sections }: { sections: HomeSection[] })
               : "border border-border text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
-          Tümü
+          {locale === "en" ? "All" : "Tümü"}
         </button>
         {LEVELS.map((l) => (
           <button

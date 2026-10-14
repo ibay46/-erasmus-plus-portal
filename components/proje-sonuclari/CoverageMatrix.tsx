@@ -62,8 +62,20 @@ function groupColumns(columns: CoverageColumn[]) {
   return Array.from(groups.entries());
 }
 
-export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; rows: CoverageRow[] }) {
+export function CoverageMatrix({
+  columns,
+  rows,
+  locale = "tr",
+}: {
+  columns: CoverageColumn[];
+  rows: CoverageRow[];
+  locale?: "tr" | "en";
+}) {
   const kaGroups = groupColumns(columns);
+  const t =
+    locale === "en"
+      ? { country: "Country", notAnnounced: "Not announced yet", announced: "Announced", multiTitle: (n: number) => `${n} results — click to view`, singleTitle: "Click to view the result" }
+      : { country: "Ülke", notAnnounced: "Henüz açıklanmadı", announced: "Açıklandı", multiTitle: (n: number) => `${n} sonuç — görüntülemek için tıklayın`, singleTitle: "Sonucu görüntülemek için tıklayın" };
 
   // Tek sektörlü gruplarda (örn. KA240) başlık metni dar sütuna sığmadığından
   // o sütunlar biraz daha geniş tutulur.
@@ -109,7 +121,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
               rowSpan={2}
               className="sticky left-0 z-10 rounded-tl-xl border-b border-y-slate-200 bg-white px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-widest text-slate-500 dark:border-y-white/10 dark:bg-slate-950 dark:text-white/50"
             >
-              Ülke
+              {t.country}
             </th>
             {kaGroups.map(([kaAction, cols], groupIndex) => {
               const color = groupColor(kaAction);
@@ -166,7 +178,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-slate-400 dark:bg-white/10 dark:text-white/25">
                             <XIcon />
                           </span>
-                          <span className="sr-only">Henüz açıklanmadı</span>
+                          <span className="sr-only">{t.notAnnounced}</span>
                         </span>
                       </td>
                     );
@@ -176,11 +188,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                       <Link
                         href={cell.href!}
                         className="group cursor-pointer flex items-center justify-center gap-1"
-                        title={
-                          cell.count > 1
-                            ? `${cell.count} sonuç — görüntülemek için tıklayın`
-                            : "Sonucu görüntülemek için tıklayın"
-                        }
+                        title={cell.count > 1 ? t.multiTitle(cell.count) : t.singleTitle}
                       >
                         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm shadow-blue-600/30 transition-transform duration-200 group-hover:scale-110 dark:bg-white dark:text-blue-600 dark:shadow-black/30">
                           <CheckIcon />
@@ -188,7 +196,7 @@ export function CoverageMatrix({ columns, rows }: { columns: CoverageColumn[]; r
                         {cell.count > 1 && (
                           <span className="text-xs font-semibold text-slate-500 dark:text-white/70">{cell.count}</span>
                         )}
-                        <span className="sr-only">Açıklandı</span>
+                        <span className="sr-only">{t.announced}</span>
                       </Link>
                     </td>
                   );

@@ -1,53 +1,105 @@
 import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
+import type { Locale } from "@/lib/i18n/locale";
 
-const FOOTER_COLUMNS = [
-  {
-    heading: "Platform",
-    links: [
-      { href: "/haberler", label: "Haberler" },
-      { href: "/ab-hibe-projeleri", label: "Hibe Projeleri" },
-      { href: "/proje-turleri", label: "Proje Türleri" },
-      { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi" },
-      { href: "/proje-sonuclari", label: "Proje Sonuçları" },
-      { href: "/acik-cagrilar", label: "Açık Çağrılar" },
-    ],
-  },
-  {
-    heading: "Akademi & Destek",
-    links: [
-      { href: "/akademi", label: "Erasmus Akademi" },
-      { href: "/araclar", label: "Araçlar" },
-      { href: "/danismanlik", label: "Danışmanlık" },
-      { href: "/sss", label: "Sıkça Sorulan Sorular" },
-    ],
-  },
-  {
-    heading: "Kaynaklar",
-    links: [
-      { href: "/mevzuat", label: "Mevzuat" },
-      { href: "/terimler-sozlugu", label: "Terimler Sözlüğü" },
-      { href: "/yararli-linkler", label: "Yararlı Linkler" },
-      { href: "/salto-youth", label: "SALTO Youth" },
-      { href: "/salto-egitim", label: "SALTO E&T" },
-      { href: "/esc", label: "ESC" },
-    ],
-  },
-];
+const FOOTER_COLUMNS_BY_LOCALE = {
+  tr: [
+    {
+      heading: "Platform",
+      links: [
+        { href: "/haberler", label: "Haberler" },
+        { href: "/ab-hibe-projeleri", label: "Hibe Projeleri" },
+        { href: "/proje-turleri", label: "Proje Türleri" },
+        { href: "/proje-kutuphanesi", label: "Proje Kütüphanesi" },
+        { href: "/proje-sonuclari", label: "Proje Sonuçları" },
+        { href: "/acik-cagrilar", label: "Açık Çağrılar" },
+      ],
+    },
+    {
+      heading: "Akademi & Destek",
+      links: [
+        { href: "/akademi", label: "Erasmus Akademi" },
+        { href: "/araclar", label: "Araçlar" },
+        { href: "/danismanlik", label: "Danışmanlık" },
+        { href: "/sss", label: "Sıkça Sorulan Sorular" },
+      ],
+    },
+    {
+      heading: "Kaynaklar",
+      links: [
+        { href: "/mevzuat", label: "Mevzuat" },
+        { href: "/terimler-sozlugu", label: "Terimler Sözlüğü" },
+        { href: "/yararli-linkler", label: "Yararlı Linkler" },
+        { href: "/salto-youth", label: "SALTO Youth" },
+        { href: "/salto-egitim", label: "SALTO E&T" },
+        { href: "/esc", label: "ESC" },
+      ],
+    },
+  ],
+  en: [
+    {
+      heading: "Platform",
+      links: [
+        { href: "/haberler", label: "News" },
+        { href: "/ab-hibe-projeleri", label: "Grant Projects" },
+        { href: "/proje-turleri", label: "Project Types" },
+        { href: "/proje-kutuphanesi", label: "Project Library" },
+        { href: "/proje-sonuclari", label: "Project Results" },
+        { href: "/acik-cagrilar", label: "Open Calls" },
+      ],
+    },
+    {
+      heading: "Academy & Support",
+      links: [
+        { href: "/akademi", label: "Erasmus Academy" },
+        { href: "/araclar", label: "Tools" },
+        { href: "/danismanlik", label: "Consulting" },
+        { href: "/sss", label: "FAQ" },
+      ],
+    },
+    {
+      heading: "Resources",
+      links: [
+        { href: "/mevzuat", label: "Legislation" },
+        { href: "/terimler-sozlugu", label: "Glossary" },
+        { href: "/yararli-linkler", label: "Useful Links" },
+        { href: "/salto-youth", label: "SALTO Youth" },
+        { href: "/salto-egitim", label: "SALTO E&T" },
+        { href: "/esc", label: "ESC" },
+      ],
+    },
+  ],
+} as const;
 
-export function Footer() {
+function withLocalePrefix(href: string, locale: Locale) {
+  return locale === "en" ? `/en${href}` : href;
+}
+
+export function Footer({ locale = "tr" }: { locale?: Locale } = {}) {
+  const footerColumns = FOOTER_COLUMNS_BY_LOCALE[locale].map((col) => ({
+    ...col,
+    links: col.links.map((link) => ({ ...link, href: withLocalePrefix(link.href, locale) })),
+  }));
+
   return (
     <footer className="border-t border-border">
       <div className="mx-auto max-w-6xl px-4 py-14">
         {/* Tagline */}
-        <p className="whitespace-normal sm:whitespace-nowrap text-[clamp(1.1rem,3.6vw,1.5rem)] font-medium tracking-tight text-foreground">
-          Fikirden <span className="text-accent">yaygınlaştırmaya</span>, Erasmus+ projenizi tek
-          yerden <span className="text-accent-warm">yönetin</span>.
-        </p>
+        {locale === "en" ? (
+          <p className="whitespace-normal sm:whitespace-nowrap text-[clamp(1.1rem,3.6vw,1.5rem)] font-medium tracking-tight text-foreground">
+            Manage your Erasmus+ project end to end, from <span className="text-accent">idea</span> to{" "}
+            <span className="text-accent-warm">dissemination</span>.
+          </p>
+        ) : (
+          <p className="whitespace-normal sm:whitespace-nowrap text-[clamp(1.1rem,3.6vw,1.5rem)] font-medium tracking-tight text-foreground">
+            Fikirden <span className="text-accent">yaygınlaştırmaya</span>, Erasmus+ projenizi tek
+            yerden <span className="text-accent-warm">yönetin</span>.
+          </p>
+        )}
 
         {/* 3-column link grid */}
         <div className="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-3">
-          {FOOTER_COLUMNS.map((col) => (
+          {footerColumns.map((col) => (
             <div key={col.heading}>
               <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                 {col.heading}
@@ -70,7 +122,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col gap-4 border-t border-border pt-6 md:flex-row md:items-center md:justify-between">
-          <Logo />
+          <Logo locale={locale} />
           <a
             href="https://www.instagram.com/erasmusportal"
             target="_blank"
@@ -99,16 +151,33 @@ export function Footer() {
         </div>
 
         <div className="mt-6 flex flex-col gap-1 text-xs text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Erasmus+ Portal. Tüm hakları saklıdır.</p>
-          <p>
-            Bu site bağımsız bir bilgi ve danışmanlık platformudur; Avrupa Komisyonu veya bir
-            Ulusal Ajans tarafından desteklenmemektedir.
-          </p>
-          <p>
-            <Link href="/gizlilik-politikasi" className="cursor-pointer hover:text-foreground hover:underline">
-              Gizlilik Politikası ve KVKK Aydınlatma Metni
-            </Link>
-          </p>
+          {locale === "en" ? (
+            <>
+              <p>&copy; {new Date().getFullYear()} Erasmus+ Portal. All rights reserved.</p>
+              <p>
+                This site is an independent information and consulting platform; it is not
+                endorsed by the European Commission or any National Agency.
+              </p>
+              <p>
+                <Link href="/en/gizlilik-politikasi" className="cursor-pointer hover:text-foreground hover:underline">
+                  Privacy Policy &amp; Data Protection Notice
+                </Link>
+              </p>
+            </>
+          ) : (
+            <>
+              <p>&copy; {new Date().getFullYear()} Erasmus+ Portal. Tüm hakları saklıdır.</p>
+              <p>
+                Bu site bağımsız bir bilgi ve danışmanlık platformudur; Avrupa Komisyonu veya bir
+                Ulusal Ajans tarafından desteklenmemektedir.
+              </p>
+              <p>
+                <Link href="/gizlilik-politikasi" className="cursor-pointer hover:text-foreground hover:underline">
+                  Gizlilik Politikası ve KVKK Aydınlatma Metni
+                </Link>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </footer>

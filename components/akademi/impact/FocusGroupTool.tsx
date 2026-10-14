@@ -16,7 +16,8 @@ function emptyTopic(id: string): Topic {
   return { id, title: "", questions: [{ id: `${id}-q1`, text: "" }] };
 }
 
-export function FocusGroupTool() {
+export function FocusGroupTool({ locale = "tr" }: { locale?: "tr" | "en" }) {
+  const isEn = locale === "en";
   const reactId = useId();
   const [objective, setObjective] = useState("");
   const [opening, setOpening] = useState("");
@@ -39,58 +40,58 @@ export function FocusGroupTool() {
 
   return (
     <div>
-      <ToolPdfBar />
+      <ToolPdfBar locale={locale} />
       <div className="space-y-6">
         <Card className="border-accent/40">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Amaç (Objective)</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Objective" : "Amaç (Objective)"}</p>
           <textarea
             value={objective}
             onChange={(e) => setObjective(e.target.value)}
-            placeholder="Bu görüşmeyle ne öğrenmek istiyorsunuz?"
+            placeholder={isEn ? "What do you want to learn from this discussion?" : "Bu görüşmeyle ne öğrenmek istiyorsunuz?"}
             className={textareaClass}
           />
         </Card>
 
         <Card>
-          <p className="text-xs font-medium text-muted-foreground mb-2">Açılış (Opening)</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Opening" : "Açılış (Opening)"}</p>
           <textarea
             value={opening}
             onChange={(e) => setOpening(e.target.value)}
-            placeholder="Kendinizi tanıtın, görüşmenin amacını ve gizliliği açıklayın."
+            placeholder={isEn ? "Introduce yourself and explain the purpose of the discussion and confidentiality." : "Kendinizi tanıtın, görüşmenin amacını ve gizliliği açıklayın."}
             className={textareaClass}
           />
         </Card>
 
         <Card>
-          <p className="text-xs font-medium text-muted-foreground mb-2">Buz Kırıcı (Icebreaker)</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Icebreaker" : "Buz Kırıcı (Icebreaker)"}</p>
           <input
             value={icebreaker}
             onChange={(e) => setIcebreaker(e.target.value)}
-            placeholder='Örn. "Deneyiminizi tek bir kelimeyle anlatın."'
+            placeholder={isEn ? 'E.g. "Describe your experience in a single word."' : 'Örn. "Deneyiminizi tek bir kelimeyle anlatın."'}
             className={inputClass}
           />
         </Card>
 
         <Card>
           <div className="flex items-center justify-between mb-3 print:hidden">
-            <p className="text-xs font-medium text-muted-foreground">Ana Tartışma Konuları</p>
+            <p className="text-xs font-medium text-muted-foreground">{isEn ? "Main Discussion Topics" : "Ana Tartışma Konuları"}</p>
             <button
               type="button"
               onClick={addTopic}
               className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              + Konu Ekle
+              {isEn ? "+ Add Topic" : "+ Konu Ekle"}
             </button>
           </div>
           <div className="space-y-4">
             {topics.map((topic, index) => (
               <div key={topic.id} className="rounded-lg border border-border p-3">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-sm font-medium text-foreground shrink-0">Konu {index + 1}:</span>
+                  <span className="text-sm font-medium text-foreground shrink-0">{isEn ? `Topic ${index + 1}:` : `Konu ${index + 1}:`}</span>
                   <input
                     value={topic.title}
                     onChange={(e) => updateTopicTitle(topic.id, e.target.value)}
-                    placeholder="Konu başlığı"
+                    placeholder={isEn ? "Topic title" : "Konu başlığı"}
                     className={inputClass}
                   />
                   <button
@@ -99,13 +100,14 @@ export function FocusGroupTool() {
                     disabled={topics.length <= 1}
                     className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-red-600 transition-colors duration-200 hover:border-red-300 disabled:opacity-40 print:hidden"
                   >
-                    Sil
+                    {isEn ? "Delete" : "Sil"}
                   </button>
                 </div>
                 <DynamicList
                   items={topic.questions}
                   onChange={(q) => updateTopicQuestions(topic.id, q)}
-                  placeholder="Soru"
+                  placeholder={isEn ? "Question" : "Soru"}
+                  locale={locale}
                 />
               </div>
             ))}
@@ -113,11 +115,11 @@ export function FocusGroupTool() {
         </Card>
 
         <Card>
-          <p className="text-xs font-medium text-muted-foreground mb-2">Kapanış (Closing)</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Closing" : "Kapanış (Closing)"}</p>
           <textarea
             value={closing}
             onChange={(e) => setClosing(e.target.value)}
-            placeholder='Örn. "Paylaşmak istediğiniz başka bir şey var mı?" + teşekkür ve sonraki adımlar.'
+            placeholder={isEn ? 'E.g. "Is there anything else you would like to share?" + thanks and next steps.' : 'Örn. "Paylaşmak istediğiniz başka bir şey var mı?" + teşekkür ve sonraki adımlar.'}
             className={textareaClass}
           />
         </Card>

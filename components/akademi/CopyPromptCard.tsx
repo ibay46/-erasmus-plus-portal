@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 
-export function CopyPromptCard({ title, prompt }: { title: string; prompt: string }) {
+export function CopyPromptCard({
+  title,
+  prompt,
+  locale = "tr",
+}: {
+  title: string;
+  prompt: string;
+  locale?: "tr" | "en";
+}) {
   const [copied, setCopied] = useState(false);
 
   return (
@@ -19,7 +27,7 @@ export function CopyPromptCard({ title, prompt }: { title: string; prompt: strin
           }}
           className="cursor-pointer shrink-0 rounded-lg border border-border px-3 py-1 text-xs font-medium text-foreground transition-colors duration-200 hover:border-accent/50"
         >
-          {copied ? "Kopyalandı" : "Kopyala"}
+          {copied ? (locale === "en" ? "Copied" : "Kopyalandı") : locale === "en" ? "Copy" : "Kopyala"}
         </button>
       </div>
       <pre className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-foreground">

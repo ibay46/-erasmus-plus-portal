@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { Card } from "@/components/ui/Card";
+import type { Locale } from "@/lib/i18n/locale";
 import {
   KA220_LUMP_SUM_OPTIONS,
   KA220_PM_MAX_SHARE,
@@ -17,10 +18,153 @@ import {
 const inputClass =
   "w-full min-w-0 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
 
-const FIELDS = ["Okul Eğitimi", "Mesleki Eğitim ve Öğretim", "Yetişkin Eğitimi", "Gençlik", "Yükseköğretim"];
+const FIELDS_TR = ["Okul Eğitimi", "Mesleki Eğitim ve Öğretim", "Yetişkin Eğitimi", "Gençlik", "Yükseköğretim"];
+const FIELDS_EN = ["School Education", "Vocational Education and Training", "Adult Education", "Youth", "Higher Education"];
 
-function formatEur(value: number) {
-  return `${(value || 0).toLocaleString("tr-TR", { maximumFractionDigits: 0 })} €`;
+const STRINGS = {
+  tr: {
+    intro: "Doldurdukça bütçe kontrolleri ve ödeme simülasyonu otomatik güncellenir. Hazır olduğunda PDF indirin.",
+    downloadPdf: "PDF Olarak İndir",
+    generalInfo: "Genel Bilgiler",
+    projectTitle: "Proje Başlığı",
+    field: "Alan",
+    lumpSumLabel: "Lump Sum (Erasmus+ Programme Guide'a göre üç sabit tutardan biri seçilir)",
+    organisations: "Katılımcı Kuruluşlar",
+    addPartner: "+ Ortak Ekle",
+    coordinator: "Koordinatör",
+    partner: "Ortak",
+    orgNamePlaceholder: "Kuruluş adı",
+    countryPlaceholder: "Ülke",
+    cityPlaceholder: "Şehir",
+    orgTypePlaceholder: "Kuruluş türü (örn. Okul)",
+    newcomer: "Programa yeni katılımcı",
+    removeOrg: "Kuruluşu Kaldır",
+    workPackages: "İş Paketleri (Work Packages)",
+    addWorkPackage: "+ İş Paketi Ekle",
+    wpHelpText:
+      "WP1 (Proje Yönetimi) toplam lump sum'ın en fazla %20'si olabilir. Görev dağılımı alanı, değerlendiricinin “ortaklık kalitesi” puanlamasında önemlidir — her ortağın bu iş paketindeki somut görevini yazın.",
+    projectManagement: "Proje Yönetimi",
+    wpTitlePlaceholder: "İş paketi başlığı",
+    remove: "Kaldır",
+    budgetEur: "Bütçe (EUR)",
+    pmShareText: (pct: string) => `Lump sum'ın %${pct}'i`,
+    pmShareExceeded: "— %20 sınırı aşıldı!",
+    wpOrgAllocationTitle: "Bu İş Paketinin Kuruluşlara Dağılımı (EUR)",
+    wpOrgAllocationMismatch: (distributed: string, budget: string) =>
+      `Kuruluşlara dağıtılan toplam (${distributed}) iş paketi bütçesiyle (${budget}) eşleşmiyor.`,
+    specificObjectives: "Spesifik Hedefler",
+    mainResults: "Ana Sonuçlar",
+    qualitativeIndicators: "Nitel Göstergeler",
+    quantitativeIndicators: "Nicel Göstergeler",
+    taskAllocation: "Görev Dağılımı (her ortağın bu iş paketindeki görev ve sorumlulukları)",
+    taskAllocationPlaceholder:
+      "örn. Koordinatör: genel koordinasyon ve raporlama; Ortak 1: müfredat geliştirme; Ortak 2: pilot uygulama...",
+    budgetJustification: "Bütçe Gerekçesi (tutar nasıl belirlendi, maliyet etkinliği nasıl doğrulandı)",
+    activities: "Faaliyetler",
+    addActivity: "+ Faaliyet Ekle",
+    activityNamePlaceholder: "Faaliyet adı",
+    venuePlaceholder: "Yer",
+    startDate: "Başlangıç",
+    endDate: "Bitiş",
+    leadOrg: "Yürütücü Kuruluş",
+    select: "Seçiniz",
+    amountEur: "Tutar (EUR)",
+    participatingOrgs: "Katılımcı Kuruluşlar",
+    expectedResultsPlaceholder: "Beklenen sonuçlar",
+    removeActivity: "Faaliyeti Kaldır",
+    budgetSummary: "Bütçe Özeti",
+    wpColumn: "İş Paketi",
+    budgetColumn: "Bütçe (EUR)",
+    lumpSumShareColumn: "Lump Sum İçindeki Pay",
+    totalDistributed: "Toplam Dağıtılan",
+    totalMismatch: (distributed: string, lumpSum: string) =>
+      `Toplam dağıtılan tutar (${distributed}), seçilen lump sum (${lumpSum}) ile eşleşmiyor.`,
+    orgDistributionTitle: "Kuruluşlara Göre Dağılım (İş Paketi Bazında)",
+    orgColumn: "Kuruluş",
+    totalColumn: "Toplam",
+    taskSummaryTitle: "Görev Dağılımı Özeti (faaliyet tablolarından otomatik hesaplanır)",
+    leadCountColumn: "Yürütücü olduğu faaliyet",
+    participantCountColumn: "Katıldığı faaliyet",
+    taskSummaryNote:
+      "Değerlendiriciler “ortaklık ve iş birliği düzenlemeleri” kriterinde tüm kuruluşların aktif katkısını arar; bu tablo görev dağılımının dengeli olup olmadığını görmenize yardımcı olur.",
+    unnamedOrg: "İsimsiz kuruluş",
+  },
+  en: {
+    intro:
+      "Budget checks and the payment simulation update automatically as you fill in the form. Download the PDF when ready.",
+    downloadPdf: "Download as PDF",
+    generalInfo: "General Information",
+    projectTitle: "Project Title",
+    field: "Field",
+    lumpSumLabel: "Lump Sum (choose one of the three fixed amounts set out in the Erasmus+ Programme Guide)",
+    organisations: "Participating Organisations",
+    addPartner: "+ Add Partner",
+    coordinator: "Coordinator",
+    partner: "Partner",
+    orgNamePlaceholder: "Organisation name",
+    countryPlaceholder: "Country",
+    cityPlaceholder: "City",
+    orgTypePlaceholder: "Organisation type (e.g. School)",
+    newcomer: "New to the programme",
+    removeOrg: "Remove Organisation",
+    workPackages: "Work Packages",
+    addWorkPackage: "+ Add Work Package",
+    wpHelpText:
+      "WP1 (Project Management) can be at most 20% of the total lump sum. The task allocation field matters for the evaluator’s “quality of the partnership” scoring — write each partner’s concrete task within this work package.",
+    projectManagement: "Project Management",
+    wpTitlePlaceholder: "Work package title",
+    remove: "Remove",
+    budgetEur: "Budget (EUR)",
+    pmShareText: (pct: string) => `${pct}% of the lump sum`,
+    pmShareExceeded: "— 20% limit exceeded!",
+    wpOrgAllocationTitle: "Distribution of This Work Package Across Organisations (EUR)",
+    wpOrgAllocationMismatch: (distributed: string, budget: string) =>
+      `The total distributed to organisations (${distributed}) does not match the work package budget (${budget}).`,
+    specificObjectives: "Specific Objectives",
+    mainResults: "Main Results",
+    qualitativeIndicators: "Qualitative Indicators",
+    quantitativeIndicators: "Quantitative Indicators",
+    taskAllocation: "Task Allocation (each partner's tasks and responsibilities within this work package)",
+    taskAllocationPlaceholder:
+      "e.g. Coordinator: overall coordination and reporting; Partner 1: curriculum development; Partner 2: pilot implementation...",
+    budgetJustification: "Budget Justification (how the amount was determined, how cost-effectiveness was verified)",
+    activities: "Activities",
+    addActivity: "+ Add Activity",
+    activityNamePlaceholder: "Activity name",
+    venuePlaceholder: "Venue",
+    startDate: "Start Date",
+    endDate: "End Date",
+    leadOrg: "Lead Organisation",
+    select: "Select",
+    amountEur: "Amount (EUR)",
+    participatingOrgs: "Participating Organisations",
+    expectedResultsPlaceholder: "Expected results",
+    removeActivity: "Remove Activity",
+    budgetSummary: "Budget Summary",
+    wpColumn: "Work Package",
+    budgetColumn: "Budget (EUR)",
+    lumpSumShareColumn: "Share of Lump Sum",
+    totalDistributed: "Total Distributed",
+    totalMismatch: (distributed: string, lumpSum: string) =>
+      `The total distributed amount (${distributed}) does not match the selected lump sum (${lumpSum}).`,
+    orgDistributionTitle: "Distribution by Organisation (per Work Package)",
+    orgColumn: "Organisation",
+    totalColumn: "Total",
+    taskSummaryTitle: "Task Allocation Summary (calculated automatically from the activity tables)",
+    leadCountColumn: "Activities as lead",
+    participantCountColumn: "Activities as participant",
+    taskSummaryNote:
+      "Evaluators look for the active contribution of all organisations under the “partnership and cooperation arrangements” criterion; this table helps you see whether the task allocation is balanced.",
+    unnamedOrg: "Unnamed organisation",
+  },
+} as const;
+
+function formatEur(value: number, locale: Locale) {
+  return `${(value || 0).toLocaleString(locale === "en" ? "en-GB" : "tr-TR", { maximumFractionDigits: 0 })} €`;
+}
+
+function formatPercent(pct: string, locale: Locale) {
+  return locale === "en" ? `${pct}%` : `%${pct}`;
 }
 
 function Field({
@@ -62,8 +206,10 @@ function Field({
   );
 }
 
-export function Ka220BudgetCalculator() {
+export function Ka220BudgetCalculator({ locale = "tr" }: { locale?: Locale } = {}) {
   const reactId = useId();
+  const t = STRINGS[locale];
+  const FIELDS = locale === "en" ? FIELDS_EN : FIELDS_TR;
 
   const [field, setField] = useState(FIELDS[0]);
   const [projectTitle, setProjectTitle] = useState("");
@@ -93,7 +239,7 @@ export function Ka220BudgetCalculator() {
   const [workPackages, setWorkPackages] = useState<Ka220WorkPackage[]>([
     {
       id: "WP1",
-      title: "Proje Yönetimi",
+      title: t.projectManagement,
       isProjectManagement: true,
       budget: 0,
       specificObjectives: "",
@@ -265,7 +411,7 @@ export function Ka220BudgetCalculator() {
   const orgTotals = getOrganisationTotals(organisations, workPackages);
   const taskDistribution = getTaskDistribution(organisations, workPackages);
 
-  const orgName = (id: string) => organisations.find((o) => o.id === id)?.name || "İsimsiz kuruluş";
+  const orgName = (id: string) => organisations.find((o) => o.id === id)?.name || t.unnamedOrg;
 
   async function handleDownloadPdf() {
     const { generateKa220BudgetPdf } = await import("@/lib/pdf/generateKa220BudgetPdf");
@@ -284,25 +430,25 @@ export function Ka220BudgetCalculator() {
     <div>
       <div className="mb-6 flex items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">
-          Doldurdukça bütçe kontrolleri ve ödeme simülasyonu otomatik güncellenir. Hazır olduğunda PDF indirin.
+          {t.intro}
         </p>
         <button
           type="button"
           onClick={handleDownloadPdf}
           className="cursor-pointer shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
         >
-          PDF Olarak İndir
+          {t.downloadPdf}
         </button>
       </div>
 
       <div className="space-y-6">
         {/* Genel bilgiler */}
         <Card>
-          <h4 className="mb-3 font-medium text-foreground">Genel Bilgiler</h4>
+          <h4 className="mb-3 font-medium text-foreground">{t.generalInfo}</h4>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Proje Başlığı" value={projectTitle} onChange={setProjectTitle} />
+            <Field label={t.projectTitle} value={projectTitle} onChange={setProjectTitle} />
             <label className="block">
-              <span className="mb-1 block text-xs font-medium text-muted-foreground">Alan</span>
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">{t.field}</span>
               <select value={field} onChange={(e) => setField(e.target.value)} className={inputClass}>
                 {FIELDS.map((f) => (
                   <option key={f}>{f}</option>
@@ -312,7 +458,7 @@ export function Ka220BudgetCalculator() {
           </div>
           <div className="mt-3">
             <p className="mb-2 text-xs font-medium text-muted-foreground">
-              Lump Sum (Erasmus+ Programme Guide&apos;a göre üç sabit tutardan biri seçilir)
+              {t.lumpSumLabel}
             </p>
             <div className="flex flex-wrap gap-2">
               {KA220_LUMP_SUM_OPTIONS.map((amount) => (
@@ -326,7 +472,7 @@ export function Ka220BudgetCalculator() {
                       : "border-border text-foreground hover:border-accent/50"
                   }`}
                 >
-                  {formatEur(amount)}
+                  {formatEur(amount, locale)}
                 </button>
               ))}
             </div>
@@ -336,43 +482,43 @@ export function Ka220BudgetCalculator() {
         {/* Kuruluşlar */}
         <Card>
           <div className="mb-3 flex items-center justify-between">
-            <h4 className="font-medium text-foreground">Katılımcı Kuruluşlar</h4>
+            <h4 className="font-medium text-foreground">{t.organisations}</h4>
             <button
               type="button"
               onClick={addOrganisation}
               className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              + Ortak Ekle
+              {t.addPartner}
             </button>
           </div>
           <div className="space-y-3">
             {organisations.map((org) => (
               <div key={org.id} className="grid gap-2 rounded-lg border border-border p-3 sm:grid-cols-6">
                 <span className="flex items-center text-xs font-medium text-muted-foreground sm:col-span-1">
-                  {org.role === "coordinator" ? "Koordinatör" : "Ortak"}
+                  {org.role === "coordinator" ? t.coordinator : t.partner}
                 </span>
                 <input
                   value={org.name}
                   onChange={(e) => updateOrganisation(org.id, { name: e.target.value })}
-                  placeholder="Kuruluş adı"
+                  placeholder={t.orgNamePlaceholder}
                   className={`${inputClass} sm:col-span-2`}
                 />
                 <input
                   value={org.country}
                   onChange={(e) => updateOrganisation(org.id, { country: e.target.value })}
-                  placeholder="Ülke"
+                  placeholder={t.countryPlaceholder}
                   className={inputClass}
                 />
                 <input
                   value={org.city}
                   onChange={(e) => updateOrganisation(org.id, { city: e.target.value })}
-                  placeholder="Şehir"
+                  placeholder={t.cityPlaceholder}
                   className={inputClass}
                 />
                 <input
                   value={org.organisationType}
                   onChange={(e) => updateOrganisation(org.id, { organisationType: e.target.value })}
-                  placeholder="Kuruluş türü (örn. Okul)"
+                  placeholder={t.orgTypePlaceholder}
                   className={inputClass}
                 />
                 {org.role === "partner" && (
@@ -384,14 +530,14 @@ export function Ka220BudgetCalculator() {
                         onChange={(e) => updateOrganisation(org.id, { isNewcomer: e.target.checked })}
                         className="h-4 w-4 rounded border-border accent-accent"
                       />
-                      Programa yeni katılımcı
+                      {t.newcomer}
                     </label>
                     <button
                       type="button"
                       onClick={() => removeOrganisation(org.id)}
                       className="cursor-pointer text-xs text-red-600"
                     >
-                      Kuruluşu Kaldır
+                      {t.removeOrg}
                     </button>
                   </div>
                 )}
@@ -403,19 +549,17 @@ export function Ka220BudgetCalculator() {
         {/* İş Paketleri */}
         <Card>
           <div className="mb-1 flex items-center justify-between">
-            <h4 className="font-medium text-foreground">İş Paketleri (Work Packages)</h4>
+            <h4 className="font-medium text-foreground">{t.workPackages}</h4>
             <button
               type="button"
               onClick={addWorkPackage}
               className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              + İş Paketi Ekle
+              {t.addWorkPackage}
             </button>
           </div>
           <p className="mb-4 text-xs text-muted-foreground">
-            WP1 (Proje Yönetimi) toplam lump sum&apos;ın en fazla %20&apos;si olabilir. Görev dağılımı alanı,
-            değerlendiricinin &quot;ortaklık kalitesi&quot; puanlamasında önemlidir — her ortağın bu iş
-            paketindeki somut görevini yazın.
+            {t.wpHelpText}
           </p>
 
           <div className="space-y-5">
@@ -429,12 +573,12 @@ export function Ka220BudgetCalculator() {
                       {wp.id}
                     </span>
                     {wp.isProjectManagement ? (
-                      <span className="flex-1 text-sm font-medium text-foreground">Proje Yönetimi</span>
+                      <span className="flex-1 text-sm font-medium text-foreground">{t.projectManagement}</span>
                     ) : (
                       <input
                         value={wp.title}
                         onChange={(e) => updateWorkPackage(wp.id, { title: e.target.value })}
-                        placeholder="İş paketi başlığı"
+                        placeholder={t.wpTitlePlaceholder}
                         className={`${inputClass} flex-1`}
                       />
                     )}
@@ -444,14 +588,14 @@ export function Ka220BudgetCalculator() {
                         onClick={() => removeWorkPackage(wp.id)}
                         className="cursor-pointer shrink-0 text-xs text-red-600"
                       >
-                        Kaldır
+                        {t.remove}
                       </button>
                     )}
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
                     <label className="block">
-                      <span className="mb-1 block text-xs font-medium text-muted-foreground">Bütçe (EUR)</span>
+                      <span className="mb-1 block text-xs font-medium text-muted-foreground">{t.budgetEur}</span>
                       <input
                         type="number"
                         min={0}
@@ -465,7 +609,7 @@ export function Ka220BudgetCalculator() {
                         <p
                           className={`text-xs ${pmShare > KA220_PM_MAX_SHARE ? "font-medium text-red-600" : "text-muted-foreground"}`}
                         >
-                          Lump sum&apos;ın %{(pmShare * 100).toFixed(1)}&apos;i {pmShare > KA220_PM_MAX_SHARE && "— %20 sınırı aşıldı!"}
+                          {t.pmShareText((pmShare * 100).toFixed(1))} {pmShare > KA220_PM_MAX_SHARE && t.pmShareExceeded}
                         </p>
                       </div>
                     )}
@@ -474,13 +618,13 @@ export function Ka220BudgetCalculator() {
                   {/* Kuruluşlara bütçe dağılımı */}
                   <div className="mt-4">
                     <p className="mb-2 text-xs font-medium text-muted-foreground">
-                      Bu İş Paketinin Kuruluşlara Dağılımı (EUR)
+                      {t.wpOrgAllocationTitle}
                     </p>
                     <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                       {organisations.map((org) => (
                         <label key={org.id} className="block">
                           <span className="mb-1 block text-xs text-muted-foreground">
-                            {org.name || (org.role === "coordinator" ? "Koordinatör" : "Ortak")}
+                            {org.name || (org.role === "coordinator" ? t.coordinator : t.partner)}
                           </span>
                           <input
                             type="number"
@@ -494,8 +638,7 @@ export function Ka220BudgetCalculator() {
                     </div>
                     {orgAllocMismatch && (
                       <p className="mt-2 text-xs font-medium text-red-600">
-                        Kuruluşlara dağıtılan toplam ({formatEur(orgAllocTotal)}) iş paketi bütçesiyle (
-                        {formatEur(wp.budget)}) eşleşmiyor.
+                        {t.wpOrgAllocationMismatch(formatEur(orgAllocTotal, locale), formatEur(wp.budget, locale))}
                       </p>
                     )}
                   </div>
@@ -504,25 +647,25 @@ export function Ka220BudgetCalculator() {
                     <>
                       <div className="mt-3 grid gap-3 sm:grid-cols-2">
                         <Field
-                          label="Spesifik Hedefler"
+                          label={t.specificObjectives}
                           value={wp.specificObjectives}
                           onChange={(v) => updateWorkPackage(wp.id, { specificObjectives: v })}
                           textarea
                         />
                         <Field
-                          label="Ana Sonuçlar"
+                          label={t.mainResults}
                           value={wp.mainResults}
                           onChange={(v) => updateWorkPackage(wp.id, { mainResults: v })}
                           textarea
                         />
                         <Field
-                          label="Nitel Göstergeler"
+                          label={t.qualitativeIndicators}
                           value={wp.qualitativeIndicators}
                           onChange={(v) => updateWorkPackage(wp.id, { qualitativeIndicators: v })}
                           textarea
                         />
                         <Field
-                          label="Nicel Göstergeler"
+                          label={t.quantitativeIndicators}
                           value={wp.quantitativeIndicators}
                           onChange={(v) => updateWorkPackage(wp.id, { quantitativeIndicators: v })}
                           textarea
@@ -530,16 +673,16 @@ export function Ka220BudgetCalculator() {
                       </div>
                       <div className="mt-3">
                         <Field
-                          label="Görev Dağılımı (her ortağın bu iş paketindeki görev ve sorumlulukları)"
+                          label={t.taskAllocation}
                           value={wp.taskAllocation}
                           onChange={(v) => updateWorkPackage(wp.id, { taskAllocation: v })}
-                          placeholder="örn. Koordinatör: genel koordinasyon ve raporlama; Ortak 1: müfredat geliştirme; Ortak 2: pilot uygulama..."
+                          placeholder={t.taskAllocationPlaceholder}
                           textarea
                         />
                       </div>
                       <div className="mt-3">
                         <Field
-                          label="Bütçe Gerekçesi (tutar nasıl belirlendi, maliyet etkinliği nasıl doğrulandı)"
+                          label={t.budgetJustification}
                           value={wp.budgetJustification}
                           onChange={(v) => updateWorkPackage(wp.id, { budgetJustification: v })}
                           textarea
@@ -549,13 +692,13 @@ export function Ka220BudgetCalculator() {
                       {/* Faaliyetler */}
                       <div className="mt-4">
                         <div className="mb-2 flex items-center justify-between">
-                          <p className="text-xs font-medium text-muted-foreground">Faaliyetler</p>
+                          <p className="text-xs font-medium text-muted-foreground">{t.activities}</p>
                           <button
                             type="button"
                             onClick={() => addActivity(wp.id)}
                             className="cursor-pointer rounded-lg border border-border px-2.5 py-1 text-xs text-foreground transition-colors duration-200 hover:border-accent/50"
                           >
-                            + Faaliyet Ekle
+                            {t.addActivity}
                           </button>
                         </div>
                         <div className="space-y-3">
@@ -565,17 +708,17 @@ export function Ka220BudgetCalculator() {
                                 <input
                                   value={activity.title}
                                   onChange={(e) => updateActivity(wp.id, activity.id, { title: e.target.value })}
-                                  placeholder="Faaliyet adı"
+                                  placeholder={t.activityNamePlaceholder}
                                   className={inputClass}
                                 />
                                 <input
                                   value={activity.venue}
                                   onChange={(e) => updateActivity(wp.id, activity.id, { venue: e.target.value })}
-                                  placeholder="Yer"
+                                  placeholder={t.venuePlaceholder}
                                   className={inputClass}
                                 />
                                 <label className="block">
-                                  <span className="mb-1 block text-xs text-muted-foreground">Başlangıç</span>
+                                  <span className="mb-1 block text-xs text-muted-foreground">{t.startDate}</span>
                                   <input
                                     type="date"
                                     value={activity.startDate}
@@ -584,7 +727,7 @@ export function Ka220BudgetCalculator() {
                                   />
                                 </label>
                                 <label className="block">
-                                  <span className="mb-1 block text-xs text-muted-foreground">Bitiş</span>
+                                  <span className="mb-1 block text-xs text-muted-foreground">{t.endDate}</span>
                                   <input
                                     type="date"
                                     value={activity.endDate}
@@ -593,22 +736,22 @@ export function Ka220BudgetCalculator() {
                                   />
                                 </label>
                                 <label className="block">
-                                  <span className="mb-1 block text-xs text-muted-foreground">Yürütücü Kuruluş</span>
+                                  <span className="mb-1 block text-xs text-muted-foreground">{t.leadOrg}</span>
                                   <select
                                     value={activity.leadOrgId}
                                     onChange={(e) => updateActivity(wp.id, activity.id, { leadOrgId: e.target.value })}
                                     className={inputClass}
                                   >
-                                    <option value="">Seçiniz</option>
+                                    <option value="">{t.select}</option>
                                     {organisations.map((org) => (
                                       <option key={org.id} value={org.id}>
-                                        {org.name || (org.role === "coordinator" ? "Koordinatör" : "Ortak")}
+                                        {org.name || (org.role === "coordinator" ? t.coordinator : t.partner)}
                                       </option>
                                     ))}
                                   </select>
                                 </label>
                                 <label className="block">
-                                  <span className="mb-1 block text-xs text-muted-foreground">Tutar (EUR)</span>
+                                  <span className="mb-1 block text-xs text-muted-foreground">{t.amountEur}</span>
                                   <input
                                     type="number"
                                     min={0}
@@ -621,7 +764,7 @@ export function Ka220BudgetCalculator() {
                                 </label>
                               </div>
                               <div className="mt-2">
-                                <p className="mb-1 text-xs text-muted-foreground">Katılımcı Kuruluşlar</p>
+                                <p className="mb-1 text-xs text-muted-foreground">{t.participatingOrgs}</p>
                                 <div className="flex flex-wrap gap-x-4 gap-y-1">
                                   {organisations.map((org) => (
                                     <label key={org.id} className="flex cursor-pointer select-none items-center gap-1.5 text-xs text-foreground">
@@ -631,7 +774,7 @@ export function Ka220BudgetCalculator() {
                                         onChange={() => toggleParticipating(wp.id, activity.id, org.id)}
                                         className="h-3.5 w-3.5 rounded border-border accent-accent"
                                       />
-                                      {org.name || (org.role === "coordinator" ? "Koordinatör" : "Ortak")}
+                                      {org.name || (org.role === "coordinator" ? t.coordinator : t.partner)}
                                     </label>
                                   ))}
                                 </div>
@@ -642,7 +785,7 @@ export function Ka220BudgetCalculator() {
                                   onChange={(e) =>
                                     updateActivity(wp.id, activity.id, { expectedResults: e.target.value })
                                   }
-                                  placeholder="Beklenen sonuçlar"
+                                  placeholder={t.expectedResultsPlaceholder}
                                   rows={2}
                                   className={inputClass}
                                 />
@@ -653,7 +796,7 @@ export function Ka220BudgetCalculator() {
                                   onClick={() => removeActivity(wp.id, activity.id)}
                                   className="cursor-pointer text-xs text-red-600"
                                 >
-                                  Faaliyeti Kaldır
+                                  {t.removeActivity}
                                 </button>
                               </div>
                             </div>
@@ -670,35 +813,37 @@ export function Ka220BudgetCalculator() {
 
         {/* Bütçe Özeti */}
         <Card>
-          <h4 className="mb-3 font-medium text-foreground">Bütçe Özeti</h4>
+          <h4 className="mb-3 font-medium text-foreground">{t.budgetSummary}</h4>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr>
-                  <th className="border border-border bg-muted p-2 text-left">İş Paketi</th>
-                  <th className="border border-border bg-muted p-2 text-right">Bütçe (EUR)</th>
-                  <th className="border border-border bg-muted p-2 text-right">Lump Sum İçindeki Pay</th>
+                  <th className="border border-border bg-muted p-2 text-left">{t.wpColumn}</th>
+                  <th className="border border-border bg-muted p-2 text-right">{t.budgetColumn}</th>
+                  <th className="border border-border bg-muted p-2 text-right">{t.lumpSumShareColumn}</th>
                 </tr>
               </thead>
               <tbody>
                 {workPackages.map((wp) => (
                   <tr key={wp.id}>
                     <td className="border border-border p-2">
-                      {wp.id}: {wp.title || (wp.isProjectManagement ? "Proje Yönetimi" : "—")}
+                      {wp.id}: {wp.title || (wp.isProjectManagement ? t.projectManagement : "—")}
                     </td>
-                    <td className="border border-border p-2 text-right">{formatEur(wp.budget)}</td>
+                    <td className="border border-border p-2 text-right">{formatEur(wp.budget, locale)}</td>
                     <td className="border border-border p-2 text-right">
-                      {lumpSum ? `%${(((wp.budget || 0) / lumpSum) * 100).toFixed(1)}` : "—"}
+                      {lumpSum
+                        ? formatPercent((((wp.budget || 0) / lumpSum) * 100).toFixed(1), locale)
+                        : "—"}
                     </td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr>
-                  <td className="border border-border p-2 font-semibold">Toplam Dağıtılan</td>
-                  <td className="border border-border p-2 text-right font-semibold">{formatEur(totalBudget)}</td>
+                  <td className="border border-border p-2 font-semibold">{t.totalDistributed}</td>
+                  <td className="border border-border p-2 text-right font-semibold">{formatEur(totalBudget, locale)}</td>
                   <td className="border border-border p-2 text-right font-semibold">
-                    {lumpSum ? `%${((totalBudget / lumpSum) * 100).toFixed(1)}` : "—"}
+                    {lumpSum ? formatPercent(((totalBudget / lumpSum) * 100).toFixed(1), locale) : "—"}
                   </td>
                 </tr>
               </tfoot>
@@ -706,25 +851,24 @@ export function Ka220BudgetCalculator() {
           </div>
           {!budgetMatchesLumpSum && (
             <p className="mt-2 text-xs font-medium text-red-600">
-              Toplam dağıtılan tutar ({formatEur(totalBudget)}), seçilen lump sum ({formatEur(lumpSum)}) ile
-              eşleşmiyor.
+              {t.totalMismatch(formatEur(totalBudget, locale), formatEur(lumpSum, locale))}
             </p>
           )}
 
           <p className="mb-2 mt-6 text-xs font-medium text-muted-foreground">
-            Kuruluşlara Göre Dağılım (İş Paketi Bazında)
+            {t.orgDistributionTitle}
           </p>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr>
-                  <th className="border border-border bg-muted p-2 text-left">Kuruluş</th>
+                  <th className="border border-border bg-muted p-2 text-left">{t.orgColumn}</th>
                   {workPackages.map((wp) => (
                     <th key={wp.id} className="border border-border bg-muted p-2 text-right">
                       {wp.id}
                     </th>
                   ))}
-                  <th className="border border-border bg-muted p-2 text-right">Toplam</th>
+                  <th className="border border-border bg-muted p-2 text-right">{t.totalColumn}</th>
                 </tr>
               </thead>
               <tbody>
@@ -733,10 +877,10 @@ export function Ka220BudgetCalculator() {
                     <td className="border border-border p-2">{orgName(row.orgId)}</td>
                     {workPackages.map((wp) => (
                       <td key={wp.id} className="border border-border p-2 text-right">
-                        {formatEur(row.perWp[wp.id] || 0)}
+                        {formatEur(row.perWp[wp.id] || 0, locale)}
                       </td>
                     ))}
-                    <td className="border border-border p-2 text-right font-semibold">{formatEur(row.total)}</td>
+                    <td className="border border-border p-2 text-right font-semibold">{formatEur(row.total, locale)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -744,15 +888,15 @@ export function Ka220BudgetCalculator() {
           </div>
 
           <p className="mb-2 mt-6 text-xs font-medium text-muted-foreground">
-            Görev Dağılımı Özeti (faaliyet tablolarından otomatik hesaplanır)
+            {t.taskSummaryTitle}
           </p>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr>
-                  <th className="border border-border bg-muted p-2 text-left">Kuruluş</th>
-                  <th className="border border-border bg-muted p-2 text-right">Yürütücü olduğu faaliyet</th>
-                  <th className="border border-border bg-muted p-2 text-right">Katıldığı faaliyet</th>
+                  <th className="border border-border bg-muted p-2 text-left">{t.orgColumn}</th>
+                  <th className="border border-border bg-muted p-2 text-right">{t.leadCountColumn}</th>
+                  <th className="border border-border bg-muted p-2 text-right">{t.participantCountColumn}</th>
                 </tr>
               </thead>
               <tbody>
@@ -767,8 +911,7 @@ export function Ka220BudgetCalculator() {
             </table>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Değerlendiriciler &quot;ortaklık ve iş birliği düzenlemeleri&quot; kriterinde tüm kuruluşların aktif
-            katkısını arar; bu tablo görev dağılımının dengeli olup olmadığını görmenize yardımcı olur.
+            {t.taskSummaryNote}
           </p>
         </Card>
       </div>

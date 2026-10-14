@@ -4,6 +4,112 @@ import { useId, useState } from "react";
 import type ExcelJS from "exceljs";
 import { ACTIVITY_TYPES } from "@/lib/content/erasmusActivityTypes";
 import { Card } from "@/components/ui/Card";
+import type { Locale } from "@/lib/i18n/locale";
+
+const ACTIVITY_TYPES_EN = [
+  "Project Management",
+  "Developing Innovative Outputs (Products)",
+  "Testing (Piloting)",
+  "Transnational Project Meetings (In-person/Virtual)",
+  "Dissemination",
+  "Learning/Teaching/Training Activities (National/International)",
+  "Reports from Partners and to the National Agency",
+];
+
+const STRINGS = {
+  tr: {
+    printHint: "PDF'e aktarırken yazdırma penceresinde yönü ",
+    printHintStrong: "Yatay (Landscape)",
+    printHintEnd: " seçin.",
+    exportExcel: "Excel'e Aktar",
+    downloadPdf: "PDF Olarak İndir",
+    projectInfo: "Proje Bilgileri",
+    formId: "Form ID",
+    acronym: "Akronim",
+    projectName: "Proje Adı",
+    partnerOrgs: "Ortak Kuruluşlar",
+    addPartner: "+ Ortak Ekle",
+    coordinatorNamePlaceholder: "Koordinatör Kurum Adı",
+    countryPlaceholder: "Ülke",
+    partnerNamePlaceholder: "Ortak Kurum Adı",
+    delete: "Sil",
+    projectDuration: "Proje Süresi",
+    totalMonths: "Toplam Ay Sayısı",
+    activityTypesRef: "Faaliyet Türleri (referans)",
+    timetable: "Proje Zaman Çizelgesi",
+    addMainActivity: "+ Ana Faaliyet",
+    addSubActivity: "+ Alt Faaliyet",
+    mainActivity: "Ana Faaliyet",
+    subActivity: "Alt Faaliyet",
+    activity: "Faaliyet",
+    type: "Tür",
+    leadOrg: "Lider Organizasyon",
+    year: (y: number) => `${y}. Yıl`,
+    actions: "İşlem",
+    coordinator: "Koordinatör",
+    partner: "Ortak",
+    activityTitlePlaceholder: "Faaliyet başlığı",
+    addMainBelowTitle: "Bu satırın altına ana faaliyet ekle",
+    addSubBelowTitle: "Bu satırın altına alt faaliyet ekle",
+    addMainShort: "+Ana",
+    addSubShort: "+Alt",
+    excelFixedCols: { no: "No", activityTitle: "Faaliyet Başlığı", type: "Tür" },
+    excelFormIdLabel: "Form ID:",
+    excelAcronymLabel: "Akronim:",
+    excelProjectNameLabel: "Proje Adı:",
+    excelLeadOrg: "Lider Organizasyon",
+    excelYear: (y: number) => `${y}. Yıl`,
+    fileNameFallback: "proje",
+    fileNameSuffix: "-zaman-cizelgesi.xlsx",
+    activityTypes: ACTIVITY_TYPES,
+  },
+  en: {
+    printHint: "When exporting to PDF, select ",
+    printHintStrong: "Landscape",
+    printHintEnd: " orientation in the print dialog.",
+    exportExcel: "Export to Excel",
+    downloadPdf: "Download as PDF",
+    projectInfo: "Project Information",
+    formId: "Form ID",
+    acronym: "Acronym",
+    projectName: "Project Name",
+    partnerOrgs: "Partner Organisations",
+    addPartner: "+ Add Partner",
+    coordinatorNamePlaceholder: "Coordinator Organisation Name",
+    countryPlaceholder: "Country",
+    partnerNamePlaceholder: "Partner Organisation Name",
+    delete: "Delete",
+    projectDuration: "Project Duration",
+    totalMonths: "Total Number of Months",
+    activityTypesRef: "Activity Types (reference)",
+    timetable: "Project Timetable",
+    addMainActivity: "+ Main Activity",
+    addSubActivity: "+ Sub-activity",
+    mainActivity: "Main Activity",
+    subActivity: "Sub-activity",
+    activity: "Activity",
+    type: "Type",
+    leadOrg: "Lead Organisation",
+    year: (y: number) => `Year ${y}`,
+    actions: "Actions",
+    coordinator: "Coordinator",
+    partner: "Partner",
+    activityTitlePlaceholder: "Activity title",
+    addMainBelowTitle: "Add a main activity below this row",
+    addSubBelowTitle: "Add a sub-activity below this row",
+    addMainShort: "+Main",
+    addSubShort: "+Sub",
+    excelFixedCols: { no: "No", activityTitle: "Activity Title", type: "Type" },
+    excelFormIdLabel: "Form ID:",
+    excelAcronymLabel: "Acronym:",
+    excelProjectNameLabel: "Project Name:",
+    excelLeadOrg: "Lead Organisation",
+    excelYear: (y: number) => `Year ${y}`,
+    fileNameFallback: "project",
+    fileNameSuffix: "-timetable.xlsx",
+    activityTypes: ACTIVITY_TYPES_EN,
+  },
+};
 
 const inputClass =
   "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors duration-200 focus:border-accent focus:ring-2 focus:ring-accent/30";
@@ -53,7 +159,9 @@ function buildMonthsActive(durationMonths: number, previous: boolean[] = []): bo
   return Array.from({ length: durationMonths }, (_, i) => previous[i] ?? false);
 }
 
-export function GanttChartBuilder() {
+export function GanttChartBuilder({ locale = "tr" }: { locale?: Locale } = {}) {
+  const t = STRINGS[locale];
+  const activityTypes = t.activityTypes;
   const reactId = useId();
   const [formId, setFormId] = useState("");
   const [acronym, setAcronym] = useState("");
@@ -74,7 +182,7 @@ export function GanttChartBuilder() {
     {
       id: `${reactId}-a1`,
       title: "",
-      type: ACTIVITY_TYPES[0],
+      type: activityTypes[0],
       level: "main",
       partnerActive: {},
       monthsActive: buildMonthsActive(durationMonths),
@@ -89,7 +197,7 @@ export function GanttChartBuilder() {
     return {
       id: `${reactId}-a${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       title: "",
-      type: ACTIVITY_TYPES[0],
+      type: activityTypes[0],
       level,
       partnerActive: {},
       monthsActive: buildMonthsActive(durationMonths),
@@ -196,20 +304,20 @@ export function GanttChartBuilder() {
     sheet.mergeCells(1, 1, 1, totalCols);
     setCell(1, 1, "PROJECT TIMETABLE", { bold: true, center: true });
 
-    setCell(2, 1, "Form ID:", { bold: true });
+    setCell(2, 1, t.excelFormIdLabel, { bold: true });
     setCell(2, 2, formId);
-    setCell(2, 3, "Akronim:", { bold: true });
+    setCell(2, 3, t.excelAcronymLabel, { bold: true });
     setCell(2, 4, acronym);
-    setCell(2, 5, "Proje Adı:", { bold: true });
+    setCell(2, 5, t.excelProjectNameLabel, { bold: true });
     if (totalCols >= 6) sheet.mergeCells(2, 6, 2, totalCols);
     setCell(2, 6, projectName);
 
     const headerRow = 3;
-    setCell(headerRow, 1, "No", { bold: true, fill: headerFill, center: true });
-    setCell(headerRow, 2, "Faaliyet Başlığı", { bold: true, fill: headerFill, center: true });
-    setCell(headerRow, 3, "Tür", { bold: true, fill: headerFill, center: true });
+    setCell(headerRow, 1, t.excelFixedCols.no, { bold: true, fill: headerFill, center: true });
+    setCell(headerRow, 2, t.excelFixedCols.activityTitle, { bold: true, fill: headerFill, center: true });
+    setCell(headerRow, 3, t.excelFixedCols.type, { bold: true, fill: headerFill, center: true });
     sheet.mergeCells(headerRow, fixedCols + 1, headerRow, fixedCols + orgColCount);
-    setCell(headerRow, fixedCols + 1, "Lider Organizasyon", { bold: true, fill: headerFill, center: true });
+    setCell(headerRow, fixedCols + 1, t.excelLeadOrg, { bold: true, fill: headerFill, center: true });
 
     let monthColCursor = fixedCols + orgColCount + 1;
     for (let y = 0; y < years; y++) {
@@ -217,7 +325,7 @@ export function GanttChartBuilder() {
       if (monthsInYear > 1) {
         sheet.mergeCells(headerRow, monthColCursor, headerRow, monthColCursor + monthsInYear - 1);
       }
-      setCell(headerRow, monthColCursor, `${y + 1}. Yıl`, { bold: true, fill: headerFill, center: true });
+      setCell(headerRow, monthColCursor, t.excelYear(y + 1), { bold: true, fill: headerFill, center: true });
       monthColCursor += monthsInYear;
     }
 
@@ -226,7 +334,7 @@ export function GanttChartBuilder() {
     setCell(subHeaderRow, 2, "", { fill: headerFill });
     setCell(subHeaderRow, 3, "", { fill: headerFill });
     allOrgs.forEach((org, i) => {
-      const label = `${org.name || (org.id === "coordinator" ? "Koordinatör" : "Ortak")}${org.country ? ` (${org.country})` : ""}`;
+      const label = `${org.name || (org.id === "coordinator" ? t.coordinator : t.partner)}${org.country ? ` (${org.country})` : ""}`;
       setCell(subHeaderRow, fixedCols + 1 + i, label, { bold: true, fill: headerFill, center: true });
     });
     for (let m = 0; m < durationMonths; m++) {
@@ -261,7 +369,7 @@ export function GanttChartBuilder() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${acronym || "proje"}-zaman-cizelgesi.xlsx`;
+    link.download = `${acronym || t.fileNameFallback}${t.fileNameSuffix}`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -270,7 +378,7 @@ export function GanttChartBuilder() {
     <div>
       <div className="flex items-center justify-between mb-6 print:hidden">
         <p className="text-sm text-muted-foreground">
-          PDF&apos;e aktarırken yazdırma penceresinde yönü <strong>Yatay (Landscape)</strong> seçin.
+          {t.printHint}<strong>{t.printHintStrong}</strong>{t.printHintEnd}
         </p>
         <div className="flex gap-2">
           <button
@@ -278,32 +386,32 @@ export function GanttChartBuilder() {
             onClick={exportToExcel}
             className="cursor-pointer rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:border-accent/50"
           >
-            Excel&apos;e Aktar
+            {t.exportExcel}
           </button>
           <button
             type="button"
             onClick={() => window.print()}
             className="cursor-pointer rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors duration-200 hover:bg-accent/90"
           >
-            PDF Olarak İndir
+            {t.downloadPdf}
           </button>
         </div>
       </div>
 
       <div className="space-y-6">
         <Card className="print:hidden">
-          <h2 className="font-medium mb-4 text-foreground">Proje Bilgileri</h2>
+          <h2 className="font-medium mb-4 text-foreground">{t.projectInfo}</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Form ID</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">{t.formId}</label>
               <input value={formId} onChange={(e) => setFormId(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Akronim</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">{t.acronym}</label>
               <input value={acronym} onChange={(e) => setAcronym(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1 text-foreground">Proje Adı</label>
+              <label className="block text-sm font-medium mb-1 text-foreground">{t.projectName}</label>
               <input value={projectName} onChange={(e) => setProjectName(e.target.value)} className={inputClass} />
             </div>
           </div>
@@ -311,13 +419,13 @@ export function GanttChartBuilder() {
 
         <Card className="print:hidden">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-medium text-foreground">Ortak Kuruluşlar</h2>
+            <h2 className="font-medium text-foreground">{t.partnerOrgs}</h2>
             <button
               type="button"
               onClick={addPartner}
               className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              + Ortak Ekle
+              {t.addPartner}
             </button>
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
@@ -325,13 +433,13 @@ export function GanttChartBuilder() {
               <input
                 value={coordinator.name}
                 onChange={(e) => setCoordinator({ ...coordinator, name: e.target.value })}
-                placeholder="Koordinatör Kurum Adı"
+                placeholder={t.coordinatorNamePlaceholder}
                 className={inputClass}
               />
               <input
                 value={coordinator.country}
                 onChange={(e) => setCoordinator({ ...coordinator, country: e.target.value })}
-                placeholder="Ülke"
+                placeholder={t.countryPlaceholder}
                 className={inputClass}
               />
             </div>
@@ -342,7 +450,7 @@ export function GanttChartBuilder() {
                   onChange={(e) =>
                     setPartners((prev) => prev.map((p) => (p.id === partner.id ? { ...p, name: e.target.value } : p)))
                   }
-                  placeholder="Ortak Kurum Adı"
+                  placeholder={t.partnerNamePlaceholder}
                   className={inputClass}
                 />
                 <input
@@ -352,7 +460,7 @@ export function GanttChartBuilder() {
                       prev.map((p) => (p.id === partner.id ? { ...p, country: e.target.value } : p))
                     )
                   }
-                  placeholder="Ülke"
+                  placeholder={t.countryPlaceholder}
                   className={inputClass}
                 />
                 <button
@@ -360,7 +468,7 @@ export function GanttChartBuilder() {
                   onClick={() => removePartner(partner.id)}
                   className="cursor-pointer rounded-lg border border-border px-3 py-2 text-sm text-red-600 transition-colors duration-200 hover:border-red-300"
                 >
-                  Sil
+                  {t.delete}
                 </button>
               </div>
             ))}
@@ -368,9 +476,9 @@ export function GanttChartBuilder() {
         </Card>
 
         <Card className="print:hidden">
-          <h2 className="font-medium mb-4 text-foreground">Proje Süresi</h2>
+          <h2 className="font-medium mb-4 text-foreground">{t.projectDuration}</h2>
           <div className="max-w-xs">
-            <label className="block text-sm font-medium mb-1 text-foreground">Toplam Ay Sayısı</label>
+            <label className="block text-sm font-medium mb-1 text-foreground">{t.totalMonths}</label>
             <input
               type="number"
               min={1}
@@ -382,9 +490,9 @@ export function GanttChartBuilder() {
         </Card>
 
         <Card className="print:hidden">
-          <h2 className="font-medium mb-2 text-foreground">Faaliyet Türleri (referans)</h2>
+          <h2 className="font-medium mb-2 text-foreground">{t.activityTypesRef}</h2>
           <ul className="text-sm text-muted-foreground space-y-1">
-            {ACTIVITY_TYPES.map((type) => (
+            {activityTypes.map((type) => (
               <li key={type}>• {type}</li>
             ))}
           </ul>
@@ -392,21 +500,21 @@ export function GanttChartBuilder() {
 
         <Card>
           <div className="flex items-center justify-between mb-4 print:hidden">
-            <h2 className="font-medium text-foreground">Proje Zaman Çizelgesi</h2>
+            <h2 className="font-medium text-foreground">{t.timetable}</h2>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={addMainActivity}
                 className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
               >
-                + Ana Faaliyet
+                {t.addMainActivity}
               </button>
               <button
                 type="button"
                 onClick={addSubActivity}
                 className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
               >
-                + Alt Faaliyet
+                {t.addSubActivity}
               </button>
             </div>
           </div>
@@ -420,10 +528,10 @@ export function GanttChartBuilder() {
             )}
             <div className="flex items-center justify-center gap-4 mt-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-sm bg-blue-600" /> Ana Faaliyet
+                <span className="h-3 w-3 rounded-sm bg-blue-600" /> {t.mainActivity}
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-3 w-3 rounded-sm bg-green-600" /> Alt Faaliyet
+                <span className="h-3 w-3 rounded-sm bg-green-600" /> {t.subActivity}
               </span>
             </div>
           </div>
@@ -436,30 +544,30 @@ export function GanttChartBuilder() {
                     No
                   </th>
                   <th className="border border-border p-1 bg-muted min-w-[160px]" rowSpan={2}>
-                    Faaliyet
+                    {t.activity}
                   </th>
                   <th className="border border-border p-1 bg-muted min-w-[140px] print:hidden" rowSpan={2}>
-                    Tür
+                    {t.type}
                   </th>
                   <th className="border border-border p-1 bg-muted" colSpan={allOrgs.length}>
-                    Lider Organizasyon
+                    {t.leadOrg}
                   </th>
                   {Array.from({ length: years }, (_, y) => {
                     const monthsInYear = Math.min(12, durationMonths - y * 12);
                     return (
                       <th key={y} className="border border-border p-1 bg-muted" colSpan={monthsInYear}>
-                        {y + 1}. Yıl
+                        {t.year(y + 1)}
                       </th>
                     );
                   })}
                   <th className="border border-border p-1 bg-muted print:hidden min-w-[64px]" rowSpan={2}>
-                    İşlem
+                    {t.actions}
                   </th>
                 </tr>
                 <tr>
                   {allOrgs.map((org) => (
                     <th key={org.id} className="border border-border p-1 bg-muted min-w-[70px] font-normal">
-                      {org.name || (org.id === "coordinator" ? "Koordinatör" : "Ortak")}
+                      {org.name || (org.id === "coordinator" ? t.coordinator : t.partner)}
                       {org.country ? ` (${org.country})` : ""}
                     </th>
                   ))}
@@ -480,7 +588,7 @@ export function GanttChartBuilder() {
                       <input
                         value={activity.title}
                         onChange={(e) => updateActivity(activity.id, { title: e.target.value })}
-                        placeholder="Faaliyet başlığı"
+                        placeholder={t.activityTitlePlaceholder}
                         className="w-full bg-transparent outline-none text-foreground focus:ring-1 focus:ring-accent/50 rounded-sm print:border-none print:focus:ring-0"
                       />
                     </td>
@@ -490,7 +598,7 @@ export function GanttChartBuilder() {
                         onChange={(e) => updateActivity(activity.id, { type: e.target.value })}
                         className="w-full bg-transparent outline-none text-foreground text-xs focus:ring-1 focus:ring-accent/50 rounded-sm"
                       >
-                        {ACTIVITY_TYPES.map((type) => (
+                        {activityTypes.map((type) => (
                           <option key={type} value={type}>
                             {type}
                           </option>
@@ -521,18 +629,18 @@ export function GanttChartBuilder() {
                           <button
                             type="button"
                             onClick={() => insertActivityAfter(activity.id, "main")}
-                            title="Bu satırın altına ana faaliyet ekle"
+                            title={t.addMainBelowTitle}
                             className="cursor-pointer text-blue-600 hover:underline"
                           >
-                            +Ana
+                            {t.addMainShort}
                           </button>
                           <button
                             type="button"
                             onClick={() => insertActivityAfter(activity.id, "sub")}
-                            title="Bu satırın altına alt faaliyet ekle"
+                            title={t.addSubBelowTitle}
                             className="cursor-pointer text-green-600 hover:underline"
                           >
-                            +Alt
+                            {t.addSubShort}
                           </button>
                         </div>
                         <button
@@ -540,7 +648,7 @@ export function GanttChartBuilder() {
                           onClick={() => removeActivity(activity.id)}
                           className="cursor-pointer text-red-600 hover:underline"
                         >
-                          Sil
+                          {t.delete}
                         </button>
                       </div>
                     </td>

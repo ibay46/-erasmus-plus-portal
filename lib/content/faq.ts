@@ -130,3 +130,126 @@ export const FAQ_GROUPS: FaqGroup[] = [
     ],
   },
 ];
+
+export const FAQ_GROUPS_EN: FaqGroup[] = [
+  {
+    category: "General",
+    items: [
+      {
+        question: "Do I need to belong to an institution to write an Erasmus+ project?",
+        answer:
+          "Yes, in most action types (KA1, KA2) applications are submitted on behalf of a legal entity (school, university, municipality, association/foundation, etc.). If you don't yet have an institution or want to take part individually, you can join a project as a partner through a school/NGO, or follow your National Agency's calls that are open to individual applicants (e.g. youth exchanges).",
+      },
+      {
+        question: "What is the difference between KA210 and KA220?",
+        answer:
+          "KA210 (Small-scale Partnerships) involves less bureaucracy, a lower budget (€30,000-60,000) and requires at least 2 partners, making it a suitable entry-level action for inexperienced organisations. KA220 (Cooperation Partnerships) has a larger budget (€120,000-400,000), requires at least 3 partners, and demands more comprehensive institutional capacity. See the KA210 and KA220 guides on our Project Types page for a detailed comparison.",
+      },
+      {
+        question: "How many countries do I need partners from?",
+        answer:
+          "KA210 requires at least 2 countries (including yours), KA220 requires at least 3 countries (including yours). More partner countries can add bonus points for the European dimension of the application, but it also divides the budget across more partners, so it's important to keep the number manageable.",
+      },
+    ],
+  },
+  {
+    category: "Budget",
+    items: [
+      {
+        question: "How is the travel budget calculated?",
+        answer:
+          "The European Commission sets fixed band amounts based on the distance between the participant's point of departure and the activity venue (e.g. 100-499 km, 500-1999 km, etc.); the actual ticket price is not used in this calculation. Once you get the distance from the official Erasmus+ Distance Calculator and enter it into our KA210 Budget Calculator, the total travel budget is calculated automatically.",
+      },
+      {
+        question: "Is the daily subsistence amount the same in every country?",
+        answer:
+          "No. The daily amount range depends on the cost group (1, 2 or 3) of the host country; the National Agency publishes the exact rate within that range each year. Our tool determines the group automatically once you select the country and shows the allowed range.",
+      },
+      {
+        question: "How does subsistence change for activities longer than 14 days?",
+        answer:
+          "The full daily rate applies for the first 14 days; from day 15 onward, 70% of the rate is paid. Our KA210 Budget Calculator applies this rule automatically, so you don't need to calculate it by hand.",
+      },
+      {
+        question: "Will my application be rejected if my budget has errors?",
+        answer:
+          "A budget error alone won't disqualify an application, but it weakens the evaluator's perception of institutional capacity and seriousness, and may require a correction during the grant-agreement stage, delaying the process. We recommend double-checking your budget with our tools or a consultant before submitting.",
+      },
+    ],
+  },
+  {
+    category: "Application Process",
+    items: [
+      {
+        question: "Which system is used to submit the application?",
+        answer:
+          "Applications are submitted through the online portal the European Commission uses for Erasmus+ and the European Solidarity Corps; your organisation needs an EU Login account and an OID (Organisation ID) number. Don't leave this registration to the last day — verification can take several days.",
+      },
+      {
+        question: "What documents are required alongside the application form?",
+        answer:
+          "Standard requirements include the organisation representative's signature authority document, partnership mandates, and annexes specific to the action type. For projects like KA210 where the coordinator is based abroad, see our KA210 process-steps guide on the Legislation page for the extra steps the Turkish partner needs to follow.",
+      },
+      {
+        question: "What's the first thing to do once my application is approved?",
+        answer:
+          "The grant agreement is signed, after which a portion of the total budget is usually transferred to your account as an advance. You can use our Advance Expenditure Form tool to reconcile the advance and track expenditure documents.",
+      },
+    ],
+  },
+  {
+    category: "Finding Partners",
+    items: [
+      {
+        question: "Where should I look to find partners abroad?",
+        answer:
+          "National Agencies' partner-search tools, announcements from SALTO resource centres (you can follow our SALTO Youth and SALTO Education & Training pages), and platforms like eTwinning are the most common sources. Reviewing the partner profiles of previously approved projects (see our Project Results page) also shows you which types of organisations partner on which themes.",
+      },
+      {
+        question: "Should I be the coordinator or a partner? Which is easier?",
+        answer:
+          "Being a partner in your first project usually carries a lighter administrative load; coordinating means taking on responsibility for budget management, reporting and coordinating between partners. Moving on to coordination after gaining experience is a common path.",
+      },
+    ],
+  },
+  {
+    category: "Open Calls",
+    items: [
+      {
+        question: "Is the information on the Open Calls page an official source?",
+        answer:
+          "No. This page is compiled from announcements published by National Agencies for informational purposes; it is not an official application document or legal advice. Always confirm the deadline with the relevant National Agency's or the European Commission's official source before applying.",
+      },
+      {
+        question: "Why does a call that's past its deadline still show up?",
+        answer:
+          "By default, only calls currently open for applications are listed. If you select \"All (including past deadlines)\" in the Status filter, expired calls are also shown, labelled \"Deadline passed\", for reference.",
+      },
+      {
+        question: "Can application deadlines change?",
+        answer:
+          "Yes. National Agencies sometimes update their announced deadline or close a call early depending on budget availability. Don't leave your application to the last day for a call with an approaching deadline, and check the official source regularly.",
+      },
+    ],
+  },
+  {
+    category: "Using This Site",
+    items: [
+      {
+        question: "Do I need to sign up to use your free tools?",
+        answer:
+          "No, all the tools in the Tools section — budget calculators, timeline, travel-expense notification, etc. — can be used for free without an account. A membership is required for premium content such as sample projects, training videos and the AI prompt library in Erasmus Academy.",
+      },
+      {
+        question: "Where does the data on the Project Results page come from?",
+        answer:
+          "It's compiled from the official approved-project lists published by National Agencies and processed into our site; you can filter by year, country, KA action and sector.",
+      },
+      {
+        question: "How can I use your consulting services?",
+        answer:
+          "You can view the package that fits your needs on our Consulting page (preliminary review, project check, full writing support, KA210 mentoring, etc.) and fill out the request form; our team will get back to you.",
+      },
+    ],
+  },
+];

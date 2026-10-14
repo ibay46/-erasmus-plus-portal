@@ -7,18 +7,20 @@ import { inputClass, textareaClass } from "./sharedStyles";
 
 function QuadrantBlock({
   label,
+  keyQuestionLabel,
   fields,
   values,
   onChange,
 }: {
   label: string;
+  keyQuestionLabel: string;
   fields: [string, string, string, string];
   values: [string, string, string, string];
   onChange: (index: number, value: string) => void;
 }) {
   return (
     <div className="rounded-lg border border-border overflow-hidden">
-      <p className="bg-muted px-3 py-2 text-sm font-medium text-foreground">Anahtar Soru: {label}</p>
+      <p className="bg-muted px-3 py-2 text-sm font-medium text-foreground">{keyQuestionLabel}: {label}</p>
       <div className="grid sm:grid-cols-2">
         {fields.map((fieldLabel, i) => (
           <div key={fieldLabel} className="border border-border p-3">
@@ -37,7 +39,8 @@ function QuadrantBlock({
   );
 }
 
-export function AfterActionReviewTool() {
+export function AfterActionReviewTool({ locale = "tr" }: { locale?: "tr" | "en" }) {
+  const isEn = locale === "en";
   const [focus, setFocus] = useState("");
   const [q1, setQ1] = useState<[string, string, string, string]>(["", "", "", ""]);
   const [q2, setQ2] = useState<[string, string, string, string]>(["", "", "", ""]);
@@ -59,22 +62,27 @@ export function AfterActionReviewTool() {
 
   return (
     <div>
-      <ToolPdfBar />
+      <ToolPdfBar locale={locale} />
       <div className="space-y-6">
         <Card className="border-accent/40">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Odak (Focus)</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Focus" : "Odak (Focus)"}</p>
           <input
             value={focus}
             onChange={(e) => setFocus(e.target.value)}
-            placeholder="Bu toplantının kapsamı nedir? (örn. bir çalıştay, hareketlilik deneyimi)"
+            placeholder={isEn ? "What is the scope of this session? (e.g. a workshop, a mobility experience)" : "Bu toplantının kapsamı nedir? (örn. bir çalıştay, hareketlilik deneyimi)"}
             className={inputClass}
           />
         </Card>
 
         <Card>
           <QuadrantBlock
-            label="Ne olmasını bekliyorduk?"
-            fields={["Hedefimiz neydi?", "Planımız neydi?", "İnsanların nasıl davranacağını düşündük?", "Başka varsayımlarımız var mıydı?"]}
+            label={isEn ? "What did we expect to happen?" : "Ne olmasını bekliyorduk?"}
+            keyQuestionLabel={isEn ? "Key Question" : "Anahtar Soru"}
+            fields={
+              isEn
+                ? ["What was our goal?", "What was our plan?", "How did we think people would behave?", "Did we have any other assumptions?"]
+                : ["Hedefimiz neydi?", "Planımız neydi?", "İnsanların nasıl davranacağını düşündük?", "Başka varsayımlarımız var mıydı?"]
+            }
             values={q1}
             onChange={updateQ1}
           />
@@ -82,13 +90,23 @@ export function AfterActionReviewTool() {
 
         <Card>
           <QuadrantBlock
-            label="Gerçekte ne oldu?"
-            fields={[
-              "Beklediğimizden farklı mıydı? Nasıl?",
-              "Ne iyi gitti? Neden?",
-              "Ne daha iyi olabilirdi? Neden?",
-              "Varsayımlarımızdan hangileri doğru/yanlıştı?",
-            ]}
+            label={isEn ? "What actually happened?" : "Gerçekte ne oldu?"}
+            keyQuestionLabel={isEn ? "Key Question" : "Anahtar Soru"}
+            fields={
+              isEn
+                ? [
+                    "Was it different from what we expected? How?",
+                    "What went well? Why?",
+                    "What could have gone better? Why?",
+                    "Which of our assumptions were right/wrong?",
+                  ]
+                : [
+                    "Beklediğimizden farklı mıydı? Nasıl?",
+                    "Ne iyi gitti? Neden?",
+                    "Ne daha iyi olabilirdi? Neden?",
+                    "Varsayımlarımızdan hangileri doğru/yanlıştı?",
+                  ]
+            }
             values={q2}
             onChange={updateQ2}
           />

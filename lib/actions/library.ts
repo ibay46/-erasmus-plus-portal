@@ -16,6 +16,12 @@ const librarySchema = z.object({
   workPackages: z.string().min(5),
   dissemination: z.string().min(5),
   budgetLogic: z.string().min(5),
+  titleEn: z.string().nullable(),
+  summaryEn: z.string().nullable(),
+  objectivesEn: z.string().nullable(),
+  workPackagesEn: z.string().nullable(),
+  disseminationEn: z.string().nullable(),
+  budgetLogicEn: z.string().nullable(),
   isPremiumOnly: z.boolean(),
 });
 
@@ -29,6 +35,12 @@ function parseLibraryForm(formData: FormData) {
     workPackages: formData.get("workPackages"),
     dissemination: formData.get("dissemination"),
     budgetLogic: formData.get("budgetLogic"),
+    titleEn: formData.get("titleEn") || null,
+    summaryEn: formData.get("summaryEn") || null,
+    objectivesEn: formData.get("objectivesEn") || null,
+    workPackagesEn: formData.get("workPackagesEn") || null,
+    disseminationEn: formData.get("disseminationEn") || null,
+    budgetLogicEn: formData.get("budgetLogicEn") || null,
     isPremiumOnly: formData.get("isPremiumOnly") === "on",
   });
 }

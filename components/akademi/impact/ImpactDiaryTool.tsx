@@ -18,7 +18,8 @@ function emptyRow(id: string): DiaryRow {
   return { id, period: "", mood: MOODS[1], notes: "" };
 }
 
-export function ImpactDiaryTool() {
+export function ImpactDiaryTool({ locale = "tr" }: { locale?: "tr" | "en" }) {
+  const isEn = locale === "en";
   const reactId = useId();
   const [granularity, setGranularity] = useState<"Günlük" | "Haftalık" | "Aylık">("Günlük");
   const [rows, setRows] = useState<DiaryRow[]>([
@@ -40,14 +41,22 @@ export function ImpactDiaryTool() {
     setRows((prev) => prev.filter((r) => r.id !== id));
   }
 
-  const periodLabel = granularity === "Günlük" ? "Tarih" : granularity === "Haftalık" ? "Hafta" : "Ay";
+  const GRANULARITY_LABELS_EN: Record<"Günlük" | "Haftalık" | "Aylık", string> = {
+    Günlük: "Daily",
+    Haftalık: "Weekly",
+    Aylık: "Monthly",
+  };
+  const granularityLabel = isEn ? GRANULARITY_LABELS_EN[granularity] : granularity;
+  const periodLabel = isEn
+    ? granularity === "Günlük" ? "Date" : granularity === "Haftalık" ? "Week" : "Month"
+    : granularity === "Günlük" ? "Tarih" : granularity === "Haftalık" ? "Hafta" : "Ay";
 
   return (
     <div>
-      <ToolPdfBar />
+      <ToolPdfBar locale={locale} />
       <div className="space-y-6">
         <Card className="print:hidden">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Günlük Sıklığı</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Diary Frequency" : "Günlük Sıklığı"}</p>
           <div className="flex gap-2">
             {(["Günlük", "Haftalık", "Aylık"] as const).map((g) => (
               <button
@@ -60,7 +69,7 @@ export function ImpactDiaryTool() {
                     : "border-border text-muted-foreground hover:border-accent/50"
                 }`}
               >
-                {g}
+                {isEn ? GRANULARITY_LABELS_EN[g] : g}
               </button>
             ))}
           </div>
@@ -68,13 +77,15 @@ export function ImpactDiaryTool() {
 
         <Card>
           <div className="flex items-center justify-between mb-3 print:hidden">
-            <p className="text-xs font-medium text-muted-foreground">{granularity} Gözlemler</p>
+            <p className="text-xs font-medium text-muted-foreground">
+              {isEn ? `${granularityLabel} Observations` : `${granularity} Gözlemler`}
+            </p>
             <button
               type="button"
               onClick={addRow}
               className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-sm text-foreground transition-colors duration-200 hover:border-accent/50"
             >
-              + Satır Ekle
+              {isEn ? "+ Add Row" : "+ Satır Ekle"}
             </button>
           </div>
           <div className="overflow-x-auto">
@@ -82,9 +93,9 @@ export function ImpactDiaryTool() {
               <thead>
                 <tr>
                   <th className="border border-border p-2 bg-muted text-left w-32">{periodLabel}</th>
-                  <th className="border border-border p-2 bg-muted text-left w-28">Mod</th>
-                  <th className="border border-border p-2 bg-muted text-left">Notlar / Gözlemler</th>
-                  <th className="border border-border p-2 bg-muted print:hidden">Sil</th>
+                  <th className="border border-border p-2 bg-muted text-left w-28">{isEn ? "Mood" : "Mod"}</th>
+                  <th className="border border-border p-2 bg-muted text-left">{isEn ? "Notes / Observations" : "Notlar / Gözlemler"}</th>
+                  <th className="border border-border p-2 bg-muted print:hidden">{isEn ? "Delete" : "Sil"}</th>
                 </tr>
               </thead>
               <tbody>
@@ -127,7 +138,7 @@ export function ImpactDiaryTool() {
                         disabled={rows.length <= 1}
                         className="cursor-pointer text-red-600 text-xs disabled:opacity-40"
                       >
-                        Sil
+                        {isEn ? "Delete" : "Sil"}
                       </button>
                     </td>
                   </tr>
@@ -139,17 +150,19 @@ export function ImpactDiaryTool() {
 
         <div className="grid sm:grid-cols-2 gap-4">
           <Card>
-            <p className="text-xs font-medium text-muted-foreground mb-2">Örüntüler (Patterns)</p>
+            <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Patterns" : "Örüntüler (Patterns)"}</p>
             <textarea value={patterns} onChange={(e) => setPatterns(e.target.value)} className={textareaClass} />
           </Card>
           <Card>
-            <p className="text-xs font-medium text-muted-foreground mb-2">Zorluklar / Öğrenilen Dersler</p>
+            <p className="text-xs font-medium text-muted-foreground mb-2">{isEn ? "Challenges / Lessons Learned" : "Zorluklar / Öğrenilen Dersler"}</p>
             <textarea value={challenges} onChange={(e) => setChallenges(e.target.value)} className={textareaClass} />
           </Card>
         </div>
 
         <Card className="border-accent/40">
-          <p className="text-xs font-medium text-muted-foreground mb-2">{granularity} Yansıma (Reflection)</p>
+          <p className="text-xs font-medium text-muted-foreground mb-2">
+            {isEn ? `${granularityLabel} Reflection` : `${granularity} Yansıma (Reflection)`}
+          </p>
           <textarea value={reflection} onChange={(e) => setReflection(e.target.value)} className={textareaClass} />
         </Card>
       </div>

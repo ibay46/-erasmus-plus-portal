@@ -56,10 +56,16 @@ export default async function RootLayout({
   const headersList = await headers();
   const pathname = headersList.get("x-pathname") ?? "";
   const isAdmin = pathname.startsWith("/admin");
+  const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
+  const locale = isEnglish ? "en" : "tr";
   const announcement = isAdmin ? null : await getAnnouncement();
 
   return (
-    <html lang="tr" className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={`${inter.variable} ${plusJakartaSans.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <ThemeProvider>
           <PageViewTracker />
@@ -76,13 +82,13 @@ export default async function RootLayout({
                     version={announcement.updatedAt.toISOString()}
                   />
                 )}
-                <Header />
+                <Header locale={locale} />
               </div>
               <HeaderHeightSync />
               <main className="min-w-0 flex-1" style={{ paddingTop: "var(--header-h, 6.5rem)" }}>
                 {children}
               </main>
-              <Footer />
+              <Footer locale={locale} />
             </>
           )}
         </ThemeProvider>

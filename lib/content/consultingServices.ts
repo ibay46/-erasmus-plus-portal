@@ -55,3 +55,53 @@ export const PRICING_PACKAGES: PricingPackage[] = [
   { name: "Tam Yazım Desteği", priceLabel: "1500 €+" },
   { name: "KA210 Mentorluk", priceLabel: "500 €" },
 ];
+
+// English mirror of CONSULTING_SERVICES / PRICING_PACKAGES for the /en/danismanlik pages.
+// Slugs are kept identical to the Turkish versions so the [service] dynamic segment
+// matches the same records/content keys on both locales.
+export const CONSULTING_SERVICES_EN: ConsultingService[] = [
+  {
+    slug: "proje-yazimi",
+    title: "Project Writing",
+    description:
+      "Professional writing of the entire project text, from your idea to the application form.",
+  },
+  {
+    slug: "proje-kontrolu",
+    title: "Project Review",
+    description:
+      "Review of your prepared application from an evaluator's perspective, with improvement recommendations.",
+  },
+  {
+    slug: "butce-hazirlama",
+    title: "Budget Preparation",
+    description: "Preparing your project budget with the correct line items and realistic figures.",
+  },
+  {
+    slug: "ortak-bulma",
+    title: "Partner Finding",
+    description: "Support in identifying suitable partner organisations abroad and at home for your project.",
+  },
+  {
+    slug: "yayginlastirma-plani",
+    title: "Dissemination Plan",
+    description: "Strategy and action plan for effectively disseminating your project outputs.",
+  },
+  {
+    slug: "ai-destekli-proje-gelistirme",
+    title: "AI-Assisted Project Development",
+    description: "An accelerated development process from project idea to work packages, using AI-powered tools.",
+  },
+  {
+    slug: "ka210-sch-proje-yazma-sihirbazi",
+    title: "KA210-SCH Project Writing Wizard (ChatGPT Assistant)",
+    description: "Weekly-access support to fill in your KA210-SCH application question by question with a specially trained ChatGPT assistant.",
+  },
+];
+
+export const PRICING_PACKAGES_EN: PricingPackage[] = [
+  { name: "Preliminary Review", priceLabel: "€100" },
+  { name: "Project Review", priceLabel: "€300" },
+  { name: "Full Writing Support", priceLabel: "€1,500+" },
+  { name: "KA210 Mentoring", priceLabel: "€500" },
+];

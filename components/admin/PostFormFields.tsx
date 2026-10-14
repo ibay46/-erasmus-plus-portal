@@ -26,6 +26,9 @@ export function PostFormFields({
     title: string;
     excerpt: string | null;
     body: string;
+    titleEn?: string | null;
+    excerptEn?: string | null;
+    bodyEn?: string | null;
     category: string;
     published: boolean;
     coverImage?: string | null;
@@ -34,7 +37,9 @@ export function PostFormFields({
     eventEndDate?: Date | null;
     eventSectors?: string | null;
     eventVenue?: string | null;
+    eventVenueEn?: string | null;
     eventPriority?: string | null;
+    eventPriorityEn?: string | null;
     eventApplicationDeadline?: Date | null;
     eventLanguage?: string | null;
     eventSymbols?: string | null;
@@ -113,6 +118,28 @@ export function PostFormFields({
           Araç çubuğundan görsel, PDF, Word, Excel, video dosyası ekleyebilir veya YouTube linki
           yapıştırabilirsiniz. Eklenen PDF/Word/Excel dosyaları sitede doğrudan önizlenebilir.
         </p>
+      </div>
+
+      <div className="space-y-4 rounded-lg border border-border p-4">
+        <p className="text-sm font-medium text-foreground">
+          English Content <span className="font-normal text-muted-foreground">(/en sayfası için, opsiyonel — boş bırakılırsa Türkçe metin gösterilir)</span>
+        </p>
+        <div>
+          <label htmlFor="titleEn" className="block text-sm font-medium mb-1 text-foreground">
+            Title (English)
+          </label>
+          <input id="titleEn" name="titleEn" defaultValue={defaultValues?.titleEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="excerptEn" className="block text-sm font-medium mb-1 text-foreground">
+            Excerpt (English)
+          </label>
+          <input id="excerptEn" name="excerptEn" defaultValue={defaultValues?.excerptEn ?? ""} className={inputClass} />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-foreground">Body (English)</label>
+          <RichTextEditor name="bodyEn" defaultValue={defaultValues?.bodyEn ?? ""} />
+        </div>
       </div>
 
       {isSaltoEducationTraining && (
@@ -210,6 +237,12 @@ export function PostFormFields({
               defaultValue={defaultValues?.eventVenue ?? ""}
               className={inputClass}
             />
+            <input
+              name="eventVenueEn"
+              placeholder="English (opsiyonel) — örn. Leuven, Belgium"
+              defaultValue={defaultValues?.eventVenueEn ?? ""}
+              className={`${inputClass} mt-2`}
+            />
           </div>
 
           <div>
@@ -222,6 +255,12 @@ export function PostFormFields({
               placeholder="örn. Increase the quality of programme implementation (2021-27)"
               defaultValue={defaultValues?.eventPriority ?? ""}
               className={inputClass}
+            />
+            <input
+              name="eventPriorityEn"
+              placeholder="English (opsiyonel)"
+              defaultValue={defaultValues?.eventPriorityEn ?? ""}
+              className={`${inputClass} mt-2`}
             />
           </div>
 
@@ -420,6 +459,12 @@ export function PostFormFields({
               placeholder="örn. Leuven, Belçika veya Online"
               defaultValue={defaultValues?.eventVenue ?? ""}
               className={inputClass}
+            />
+            <input
+              name="eventVenueEn"
+              placeholder="English (opsiyonel) — örn. Leuven, Belgium"
+              defaultValue={defaultValues?.eventVenueEn ?? ""}
+              className={`${inputClass} mt-2`}
             />
           </div>
         </div>
