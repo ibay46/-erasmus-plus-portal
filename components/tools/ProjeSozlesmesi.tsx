@@ -339,7 +339,7 @@ export function ProjeSozlesmesi({
           <EuFlagHeader />
 
           <p className="text-sm font-semibold text-foreground">
-            Prot. <Inline value={protNo} onChange={setProtNo} placeholder="…." widthClass="w-20" /> del {fmtDate(protDate)}
+            Prot. No. <Inline value={protNo} onChange={setProtNo} placeholder="…." widthClass="w-20" /> dated {fmtDate(protDate)}
           </p>
 
           <h1 className="text-center text-lg font-bold text-foreground mt-4">PARTNERSHIP AGREEMENT</h1>

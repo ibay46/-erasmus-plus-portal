@@ -205,7 +205,7 @@ export function generateContractPdf(data: ContractPdfData) {
   drawCard(() => {
     doc.setFont("WorkSans", "bold");
     doc.setFontSize(9.5);
-    if (!dryRun) doc.text(`Prot. ${field(data.protNo)} del ${data.protDateLabel}`, MARGIN_X + CARD_PADDING, cursorY);
+    if (!dryRun) doc.text(`Prot. No. ${field(data.protNo)} dated ${data.protDateLabel}`, MARGIN_X + CARD_PADDING, cursorY);
     advance(8);
 
     drawHeading("PARTNERSHIP AGREEMENT", 13, true);
