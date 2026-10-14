@@ -138,13 +138,18 @@ export function generateContractPdf(data: ContractPdfData) {
   }
 
   function drawCenteredLine(text: string, opts?: { bold?: boolean }) {
+    const lines = wrap(text, CONTENT_WIDTH, 9.5);
     if (!dryRun) {
       doc.setFont("WorkSans", opts?.bold ? "bold" : "normal");
       doc.setFontSize(9.5);
-      doc.text(text, PAGE_WIDTH / 2, cursorY, { align: "center" });
-      doc.setFont("WorkSans", "normal");
     }
-    advance(5);
+    for (const line of lines) {
+      if (!dryRun) {
+        doc.text(line, PAGE_WIDTH / 2, cursorY, { align: "center" });
+      }
+      advance(5);
+    }
+    if (!dryRun) doc.setFont("WorkSans", "normal");
   }
 
   function drawParagraph(text: string, opts?: { indent?: number; gapAfter?: number; bold?: boolean }) {
